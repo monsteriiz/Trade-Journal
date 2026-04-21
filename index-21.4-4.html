@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trading Journal Pro</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a1a;min-height:100vh}
+.container{max-width:1100px;margin:0 auto;padding:20px 16px}
+.topbar{display:flex;align-items:center;gap:10px;padding:14px 20px;background:#fff;border-bottom:1px solid #e8e8e4;margin-bottom:0;flex-wrap:wrap}
+.app-title{font-size:16px;font-weight:600;color:#185FA5;margin-right:8px}
+.acc-sel{font-size:12px;padding:5px 12px;border:1px solid #ddd;border-radius:20px;background:#fff;color:#1a1a1a;cursor:pointer;font-weight:500}
+.acc-badge{font-size:11px;color:#666}
+.btn-acc{font-size:11px;padding:4px 11px;border:1px solid #ddd;border-radius:20px;background:#fff;cursor:pointer;color:#333}
+.btn-acc:hover{background:#f0f0f0}
+.nav-row{display:flex;gap:5px;flex-wrap:wrap;padding:12px 20px;background:#fff;border-bottom:1px solid #e8e8e4;margin-bottom:16px}
+.nb{font-size:12px;padding:6px 14px;border:1px solid #e0e0e0;border-radius:20px;background:transparent;color:#666;cursor:pointer;transition:all .15s;white-space:nowrap}
+.nb.on{background:#185FA5;color:#fff;border-color:#185FA5}
+.nb:hover:not(.on){background:#f5f5f0}
+.pg{display:none}.pg.on{display:block}
+.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:16px}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:14px}
+.mc{background:#fff;border-radius:8px;padding:12px 15px;border:1px solid #eee}
+.mc-l{font-size:11px;color:#888;margin-bottom:4px;font-weight:500}
+.mc-v{font-size:20px;font-weight:600}
+.gv{color:#0F6E56}.rv{color:#A32D2D}.av{color:#854F0B}.bv{color:#185FA5}
+.card{background:#fff;border:1px solid #e8e8e4;border-radius:12px;padding:16px 20px;margin-bottom:14px}
+.ct{font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.fr{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:10px}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:11px;color:#666;font-weight:500}
+.fg input,.fg select,.fg textarea{font-size:13px;padding:7px 10px;border:1px solid #e0e0e0;border-radius:7px;background:#fff;color:#1a1a1a;width:100%;transition:border .15s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:#185FA5}
+.fg textarea{resize:vertical;font-family:inherit;min-height:60px}
+.btn{padding:7px 16px;border-radius:8px;font-size:12px;cursor:pointer;border:1px solid #ddd;background:#fff;color:#333;font-weight:500;transition:all .15s}
+.btn:hover{background:#f5f5f0}
+.btn-p{background:#185FA5;color:#fff;border-color:#185FA5}
+.btn-p:hover{background:#1450a0}
+.btn-d{background:#E24B4A;color:#fff;border-color:#E24B4A}
+.btn-d:hover{background:#c43a39}
+.btn-g{background:#1D9E75;color:#fff;border-color:#1D9E75}
+.btn-g:hover{background:#178a65}
+.btn-sm{padding:4px 10px;font-size:11px}
+.badge{display:inline-flex;align-items:center;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600;white-space:nowrap}
+.b-buy{background:#EAF3DE;color:#27500A}
+.b-sell{background:#FCEBEB;color:#791F1F}
+.b-a{background:#EAF3DE;color:#27500A}
+.b-b{background:#FAEEDA;color:#633806}
+.b-c{background:#FCEBEB;color:#791F1F}
+.b-model{background:#EEEDFE;color:#3C3489}
+.b-ge{background:#EAF3DE;color:#27500A}
+.b-pt{background:#E6F1FB;color:#0C447C}
+.b-loss2{background:#FCEBEB;color:#791F1F}
+.b-cp{background:#E6F1FB;color:#0C447C}
+.b-be{background:#FAEEDA;color:#633806}
+.tbl-wrap{border:1px solid #e8e8e4;border-radius:12px;overflow:hidden;overflow-x:auto;margin-bottom:14px;background:#fff}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{font-size:11px;font-weight:600;color:#888;text-align:left;padding:8px 10px;border-bottom:1px solid #f0f0ec;background:#fafaf8;white-space:nowrap}
+.tbl td{padding:8px 10px;border-bottom:1px solid #f5f5f2;vertical-align:middle;color:#1a1a1a}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:#fafaf8}
+.prog{height:5px;background:#f0f0ec;border-radius:3px;overflow:hidden;margin-top:4px}
+.prog-f{height:100%;border-radius:3px}
+.cal-wrap{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:8px}
+.cal-h{font-size:10px;color:#999;text-align:center;padding:4px;font-weight:600}
+.cal-d{font-size:11px;text-align:center;padding:6px 2px;border-radius:5px;color:#aaa;cursor:pointer;transition:background .15s;line-height:1.3}
+.cal-d:hover{background:#f0f0ec}
+.cal-d.profit{background:#E1F5EE;color:#085041;font-weight:600}
+.cal-d.loss{background:#FCEBEB;color:#791F1F;font-weight:600}
+.cal-d.be{background:#FAEEDA;color:#633806}
+.cal-d.empty{opacity:0;pointer-events:none}
+.emo-btn{padding:5px 11px;font-size:11px;border-radius:20px;border:1px solid #e0e0e0;background:#fff;color:#666;cursor:pointer;transition:all .15s;font-weight:500}
+.emo-btn:hover{background:#f5f5f0}
+.emo-btn.on{border-color:#185FA5;background:#E6F1FB;color:#0C447C;font-weight:600}
+.chart-zone{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.chart-slot{border:1px dashed #ccc;border-radius:8px;aspect-ratio:16/9;background:#fafaf8;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;position:relative;overflow:hidden;transition:border .15s}
+.chart-slot:hover{border-color:#185FA5;background:#f0f6ff}
+.chart-slot img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0}
+.chart-slot-label{font-size:10px;color:#aaa;font-weight:700;position:relative;z-index:1;letter-spacing:.05em}
+.chart-slot-icon{font-size:22px;position:relative;z-index:1;color:#ccc}
+.conf-tag{padding:4px 10px;font-size:11px;border-radius:20px;border:1px solid #e0e0e0;background:#fff;color:#666;cursor:pointer;transition:all .15s;font-weight:500}
+.conf-tag:hover{background:#1e1e1e}
+.conf-tag.on{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC;font-weight:600}
+.tags-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.review-check{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;margin-bottom:10px;padding:10px 12px;background:#fafaf8;border-radius:8px;border:1px solid #eee}
+.review-check input{width:16px;height:16px;cursor:pointer;accent-color:#185FA5}
+
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);z-index:1000;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:14px;padding:22px;width:100%;max-width:520px;border:1px solid #e0e0e0;position:relative;margin:auto}
+.modal-close{position:absolute;top:12px;right:14px;background:#f5f5f0;border:none;cursor:pointer;font-size:14px;color:#666;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:#e8e8e4}
+.notice{background:#f0f6ff;border-radius:8px;padding:9px 14px;font-size:12px;color:#0C447C;margin-bottom:12px;border:1px solid #dce8f8}
+.week-sel{font-size:12px;padding:7px 12px;border:1px solid #e0e0e0;border-radius:8px;background:#fff;color:#1a1a1a}
+.row-actions{display:flex;gap:4px}
+.save-msg{display:none;text-align:center;padding:10px;background:#E1F5EE;color:#085041;border-radius:8px;margin-bottom:12px;font-size:13px;font-weight:500;border:1px solid #9FE1CB}
+.section-sub{font-size:12px;color:#999;font-weight:400;margin-left:5px}
+.empty-state{text-align:center;padding:36px;color:#aaa;font-size:13px}
+@media(max-width:600px){.g4{grid-template-columns:repeat(2,1fr)}.chart-zone{grid-template-columns:1fr}.fr{grid-template-columns:1fr}}
+
+
+
+
+
+
+.dhl{font-size:11px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.dhv{font-size:26px;font-weight:500;color:var(--color-text-primary);line-height:1}
+.dhsub{font-size:11px;color:#666;margin-top:4px}
+.dhv.gv{color:#1D9E75}.dhv.rv{color:#ef4444}.dhv.av{color:#BA7517}.dhv.wh{color:#fff}
+.chart-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:18px 20px;margin-bottom:14px}
+.chart-card-title{font-size:11px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.chart-card-title .dot-ind{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.model-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.model-row:last-child{border-bottom:none}
+.model-name{font-size:12px;font-weight:500;color:var(--color-text-primary);min-width:130px}
+.model-bar-wrap{flex:1;height:6px;background:var(--color-background-secondary);border-radius:3px;overflow:hidden}
+.model-bar-fill{height:100%;border-radius:3px;transition:width .5s}
+.model-pnl{font-size:12px;font-weight:500;min-width:70px;text-align:right}
+.model-wr{font-size:11px;color:#666;min-width:36px;text-align:right}
+.score-wrap{display:flex;align-items:center;gap:20px;padding:4px 0}
+.score-arc{position:relative;width:90px;height:90px}
+.score-arc svg{width:90px;height:90px}
+.score-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.score-num{font-size:22px;font-weight:500;line-height:1}
+.score-sub{font-size:9px;color:#666;margin-top:2px}
+.score-stat{display:flex;flex-direction:column;gap:8px;flex:1}
+.score-stat-row{display:flex;justify-content:space-between;align-items:center;font-size:12px}
+.score-stat-label{color:#666}
+.score-stat-val{font-weight:500}
+.emo-bar{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+.emo-bar:last-child{border-bottom:none}
+.emo-name{min-width:100px;color:var(--color-text-primary)}
+.emo-bar-wrap{flex:1;height:5px;background:var(--color-background-secondary);border-radius:3px;overflow:hidden}
+.emo-bar-fill{height:100%;border-radius:3px}
+.emo-pnl{min-width:65px;text-align:right;font-weight:500}
+.streak-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px}
+.streak-cell{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px}
+.streak-cell .v{font-size:20px;font-weight:500;margin-top:3px}
+.dash-2col{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px;margin-bottom:14px}
+.dash-3col{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:14px}
+
+.tv-stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;border-radius:12px;overflow:hidden;margin-bottom:14px;background:#e8e8e4}
+.tv-stat{background:#fff;padding:16px 18px}
+.tv-stat-l{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.tv-stat-v{font-size:24px;font-weight:500;color:#1a1a1a;line-height:1}
+.tv-stat-sub{font-size:11px;color:#888;margin-top:4px}
+.tv-stat-v.gv{color:#1D9E75}.tv-stat-v.rv{color:#E24B4A}.tv-stat-v.av{color:#BA7517}.tv-stat-v.bv{color:#185FA5}
+.tv-card{background:#fff;border:1px solid #e8e8e4;border-radius:12px;padding:16px 18px;margin-bottom:0}
+.tv-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-size:12px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.05em}
+.tv-2col{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.tv-3col{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.period-btn{font-size:12px;padding:5px 13px;border:1px solid #e0e0e0;border-radius:20px;background:transparent;color:#666;cursor:pointer;transition:all .15s;font-weight:500}
+.period-btn.on{background:#e8e8e8;color:#0f0f0f;border-color:#1a1a1a}
+.period-btn:hover:not(.on){background:#f5f5f0}
+.returns-btn{font-size:11px;padding:3px 9px;border:1px solid #e0e0e0;border-radius:6px;background:transparent;color:#888;cursor:pointer;font-weight:500}
+.returns-btn.on{background:#252525;color:#1a1a1a;border-color:#666}
+.tv-icon-btn{background:none;border:1px solid #e0e0e0;border-radius:6px;cursor:pointer;color:#888;padding:3px 8px;font-size:12px}
+.tv-icon-btn:hover{background:#f5f5f0}
+.tv-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.tv-cal-head{font-size:10px;font-weight:600;color:#aaa;text-align:center;padding:4px;text-transform:uppercase;letter-spacing:.04em}
+.tv-cal-day{border-radius:6px;padding:8px;min-height:70px;position:relative;cursor:pointer;transition:all .15s;border:1px solid transparent}
+.tv-cal-day:hover{border-color:#ccc}
+.tv-cal-day.empty{background:transparent;cursor:default;min-height:54px}
+.tv-cal-day.has-trade{background:#fafaf8}
+.tv-cal-day.profit{background:#E1F5EE}
+.tv-cal-day.loss{background:#FCEBEB}
+.tv-cal-day.be{background:#FAEEDA}
+.tv-cal-day-num{font-size:11px;font-weight:500;color:#666}
+.tv-cal-day.profit .tv-cal-day-num{color:#085041}
+.tv-cal-day.loss .tv-cal-day-num{color:#791F1F}
+.tv-cal-day-pnl{font-size:14px;font-weight:600;margin-top:14px;line-height:1}
+.tv-cal-day.profit .tv-cal-day-pnl{color:#0F6E56}
+.tv-cal-day.loss .tv-cal-day-pnl{color:#A32D2D}
+.tv-cal-day-cnt{font-size:10px;color:#aaa;margin-top:2px;line-height:1.3}
+.tv-week-row{background:#fafaf8;border-radius:6px;padding:5px 8px;min-height:54px;display:flex;flex-direction:column;justify-content:center;border:1px solid #eee}
+.tv-week-label{font-size:9px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.tv-week-pnl{font-size:13px;font-weight:600}
+.tv-model-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f0f0ec}
+.tv-model-row:last-child{border-bottom:none}
+.tv-model-name{font-size:12px;font-weight:500;color:#1a1a1a;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tv-model-bar-wrap{width:70px;height:5px;background:#f0f0ec;border-radius:3px;overflow:hidden;flex-shrink:0}
+.tv-model-bar-f{height:100%;border-radius:3px}
+.tv-model-wr{font-size:11px;font-weight:600;min-width:32px;text-align:right;flex-shrink:0}
+.tv-model-pnl{font-size:11px;font-weight:500;min-width:58px;text-align:right;flex-shrink:0}
+.tv-recent-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f0f0ec;font-size:12px}
+.tv-recent-row:last-child{border-bottom:none}
+
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <span class="app-title">Trading Journal Pro</span>
+  <select id="acc-select" class="acc-sel" onchange="switchAccount(this.value)"></select>
+  <button class="btn-acc" onclick="openModal('modal-acc')">+ จัดการ Account</button>
+  <span style="flex:1"></span>
+  <span class="acc-badge" id="acc-info"></span>
+</div>
+
+<!-- NAV -->
+<div class="nav-row">
+  <button class="nb on" onclick="nav('dashboard',this)">Dashboard</button>
+  <button class="nb" onclick="nav('log',this)">+ Log Trade</button>
+  <button class="nb" onclick="nav('history',this)">Trade History</button>
+  <button class="nb" onclick="nav('models',this)">Models DB</button>
+  <button class="nb" onclick="nav('calendar',this)">Calendar</button>
+  <button class="nb" onclick="nav('weekly',this)">Weekly Report</button>
+</div>
+
+<div class="container">
+
+<!-- ===== DASHBOARD ===== -->
+<div id="pg-dashboard" class="pg on">
+
+  <!-- Period selector -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+    <div style="display:flex;gap:6px">
+      <button class="period-btn on" onclick="setPeriod('all',this)">All Time</button>
+      <button class="period-btn" onclick="setPeriod('month',this)">This Month</button>
+      <button class="period-btn" onclick="setPeriod('week',this)">This Week</button>
+    </div>
+    <div style="font-size:12px;color:#666" id="dash-period-label"></div>
+  </div>
+
+  <!-- Core stats bar -->
+  <div class="tv-stats-bar" id="tv-stats-bar"></div>
+
+  <!-- Equity + Returns row -->
+  <div class="tv-2col" style="margin-bottom:14px">
+    <div class="tv-card">
+      <div class="tv-card-head">
+        <span>Account Balance</span>
+        <span id="tv-equity-total" style="font-size:14px;font-weight:500;color:var(--color-text-primary)"></span>
+      </div>
+      <div style="position:relative;height:180px"><canvas id="eqChart" role="img" aria-label="Equity curve">Equity</canvas></div>
+    </div>
+    <div class="tv-card">
+      <div class="tv-card-head">
+        <span>Returns</span>
+        <div style="display:flex;gap:4px">
+          <button class="returns-btn on" onclick="setReturns('day',this)">D</button>
+          <button class="returns-btn" onclick="setReturns('week',this)">W</button>
+          <button class="returns-btn" onclick="setReturns('month',this)">M</button>
+        </div>
+      </div>
+      <div style="position:relative;height:180px"><canvas id="returnsChart" role="img" aria-label="Returns chart">Returns</canvas></div>
+    </div>
+  </div>
+
+  <!-- Monthly calendar -->
+  <div class="tv-card" style="margin-bottom:14px">
+    <div class="tv-card-head">
+      <span>Monthly Breakdown</span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="tv-icon-btn" onclick="calPrevDash()">&#8592;</button>
+        <span id="tv-cal-title" style="font-size:13px;font-weight:500;min-width:90px;text-align:center"></span>
+        <button class="tv-icon-btn" onclick="calNextDash()">&#8594;</button>
+      </div>
+    </div>
+    <div id="tv-calendar"></div>
+  </div>
+
+  <!-- Bottom row: Model WR + Session + Outcome -->
+  <div class="tv-3col" style="margin-bottom:14px">
+    <div class="tv-card">
+      <div class="tv-card-head"><span>Win Rate by Model</span></div>
+      <div id="tv-model-wr"></div>
+    </div>
+    <div class="tv-card">
+      <div class="tv-card-head"><span>P&amp;L by Session</span></div>
+      <div style="position:relative;height:160px"><canvas id="sesChart" role="img" aria-label="Session PnL">Session</canvas></div>
+    </div>
+    <div class="tv-card">
+      <div class="tv-card-head"><span>Outcomes</span></div>
+      <div style="position:relative;height:185px"><canvas id="outChart" role="img" aria-label="Outcomes">Out</canvas></div>
+    </div>
+  </div>
+
+  <!-- Recent trades -->
+  <div class="tv-card">
+    <div class="tv-card-head"><span>Recent Trades</span><a href="#" onclick="nav('history',document.querySelectorAll('.nb')[2]);return false" style="font-size:12px;color:#a78bfa;text-decoration:none">View all</a></div>
+    <div id="tv-recent-trades"></div>
+  </div>
+
+</div>
+<div id="pg-log" class="pg">
+  <div class="notice">บันทึก trade สำหรับ account: <strong id="log-acc-name">—</strong></div>
+
+  <div class="card">
+    <div class="ct">Trade Details</div>
+    <div class="fr">
+      <div class="fg"><label>Date</label><input type="date" id="f-date"></div>
+      <div class="fg"><label>Symbol</label>
+        <select id="f-sym">
+          <option value="">— เลือก Symbol —</option>
+          <optgroup label="Favorite">
+            <option value="XAUUSD">Gold (XAUUSD)</option>
+            <option value="NQ">NQ</option>
+            <option value="ES">ES</option>
+            <option value="XAGUSD">Silver (XAGUSD)</option>
+          </optgroup>
+          <optgroup label="Forex">
+            <option value="EURUSD">EURUSD</option>
+            <option value="USDJPY">USDJPY</option>
+            <option value="EURGBP">EURGBP</option>
+          </optgroup>
+          <optgroup label="Crypto">
+            <option value="BTCUSD">BTC</option>
+            <option value="ETHUSD">ETH</option>
+            <option value="BNBUSD">BNB</option>
+          </optgroup>
+          <optgroup label="ETC">
+            <option value="OTHER">Other</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="fg"><label>Direction</label><select id="f-pos"><option>Buy</option><option>Sell</option></select></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Session</label><select id="f-ses"><option>Asia</option><option>London</option><option>New York</option><option>Out of Session</option></select></div>
+      <div class="fg"><label>Duration</label><input type="text" id="f-dur" placeholder="23m, 2h..."></div>
+      <div class="fg"><label>Avg Entry Price</label><input type="number" id="f-entry" step="0.00001"></div>
+      <div class="fg"><label>Type of Trade</label><select id="f-ttype"><option>Intraday</option><option>Swing</option><option>Scalp</option></select></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Model / Strategy <span class="section-sub">จาก Model DB</span></div>
+    <div class="fr">
+      <div class="fg">
+        <label>Model</label>
+        <select id="f-model"><option value="">— เลือก Model —</option></select>
+      </div>
+      <div class="fg"><label>Entry Timeframe</label><select id="f-etf"><option>1m</option><option>5m</option><option>15m</option><option>1h</option><option>4h</option></select></div>
+      <div class="fg"><label>Market Conditions</label><select id="f-mkt"><option>Strong uptrend (HT)</option><option>Strong downtrend (HT)</option><option>Ranging</option><option>Volatile</option><option>Trending</option></select></div>
+      <div class="fg"><label>Bias</label><select id="f-bias"><option>Bullish</option><option>Bearish</option><option>Neutral</option></select></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Key Levels</label><input type="text" id="f-kl" placeholder="Supply Zone, OB, PDH..."></div>
+      <div class="fg"><label>News Impact</label><select id="f-news"><option value="">None</option><option>Low</option><option>Medium</option><option>High — CPI/NFP</option></select></div>
+      <div class="fg"><label>Order Type</label><select id="f-ot"><option>Limit</option><option>Market</option><option>Stop Limit</option></select></div>
+    </div>
+    <div style="margin-top:4px">
+      <label style="font-size:11px;color:#666;font-weight:500;display:block;margin-bottom:6px">Entry Confluences</label>
+      <div class="tags-row" id="conf-tags">
+        <button class="conf-tag" onclick="toggleTag(this)">LG sweep</button>
+        <button class="conf-tag" onclick="toggleTag(this)">LTF POI Mitigation</button>
+        <button class="conf-tag" onclick="toggleTag(this)">MS Break</button>
+        <button class="conf-tag" onclick="toggleTag(this)">FVG</button>
+        <button class="conf-tag" onclick="toggleTag(this)">iFVG</button>
+        <button class="conf-tag" onclick="toggleTag(this)">Order Block</button>
+        <button class="conf-tag" onclick="toggleTag(this)">Breaker Block</button>
+        <button class="conf-tag" onclick="toggleTag(this)">Supply Zone</button>
+        <button class="conf-tag" onclick="toggleTag(this)">Demand Zone</button>
+        <button class="conf-tag" onclick="toggleTag(this)">Inversion FVG</button>
+        <button class="conf-tag" onclick="toggleTag(this)">PDH/PDL</button>
+        <button class="conf-tag" onclick="toggleTag(this)">LTF sweep</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">P&L & Risk</div>
+    <div class="fr">
+      <div class="fg"><label>Risk (R $)</label><input type="number" id="f-risk-r" step="0.01"></div>
+      <div class="fg"><label>Actual RR</label><input type="number" id="f-arr" step="0.01"></div>
+      <div class="fg"><label>Gross P&L ($)</label><input type="number" id="f-gross" step="0.01"></div>
+      <div class="fg"><label>Fees ($)</label><input type="number" id="f-fees" step="0.01" value="0"></div>
+      <div class="fg"><label>Swap ($)</label><input type="number" id="f-swap" step="0.01" value="0"></div>
+      <div class="fg"><label>Net P&L ($)</label><input type="number" id="f-net" step="0.01" placeholder="คำนวณอัตโนมัติ"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>SL Management</label><select id="f-slm"><option value="">—</option><option>Hit Initial SL</option><option>Locked Profit</option><option>Moved to BE</option><option>Manual Close</option></select></div>
+      <div class="fg"><label>TP Management</label><select id="f-tpm"><option>Set and Forget</option><option>Manual Close</option><option>Partial TP</option><option>Move to BE</option><option>Final TP Hit</option><option>Locked Profit</option></select></div>
+      <div class="fg"><label>Outcome</label><select id="f-outcome"><option>Profit Taken</option><option>Great Exit!</option><option>Loss, Review Setup</option><option>Capital Protected</option><option>Breakeven</option></select></div>
+      <div class="fg"><label>Mistakes</label><select id="f-mistake"><option value="">None</option><option>Position Sizing</option><option>Wrong Exit Point</option><option>Wrong Entry Point</option><option>FOMO</option><option>Early Exit</option><option>Late Entry</option><option>No Stop Loss</option></select></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Setup Grade</label><select id="f-grade"><option value="A">A — Best</option><option value="B">B — Good</option><option value="C">C — Marginal</option></select></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Charts — HTF · MTF · LTF</div>
+    <div class="chart-zone">
+      <div onclick="triggerUpload('img-htf')">
+        <div class="chart-slot" id="slot-htf">
+          <span class="chart-slot-icon">+</span>
+          <span class="chart-slot-label">HTF</span>
+          <input type="file" id="img-htf" accept="image/*" style="display:none" onchange="loadChart(this,'slot-htf','htf')">
+        </div>
+      </div>
+      <div onclick="triggerUpload('img-mtf')">
+        <div class="chart-slot" id="slot-mtf">
+          <span class="chart-slot-icon">+</span>
+          <span class="chart-slot-label">MTF</span>
+          <input type="file" id="img-mtf" accept="image/*" style="display:none" onchange="loadChart(this,'slot-mtf','mtf')">
+        </div>
+      </div>
+      <div onclick="triggerUpload('img-ltf')">
+        <div class="chart-slot" id="slot-ltf">
+          <span class="chart-slot-icon">+</span>
+          <span class="chart-slot-label">LTF</span>
+          <input type="file" id="img-ltf" accept="image/*" style="display:none" onchange="loadChart(this,'slot-ltf','ltf')">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Review & Reflection</div>
+    <label class="review-check">
+      <input type="checkbox" id="f-followed">
+      <span>I followed my trade plan</span>
+    </label>
+    <div class="fr" style="margin-bottom:12px">
+      <div class="fg"><label>Plan followed</label><select id="f-plan"><option>Daily Bias</option><option>Weekly Plan</option><option>Playbook</option><option>Custom</option></select></div>
+    </div>
+    <div style="margin-bottom:10px">
+      <label style="font-size:11px;color:#666;font-weight:500;display:block;margin-bottom:6px">Entry Emotion</label>
+      <div style="display:flex;gap:5px;flex-wrap:wrap" id="entry-emo">
+        <button class="emo-btn" onclick="selEmo('entry',this,'Calm')">Calm</button>
+        <button class="emo-btn" onclick="selEmo('entry',this,'Fomo')">Fomo</button>
+        <button class="emo-btn" onclick="selEmo('entry',this,'Revenge')">Revenge</button>
+        <button class="emo-btn" onclick="selEmo('entry',this,'Boredom')">Boredom</button>
+        <button class="emo-btn" onclick="selEmo('entry',this,'Overconfident')">Overconfident</button>
+        <button class="emo-btn" onclick="selEmo('entry',this,'Fear')">Fear</button>
+        <button class="emo-btn" onclick="selEmo('entry',this,'Greed')">Greed</button>
+      </div>
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:11px;color:#666;font-weight:500;display:block;margin-bottom:6px">Exit Emotion</label>
+      <div style="display:flex;gap:5px;flex-wrap:wrap" id="exit-emo">
+        <button class="emo-btn" onclick="selEmo('exit',this,'Calm')">Calm</button>
+        <button class="emo-btn" onclick="selEmo('exit',this,'Fomo')">Fomo</button>
+        <button class="emo-btn" onclick="selEmo('exit',this,'Fear')">Fear</button>
+        <button class="emo-btn" onclick="selEmo('exit',this,'Satisfied')">Satisfied</button>
+        <button class="emo-btn" onclick="selEmo('exit',this,'Regret')">Regret</button>
+      </div>
+    </div>
+    <div class="fg">
+      <label>Note / Reflection — What went well? What will you do differently?</label>
+      <textarea id="f-notes" rows="4" placeholder="What went well? What will you do differently next time?"></textarea>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;justify-content:flex-end;margin-bottom:20px">
+    <button class="btn" onclick="clearForm()">ล้างฟอร์ม</button>
+    <button class="btn btn-p" onclick="saveTrade()">บันทึก Trade</button>
+  </div>
+  <div class="save-msg" id="save-msg">บันทึกสำเร็จ!</div>
+</div>
+
+<!-- ===== HISTORY ===== -->
+<div id="pg-history" class="pg">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
+    <input type="text" id="hs-q" placeholder="ค้นหา symbol, model..." oninput="renderHistory()" style="font-size:12px;padding:7px 11px;border:1px solid #2a2a2a;border-radius:8px;background:#fff;color:#1a1a1a;width:180px">
+    <select id="hs-out" onchange="renderHistory()" style="font-size:12px;padding:7px 11px;border:1px solid #2a2a2a;border-radius:8px;background:#fff;color:#1a1a1a">
+      <option value="">All Outcomes</option>
+      <option>Profit Taken</option><option>Great Exit!</option><option>Loss, Review Setup</option><option>Capital Protected</option><option>Breakeven</option>
+    </select>
+    <select id="hs-grade" onchange="renderHistory()" style="font-size:12px;padding:7px 11px;border:1px solid #2a2a2a;border-radius:8px;background:#fff;color:#1a1a1a">
+      <option value="">All Grades</option><option value="A">Grade A</option><option value="B">Grade B</option><option value="C">Grade C</option>
+    </select>
+    <button class="btn btn-sm" onclick="exportCSV()">Export CSV</button>
+  </div>
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <thead><tr>
+        <th>Date</th><th>Symbol</th><th>Dir</th><th>Model</th><th>Session</th><th>Grade</th>
+        <th>Net P&L</th><th>RR</th><th>Outcome</th><th>Emotion</th><th>Charts</th><th></th>
+      </tr></thead>
+      <tbody id="hist-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== MODELS DB ===== -->
+<div id="pg-models" class="pg">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <span style="font-size:16px;font-weight:600">Model Database</span>
+    <button class="btn btn-p btn-sm" onclick="openModal('modal-model')">+ เพิ่ม Model</button>
+  </div>
+  <div id="model-db-list"></div>
+</div>
+
+<!-- ===== CALENDAR ===== -->
+<div id="pg-calendar" class="pg">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <button class="btn btn-sm" onclick="calPrev()">&#8592; ก่อน</button>
+      <span id="cal-title" style="font-size:15px;font-weight:600"></span>
+      <button class="btn btn-sm" onclick="calNext()">ถัดไป &#8594;</button>
+    </div>
+    <div class="cal-wrap" id="cal-days"></div>
+  </div>
+  <div class="card" id="cal-detail" style="display:none">
+    <div class="ct" id="cal-detail-date"></div>
+    <div id="cal-detail-body"></div>
+  </div>
+</div>
+
+<!-- ===== WEEKLY REPORT ===== -->
+<div id="pg-weekly" class="pg">
+  <div class="card">
+    <div class="ct">Weekly Report — Export PDF</div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
+      <label style="font-size:12px;color:#666">เลือกสัปดาห์:</label>
+      <select id="week-sel" class="week-sel" onchange="loadWeekPreview()"></select>
+      <button class="btn btn-g" onclick="exportWeekPDF()">Export PDF</button>
+    </div>
+    <div id="week-preview"></div>
+  </div>
+</div>
+
+</div><!-- end container -->
+
+<!-- MODAL: ACCOUNT -->
+<div class="modal-overlay" id="modal-acc" onclick="overlayClose(event,'modal-acc')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-acc')">x</button>
+    <div class="ct" style="margin-bottom:14px">จัดการ Accounts</div>
+    <div id="acc-list" style="margin-bottom:16px"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <input type="text" id="new-acc-name" placeholder="ชื่อ Account" style="flex:1;min-width:140px;font-size:12px;padding:7px 10px;border:1px solid #2a2a2a;border-radius:7px">
+      <input type="number" id="new-acc-bal" placeholder="Balance ($)" style="width:130px;font-size:12px;padding:7px 10px;border:1px solid #2a2a2a;border-radius:7px">
+      <button class="btn btn-p btn-sm" onclick="addAccount()">เพิ่ม</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: MODEL -->
+<div class="modal-overlay" id="modal-model" onclick="overlayClose(event,'modal-model')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-model')">x</button>
+    <div class="ct" style="margin-bottom:14px">เพิ่ม Model / Strategy</div>
+    <div class="fr">
+      <div class="fg"><label>ชื่อ Model</label><input type="text" id="m-name" placeholder="iFVG 5m, Order Block..."></div>
+      <div class="fg"><label>Category</label><select id="m-cat"><option>ICT</option><option>SMC</option><option>Price Action</option><option>Wyckoff</option><option>Custom</option></select></div>
+    </div>
+    <div class="fg" style="margin-bottom:10px"><label>Description / Rules</label><textarea id="m-desc" placeholder="กฎการเข้า, conditions, checklist..."></textarea></div>
+    <div class="fr">
+      <div class="fg"><label>Best Session</label><select id="m-ses"><option>Asia</option><option>London</option><option>New York</option><option>Any</option></select></div>
+      <div class="fg"><label>Timeframe</label><select id="m-tf"><option>1m</option><option>5m</option><option>15m</option><option>1h</option><option>Multi-TF</option></select></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px">
+      <button class="btn" onclick="closeModal('modal-model')">ยกเลิก</button>
+      <button class="btn btn-p" onclick="saveModel()">บันทึก Model</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DB={accounts:'tj_accounts_v5',trades:'tj_trades_v5',models:'tj_models_v5'};
+let S={accounts:[],trades:[],models:[],currentAcc:null,entryEmo:'',exitEmo:'',_htf:'',_mtf:'',_ltf:'',calY:new Date().getFullYear(),calM:new Date().getMonth()};
+let chartObjs={};
+
+
+// ===== NOTION DATA PRE-LOADED =====
+const NOTION_DATA = {"accounts": [{"id": "acc_hardcore", "name": "HardCORE", "balance": 1074.43, "type": "Live"}, {"id": "acc_ftmo", "name": "FTMO PA$$", "balance": 279.29, "type": "Challenge"}, {"id": "acc_topstep", "name": "TopStep 50k", "balance": 2323.1, "type": "Challenge"}], "trades": [{"id": 1776690081049, "accId": "acc_hardcore", "date": "2026/01/05", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "OBs In OBs", "ses": "Out of Session", "etf": "5 minutes", "ttype": "Swing Trade", "mkt": "", "bias": "Bearish", "news": "Medium", "kl": "Liquidity Vload", "confs": ["Liq Sweep"], "esig": "CSD", "ot": "Limit Order", "grade": "F", "arr": 2.5, "maxRR": 0, "riskR": 2.0, "gross": -18.05, "fees": 0.0, "swap": 0, "net": -18.05, "slm": "Widened SL", "tpm": "", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "https://www.tradingview.com/x/TyMPy4dy/", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081050, "accId": "acc_hardcore", "date": "2025/12/23", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "OBs In OBs", "ses": "Out of Session", "etf": "5 minutes", "ttype": "Swing Trade", "mkt": "", "bias": "Bullish", "news": "Low", "kl": "Order Block (H1)", "confs": ["OBs", "CISD"], "esig": "MSS + Return to OB", "ot": "Limit Order", "grade": "F", "arr": 2.5, "maxRR": 0, "riskR": 1.0, "gross": -5.61, "fees": 0.0, "swap": 0, "net": -5.61, "slm": "Hit Initial SL", "tpm": "", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081051, "accId": "acc_hardcore", "date": "2026/01/06", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "Model #2", "ses": "Out of Session", "etf": "15 minutes", "ttype": "", "mkt": "", "bias": "Bullish", "news": "Low", "kl": "Liquidity Sweep", "confs": [], "esig": "", "ot": "", "grade": "B", "arr": 2.5, "maxRR": 0, "riskR": 1.0, "gross": 28.71, "fees": 0, "swap": 0, "net": 28.71, "slm": "Locked Profit", "tpm": "", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081052, "accId": "acc_hardcore", "date": "2026/01/07", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "Liq sweep", "ses": "Out of Session", "etf": "15 minutes", "ttype": "", "mkt": "", "bias": "Bearish", "news": "Low", "kl": "Liquidity Sweep", "confs": ["Liq Sweep", "Displacement"], "esig": "CSD", "ot": "", "grade": "A", "arr": 2.8, "maxRR": 0, "riskR": 1.0, "gross": 21.65, "fees": 0, "swap": 0, "net": 21.65, "slm": "Locked Profit", "tpm": "", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "https://www.tradingview.com/x/wt9knrO6/", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081053, "accId": "acc_hardcore", "date": "2026/01/07", "sym": "XAUUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "", "ses": "", "etf": "", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": [], "esig": "", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -10.49, "fees": 0, "swap": 0, "net": -10.49, "slm": "", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081054, "accId": "acc_hardcore", "date": "2026/01/09", "sym": "XAUUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "Liq sweep", "ses": "", "etf": "", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": [], "esig": "", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": 38.45, "fees": 0, "swap": 0, "net": 38.45, "slm": "", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "https://www.tradingview.com/x/23zffxby/", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081055, "accId": "acc_hardcore", "date": "2026/01/13", "sym": "XAUUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "", "ses": "", "etf": "15 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": [], "esig": "", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": 19.77, "fees": 0, "swap": 0, "net": 19.77, "slm": "", "tpm": "Final TP Hit", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081057, "accId": "acc_ftmo", "date": "2026/03/04", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "CISD + FVG", "ses": "Out of Session", "etf": "5 minutes", "ttype": "", "mkt": "Strong uptrend (LTF)", "bias": "Bullish", "news": "", "kl": "FVG", "confs": ["FVG", "CISD"], "esig": "CSD", "ot": "Limit Order", "grade": "B", "arr": 2.5, "maxRR": 2.5, "riskR": 0, "gross": 35.0, "fees": 0, "swap": 0, "net": 35.0, "slm": "", "tpm": "Final TP Hit, Partial 1 Taken", "outcome": "Maximum Profit!", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "Screen_Shot_2569-03-04_at_18.02.46.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081058, "accId": "acc_ftmo", "date": "2026/03/04", "sym": "XAUUSD", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "CISD + FVG", "ses": "Out of Session", "etf": "", "ttype": "Scalping", "mkt": "Strong uptrend (LTF), Pullback in uptrend", "bias": "Bullish", "news": "", "kl": "Liquidity Sweep, FVG, 61.8", "confs": ["FVG", "CISD"], "esig": "CSD", "ot": "Limit Order", "grade": "B", "arr": 2.2, "maxRR": 2.5, "riskR": 0, "gross": 40.0, "fees": 0, "swap": 0, "net": 40.0, "slm": "", "tpm": "", "outcome": "Great Exit!", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%2016.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081059, "accId": "acc_ftmo", "date": "2026/03/02", "sym": "XAUUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "Breaker Block", "ses": "", "etf": "", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "Breaker Block", "confs": ["Breaker Block"], "esig": "", "ot": "Limit Order", "grade": "B", "arr": 2.0, "maxRR": 2.5, "riskR": 0, "gross": 69.0, "fees": 0, "swap": 0, "net": 69.0, "slm": "", "tpm": "Final TP Hit", "outcome": "Great Exit!", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081060, "accId": "acc_ftmo", "date": "2026/03/20", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "Out of Session", "etf": "5 minutes", "ttype": "", "mkt": "Pullback in downtrend", "bias": "Bearish", "news": "", "kl": "61.8, pullback", "confs": ["iFVG"], "esig": "Inversion-FVG", "ot": "Market Order", "grade": "A", "arr": 2.2, "maxRR": 0, "riskR": 0, "gross": 65.61, "fees": 0, "swap": 0, "net": 65.61, "slm": "", "tpm": "", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%2015.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081061, "accId": "acc_ftmo", "date": "2026/03/23", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "CISD + FVG", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": [], "esig": "CSD", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -41.7, "fees": 0, "swap": 0, "net": -41.7, "slm": "", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%2014.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081062, "accId": "acc_ftmo", "date": "2026/03/23", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "Order Blocks", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "Strong downtrend (HTF)", "bias": "Bearish", "news": "", "kl": "pullback", "confs": [], "esig": "Inversion-FVG", "ot": "", "grade": "B", "arr": 2.2, "maxRR": 3.5, "riskR": 0, "gross": 109.22, "fees": 0, "swap": 0, "net": 109.22, "slm": "", "tpm": "Partial 1 Taken", "outcome": "Great Exit!", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%2013.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081064, "accId": "acc_ftmo", "date": "2026/03/24", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "MR", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "Strong downtrend (LTF)", "bias": "Bearish", "news": "", "kl": "FVG", "confs": ["MR"], "esig": "MR", "ot": "Limit Order", "grade": "B", "arr": 1.5, "maxRR": 2.0, "riskR": 0, "gross": 74.1, "fees": 0, "swap": 0, "net": 74.1, "slm": "", "tpm": "Partial 1 Taken, Final TP Hit", "outcome": "Great Exit!", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%2011.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081065, "accId": "acc_ftmo", "date": "2026/03/23", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "Strong downtrend (HTF)", "bias": "Bearish", "news": "", "kl": "", "confs": ["iFVG"], "esig": "Inversion-FVG", "ot": "", "grade": "A", "arr": 0.5, "maxRR": 5.0, "riskR": 0, "gross": 20.21, "fees": 0, "swap": 0, "net": 20.21, "slm": "", "tpm": "Manual Close (Profit)", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%2012.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081066, "accId": "acc_ftmo", "date": "2026/03/24", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "London Open", "etf": "", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": [], "esig": "", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": 26.52, "fees": 0, "swap": 0, "net": 26.52, "slm": "", "tpm": "Partial 1 Taken, Manual Close (BE)", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%2010.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081067, "accId": "acc_ftmo", "date": "2026/03/24", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "MR", "ses": "London Open", "etf": "5 minutes", "ttype": "", "mkt": "Strong downtrend (LTF)", "bias": "Bearish", "news": "", "kl": "FVG", "confs": ["MR"], "esig": "MR, Inversion-FVG", "ot": "", "grade": "B", "arr": 1.0, "maxRR": 1.8, "riskR": 0, "gross": 18.9, "fees": 0, "swap": 0, "net": 18.9, "slm": "", "tpm": "Manual Close (Loss)", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%209.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081068, "accId": "acc_ftmo", "date": "2026/03/24", "sym": "XAUUSD", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "Breaker Block", "ses": "London Open", "etf": "5 minutes", "ttype": "", "mkt": "Strong downtrend (HTF)", "bias": "Bullish", "news": "", "kl": "", "confs": ["Breaker Block"], "esig": "", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -32.0, "fees": 0, "swap": 0, "net": -32.0, "slm": "", "tpm": "Manual Close (Loss)", "outcome": "Capital Protected", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%208.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081069, "accId": "acc_ftmo", "date": "2026/03/24", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "Breaker Block", "ses": "London Open", "etf": "5 minutes", "ttype": "", "mkt": "Strong uptrend (LTF)", "bias": "Bullish", "news": "", "kl": "", "confs": ["Breaker Block"], "esig": "", "ot": "", "grade": "A", "arr": 1.8, "maxRR": 2.5, "riskR": 0, "gross": 62.2, "fees": 0, "swap": 0, "net": 62.2, "slm": "", "tpm": "Partial 1 Taken, Final TP Hit", "outcome": "Great Exit!", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%207.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081070, "accId": "acc_ftmo", "date": "2026/03/24", "sym": "EURUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "poNooK", "ses": "", "etf": "1 minute", "ttype": "", "mkt": "", "bias": "Bearish", "news": "", "kl": "FVG", "confs": [], "esig": "", "ot": "", "grade": "B", "arr": 1.0, "maxRR": 4.0, "riskR": 0, "gross": 17.4, "fees": 0, "swap": 0, "net": 17.4, "slm": "", "tpm": "", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%206.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081071, "accId": "acc_ftmo", "date": "2026/03/24", "sym": "XAUUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "London Close", "etf": "5 minutes", "ttype": "", "mkt": "Strong downtrend (HTF), Strong downtrend (LTF)", "bias": "", "news": "", "kl": "", "confs": [], "esig": "Inversion-FVG", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -34.13, "fees": 0, "swap": 0, "net": -34.13, "slm": "", "tpm": "Manual Close (Loss)", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%205.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081072, "accId": "acc_ftmo", "date": "2026/03/24", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "London Close", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "Liquidity Sweep", "confs": [], "esig": "Inversion-FVG, MR", "ot": "", "grade": "B", "arr": 1.5, "maxRR": 0, "riskR": 0, "gross": 20.51, "fees": 0, "swap": 0, "net": 20.51, "slm": "", "tpm": "", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%204.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081073, "accId": "acc_ftmo", "date": "2026/03/24", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "Out of Session", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "pullback", "confs": ["iFVG"], "esig": "Inversion-FVG", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -16.9, "fees": 0, "swap": 0, "net": -16.9, "slm": "", "tpm": "Manual Close (Loss)", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%203.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081074, "accId": "acc_ftmo", "date": "2026/03/24", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "Out of Session", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "FVG", "confs": [], "esig": "Inversion-FVG", "ot": "", "grade": "C", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -18.87, "fees": 0, "swap": 0, "net": -18.87, "slm": "", "tpm": "Manual Close (Loss)", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081075, "accId": "acc_ftmo", "date": "2026/03/25", "sym": "US100", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "PA", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": [], "esig": "PA", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -50.0, "fees": 0, "swap": 0, "net": -50.0, "slm": "", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%202.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081076, "accId": "acc_ftmo", "date": "2026/03/25", "sym": "XAUUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "Order Block 15m", "confs": [], "esig": "", "ot": "", "grade": "B", "arr": 1.1, "maxRR": 2.5, "riskR": 0, "gross": 33.85, "fees": 0, "swap": 0, "net": 33.85, "slm": "", "tpm": "Partial 1 Taken", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%201.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081078, "accId": "acc_ftmo", "date": "2026/03/25", "sym": "US100", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "CISD + FVG", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": [], "esig": "", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -50.82, "fees": 0, "swap": 0, "net": -50.82, "slm": "", "tpm": "Manual Close (Loss)", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081079, "accId": "acc_topstep", "date": "2026/03/30", "sym": "XAUUSD", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "Order Blocks", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "Strong uptrend (LTF)", "bias": "Bullish", "news": "", "kl": "Order Block 15m", "confs": [], "esig": "CSD", "ot": "", "grade": "A", "arr": 0, "maxRR": 0, "riskR": 0, "gross": 392.0, "fees": 1.24, "swap": 0, "net": 390.76, "slm": "Locked Profit", "tpm": "Manual Close (Profit)", "outcome": "Capital Protected", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-03-30_13-59-32.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081081, "accId": "acc_topstep", "date": "2026/03/30", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "Bearish", "news": "", "kl": "FVG", "confs": [], "esig": "Inversion-FVG", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -185.5, "fees": 1.0, "swap": 0, "net": -186.5, "slm": "Hit Initial SL", "tpm": "", "outcome": "Capital Protected", "mistake": "Wrong Entry Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-03-30_13-50-10.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081082, "accId": "acc_topstep", "date": "2026/03/30", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "Trend Line", "ses": "Out of Session", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "FVG", "confs": ["Trend Line"], "esig": "CSD", "ot": "", "grade": "C", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -110.5, "fees": 0.74, "swap": 0, "net": -111.24, "slm": "Hit Initial SL", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-03-30_18-18-38.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081083, "accId": "acc_topstep", "date": "2026/03/30", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "iBos", "ses": "Out of Session", "etf": "", "ttype": "", "mkt": "Strong downtrend (HTF)", "bias": "Bearish", "news": "", "kl": "", "confs": ["iBos"], "esig": "", "ot": "", "grade": "F", "arr": 0, "maxRR": 0, "riskR": 0, "gross": 95.5, "fees": 2.22, "swap": 0, "net": 93.28, "slm": "Hit Initial SL", "tpm": "", "outcome": "Capital Protected", "mistake": "Wrong Entry Point, No FVG", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-03-31_11-02-41.png, MNQ1!_2026-03-31_11-16-09.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081084, "accId": "acc_topstep", "date": "2026/03/30", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "FVG", "ses": "New York", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": ["FVG", "CISD"], "esig": "FVG", "ot": "", "grade": "C", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -47.5, "fees": 0.74, "swap": 0, "net": -48.24, "slm": "", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-03-31_11-19-44.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081085, "accId": "acc_topstep", "date": "2026/03/31", "sym": "XAUUSD", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "Pull Back", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "Strong uptrend (LTF)", "bias": "Bullish", "news": "", "kl": "61.8", "confs": ["iFVG"], "esig": "Inversion-FVG", "ot": "", "grade": "A", "arr": 1.44, "maxRR": 2.7, "riskR": 0, "gross": 420.0, "fees": 1.24, "swap": 0, "net": 418.76, "slm": "Locked Profit", "tpm": "Final TP Hit", "outcome": "Profit Taken", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-03-31_11-21-50.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081086, "accId": "acc_topstep", "date": "2026/03/31", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "Strong downtrend (HTF)", "bias": "Bearish", "news": "", "kl": "Liquidity Sweep", "confs": ["iFVG"], "esig": "", "ot": "", "grade": "A", "arr": 1.3, "maxRR": 2.5, "riskR": 0, "gross": 235.0, "fees": 0.74, "swap": 0, "net": 234.26, "slm": "", "tpm": "Manual Close (Profit)", "outcome": "Profit Taken", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-03-31_11-28-05.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081087, "accId": "acc_topstep", "date": "2026/03/31", "sym": "XAUUSD", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "Pull Back", "ses": "London Open", "etf": "5 minutes", "ttype": "", "mkt": "Strong uptrend (LTF)", "bias": "Bullish", "news": "", "kl": "0.5", "confs": ["iFVG"], "esig": "Inversion-FVG", "ot": "", "grade": "B", "arr": 1.5, "maxRR": 3.0, "riskR": 0, "gross": 51.0, "fees": 2.48, "swap": 0, "net": 48.52, "slm": "Hit Trailed SL", "tpm": "Manual Close (Profit)", "outcome": "Profit Taken", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-03-31_13-21-42.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081088, "accId": "acc_topstep", "date": "2026/03/31", "sym": "XAUUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "Pull Back", "ses": "London Open", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "Bullish", "news": "", "kl": "0.5", "confs": [], "esig": "OB", "ot": "", "grade": "C", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -135.0, "fees": 1.24, "swap": 0, "net": -136.24, "slm": "Hit Trailed SL", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-03-31_14-20-56.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081089, "accId": "acc_topstep", "date": "2026/03/31", "sym": "XAUUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "iBos", "ses": "London Close", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "Bullish", "news": "", "kl": "0.5", "confs": ["CISD"], "esig": "CSD", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -165.0, "fees": 1.98, "swap": 0, "net": -166.98, "slm": "Hit Trailed SL", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-03-31_16-39-43.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081090, "accId": "acc_topstep", "date": "2026/03/31", "sym": "XAUUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "", "ses": "London Close", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "Bullish", "news": "", "kl": "", "confs": ["iBos"], "esig": "CSD", "ot": "", "grade": "C", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -153.0, "fees": 1.24, "swap": 0, "net": -154.24, "slm": "Hit Initial SL", "tpm": "", "outcome": "Capital Protected", "mistake": "No FVG, Wrong Entry Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-03-31_19-52-19.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081091, "accId": "acc_topstep", "date": "2026/03/31", "sym": "US100", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "London Close", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": [], "esig": "Inversion-FVG", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -170.5, "fees": 0.74, "swap": 0, "net": -171.24, "slm": "", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081092, "accId": "acc_topstep", "date": "2026/03/31", "sym": "US100", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "Order Blocks", "ses": "London Close", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": [], "esig": "", "ot": "", "grade": "C", "arr": 0, "maxRR": 0, "riskR": 0, "gross": 440.0, "fees": 0, "swap": 0, "net": 440.0, "slm": "", "tpm": "Manual Close (Profit)", "outcome": "Capital Protected", "mistake": "Regret Trading", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-03-31_19-57-18.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081093, "accId": "acc_topstep", "date": "2026/04/01", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "FVG", "ses": "", "etf": "1 minute", "ttype": "", "mkt": "", "bias": "Bullish", "news": "", "kl": "Liquidity Sweep", "confs": ["FVG"], "esig": "FVG", "ot": "", "grade": "B", "arr": 1.95, "maxRR": 0, "riskR": 0, "gross": 190.0, "fees": 1.24, "swap": 0, "net": 188.76, "slm": "Locked Profit", "tpm": "Manual Close (Profit)", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-01_08-42-17.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081094, "accId": "acc_topstep", "date": "2026/04/01", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "FVG", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": ["FVG"], "esig": "", "ot": "", "grade": "C", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -162.0, "fees": 3.72, "swap": 0, "net": -165.72, "slm": "", "tpm": "", "outcome": "Capital Protected", "mistake": "Wrong Entry Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-02_08-52-11.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081095, "accId": "acc_topstep", "date": "2026/04/01", "sym": "XAUUSD", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "London Open", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "pullback", "confs": ["iFVG", "OBs"], "esig": "Inversion-FVG", "ot": "", "grade": "B", "arr": 0.5, "maxRR": 4.0, "riskR": 0, "gross": 60.0, "fees": 1.24, "swap": 0, "net": 58.76, "slm": "", "tpm": "Manual Close (Profit)", "outcome": "Profit Taken", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-02_08-54-50.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081096, "accId": "acc_topstep", "date": "2026/04/01", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iBos", "ses": "", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": ["FVG"], "esig": "FVG, CSD", "ot": "", "grade": "C", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -131.0, "fees": 2.22, "swap": 0, "net": -133.22, "slm": "Hit Initial SL", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-02_08-58-21.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081097, "accId": "acc_topstep", "date": "2026/04/01", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "London Close", "etf": "5 minutes", "ttype": "", "mkt": "Strong uptrend (HTF)", "bias": "", "news": "", "kl": "", "confs": ["iFVG"], "esig": "Inversion-FVG", "ot": "", "grade": "B", "arr": 1.1, "maxRR": 1.15, "riskR": 0, "gross": 130.5, "fees": 1.48, "swap": 0, "net": 129.02, "slm": "", "tpm": "Manual Close (Profit)", "outcome": "Maximum Profit!", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-02_09-03-49.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081098, "accId": "acc_topstep", "date": "2026/04/01", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "FVG", "ses": "New York", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "Bullish", "news": "", "kl": "", "confs": ["FVG"], "esig": "FVG", "ot": "", "grade": "C", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -703.0, "fees": 1.24, "swap": 0, "net": -704.24, "slm": "Hit Initial SL", "tpm": "", "outcome": "Capital Protected", "mistake": "Wrong Entry Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-02_09-10-37.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081099, "accId": "acc_topstep", "date": "2026/04/02", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "iBos", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": ["iFVG"], "esig": "", "ot": "", "grade": "C", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -13.0, "fees": 2.48, "swap": 0, "net": -15.48, "slm": "", "tpm": "", "outcome": "Capital Protected", "mistake": "Wrong Entry Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-02_09-16-52.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081100, "accId": "acc_topstep", "date": "2026/04/02", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "Breaker Block", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "Breaker Block", "confs": ["BBs"], "esig": "BBs", "ot": "", "grade": "A", "arr": 1.9, "maxRR": 6.0, "riskR": 0, "gross": 288.0, "fees": 1.24, "swap": 0, "net": 286.76, "slm": "", "tpm": "", "outcome": "Profit Taken", "mistake": "Wrong Entry Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-02_09-18-56.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081101, "accId": "acc_topstep", "date": "2026/04/02", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "Breaker Block", "ses": "Asia", "etf": "1 minute", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "Breaker Block", "confs": ["BBs"], "esig": "", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -120.5, "fees": 0.74, "swap": 0, "net": -121.24, "slm": "", "tpm": "", "outcome": "Capital Protected", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-02_09-22-12.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081102, "accId": "acc_topstep", "date": "2026/04/02", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "Breaker Block", "ses": "Asia", "etf": "1 minute", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "Breaker Block", "confs": ["BBs"], "esig": "BBs", "ot": "", "grade": "A", "arr": 0.5, "maxRR": 1.73, "riskR": 0, "gross": 170.0, "fees": 1.24, "swap": 0, "net": 168.76, "slm": "", "tpm": "Manual Close (Profit)", "outcome": "Profit Taken", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-02_09-24-32.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081103, "accId": "acc_topstep", "date": "2026/04/01", "sym": "XAUUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "ETC", "ses": "", "etf": "", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "ETC", "confs": ["ETC"], "esig": "", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": 145.58, "fees": 0, "swap": 0, "net": 145.58, "slm": "", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081104, "accId": "acc_topstep", "date": "2026/04/02", "sym": "US100", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "London Open", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "FVG", "confs": ["iFVG"], "esig": "", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -120.0, "fees": 1.48, "swap": 0, "net": -121.48, "slm": "Hit Initial SL", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-02_13-27-55.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081105, "accId": "acc_topstep", "date": "2026/04/02", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "London Close", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "Bearish", "news": "", "kl": "", "confs": ["iFVG"], "esig": "Inversion-FVG", "ot": "", "grade": "A", "arr": 1.8, "maxRR": 0, "riskR": 0, "gross": 137.0, "fees": 0.74, "swap": 0, "net": 136.26, "slm": "Locked Profit", "tpm": "Final TP Hit", "outcome": "Profit Taken", "mistake": "Position Sizing Error", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "Screen_Shot_2569-03-05_at_16.33.00.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081106, "accId": "acc_topstep", "date": "2026/04/03", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFVG 15m", "ses": "London Open", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "Low", "kl": "Liquidity Sweep", "confs": [], "esig": "Inversion-FVG", "ot": "", "grade": "A", "arr": 1.0, "maxRR": 1.8, "riskR": 0, "gross": 119.54, "fees": 0, "swap": 0, "net": 119.54, "slm": "", "tpm": "Manual Close (Profit)", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-03_16-00-11.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081107, "accId": "acc_topstep", "date": "2026/04/02", "sym": "US100", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "By Alex", "ses": "New York", "etf": "", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": ["Alex"], "esig": "", "ot": "", "grade": "B", "arr": -1.0, "maxRR": 0.0, "riskR": 0, "gross": -57.74, "fees": 0, "swap": 0, "net": -57.74, "slm": "Hit Initial SL", "tpm": "", "outcome": "Loss, Review Setup", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081108, "accId": "acc_topstep", "date": "2026/04/02", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "iFVG 15m", "ses": "New York", "etf": "1 minute", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": ["iFVG"], "esig": "Inversion-FVG", "ot": "", "grade": "B", "arr": 1.0, "maxRR": 0, "riskR": 0, "gross": 351.5, "fees": 4.44, "swap": 0, "net": 347.06, "slm": "", "tpm": "Manual Close (Profit)", "outcome": "Profit Taken", "mistake": "Position Sizing Error", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-03_16-08-46.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081109, "accId": "acc_topstep", "date": "2026/04/02", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "iFVG 15m", "ses": "New York", "etf": "1 minute", "ttype": "", "mkt": "", "bias": "Bullish", "news": "", "kl": "iFVG", "confs": ["iFVG"], "esig": "Inversion-FVG", "ot": "", "grade": "A", "arr": 1.3, "maxRR": 7.0, "riskR": 0, "gross": 165.5, "fees": 0.74, "swap": 0, "net": 164.76, "slm": "", "tpm": "Final TP Hit", "outcome": "Profit Taken", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-03_16-11-58.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081110, "accId": "acc_topstep", "date": "2026/04/06", "sym": "XAUUSD", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "Pull Back", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "FVG", "confs": ["iFVG 15m"], "esig": "Inversion-FVG", "ot": "", "grade": "A", "arr": 0.84, "maxRR": 1.59, "riskR": 0, "gross": 184.76, "fees": 0, "swap": 0, "net": 184.76, "slm": "Locked Profit", "tpm": "Final TP Hit", "outcome": "Profit Taken", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-06_09-29-30.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081111, "accId": "acc_topstep", "date": "2026/04/06", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "Pull Back", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "Bullish", "news": "", "kl": "FVG", "confs": [], "esig": "FVG", "ot": "", "grade": "C", "arr": 0.0, "maxRR": 0, "riskR": 0, "gross": -33.74, "fees": 0, "swap": 0, "net": -33.74, "slm": "Hit Initial SL", "tpm": "Manual Close (Loss)", "outcome": "Capital Protected", "mistake": "Wrong Entry Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-06_10-01-27.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081112, "accId": "acc_topstep", "date": "2026/04/06", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "Order Blocks", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "Order Block 15m", "confs": ["iFVG 15m"], "esig": "Inversion-FVG", "ot": "", "grade": "A", "arr": 1.43, "maxRR": 2.0, "riskR": 0, "gross": 135.5, "fees": 0.74, "swap": 0, "net": 134.76, "slm": "Locked Profit", "tpm": "Final TP Hit", "outcome": "Great Exit!", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-06_10-20-43.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081113, "accId": "acc_topstep", "date": "2026/04/06", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "Breaker Block", "ses": "Out of Session", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "Breaker Block", "confs": [], "esig": "BBs", "ot": "", "grade": "B", "arr": 0, "maxRR": 1.0, "riskR": 0, "gross": -148.98, "fees": 0, "swap": 0, "net": -148.98, "slm": "Hit Initial SL", "tpm": "", "outcome": "Capital Protected", "mistake": "Wrong Entry Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-07_07-54-47.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081114, "accId": "acc_topstep", "date": "2026/04/07", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "Asia", "etf": "", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "Supply Zone 15m", "confs": [], "esig": "Inversion-FVG", "ot": "", "grade": "B", "arr": 0.8, "maxRR": 1.5, "riskR": 0, "gross": 212.0, "fees": 4.96, "swap": 0, "net": 207.04, "slm": "", "tpm": "", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-07_10-01-19.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081115, "accId": "acc_topstep", "date": "2026/04/07", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFVG 15m", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "Strong downtrend (HTF)", "bias": "", "news": "", "kl": "Supply Zone 5m", "confs": ["iFVG 15m"], "esig": "Inversion-FVG", "ot": "", "grade": "A", "arr": 1.49, "maxRR": 1.93, "riskR": 0, "gross": 175.0, "fees": 4.96, "swap": 0, "net": 170.04, "slm": "", "tpm": "Manual Close (Profit)", "outcome": "Great Exit!", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-07_12-48-44.png, MGCM2026_2026-04-07_12-48-39.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081116, "accId": "acc_topstep", "date": "2026/04/08", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "5m FVG", "ses": "New York", "etf": "", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "FVG", "confs": ["5m FVG"], "esig": "5m FVG", "ot": "", "grade": "C", "arr": -0.1, "maxRR": 0.0, "riskR": 0, "gross": -20.0, "fees": 0.74, "swap": 0, "net": -20.74, "slm": "Hit Initial SL", "tpm": "Manual Close (Loss)", "outcome": "Loss, Review Setup", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-08_01-51-47.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081117, "accId": "acc_topstep", "date": "2026/04/08", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFVG 5m", "ses": "New York", "etf": "5 minutes", "ttype": "", "mkt": "Strong downtrend (HTF)", "bias": "", "news": "", "kl": "5m iFVG", "confs": ["5m iFVG"], "esig": "5m iFVG", "ot": "", "grade": "B", "arr": 1.0, "maxRR": 2.0, "riskR": 0, "gross": 91.5, "fees": 0.74, "swap": 0, "net": 90.76, "slm": "Locked Profit", "tpm": "Manual Close (Profit)", "outcome": "Profit Taken", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-08_01-49-33.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081118, "accId": "acc_topstep", "date": "2026/04/08", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFVG 15m", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "Strong uptrend (HTF)", "bias": "", "news": "", "kl": "Order Block (H4)", "confs": ["iFVG 15m"], "esig": "", "ot": "", "grade": "A", "arr": 1.4, "maxRR": 2.3, "riskR": 0, "gross": 189.0, "fees": 1.24, "swap": 0, "net": 187.76, "slm": "", "tpm": "Final TP Hit", "outcome": "Great Exit!", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-09_07-41-17.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081119, "accId": "acc_topstep", "date": "2026/04/08", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFVG 15m", "ses": "Out of Session", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": ["iFVG 15m"], "esig": "15m iFVG", "ot": "", "grade": "C", "arr": -0.5, "maxRR": 0, "riskR": 0, "gross": 58.5, "fees": 0.74, "swap": 0, "net": 57.76, "slm": "", "tpm": "", "outcome": "Loss, Review Setup", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-09_07-46-35.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081120, "accId": "acc_topstep", "date": "2026/04/08", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFVG 5m", "ses": "New York", "etf": "5 minutes", "ttype": "", "mkt": "Strong uptrend (HTF)", "bias": "", "news": "", "kl": "", "confs": ["5m iFVG"], "esig": "5m iFVG", "ot": "", "grade": "B", "arr": 0.5, "maxRR": 0, "riskR": 0.5, "gross": 416.64, "fees": 0, "swap": 0, "net": 416.64, "slm": "", "tpm": "", "outcome": "Profit Taken", "mistake": "Position Sizing Error, Thin SL", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-09_07-53-18.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}], "models": [{"id": "OBs In OBs", "name": "OBs In OBs", "cat": "ICT", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "Model #2", "name": "Model #2", "cat": "Price Action", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "Liq sweep", "name": "Liq sweep", "cat": "SMC", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "CISD + FVG", "name": "CISD + FVG", "cat": "ICT", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "Breaker Block", "name": "Breaker Block", "cat": "ICT", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "iFvg", "name": "iFvg", "cat": "ICT", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "Order Blocks", "name": "Order Blocks", "cat": "ICT", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "MR", "name": "MR", "cat": "Price Action", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "poNooK", "name": "poNooK", "cat": "Price Action", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "PA", "name": "PA", "cat": "Price Action", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "Trend Line", "name": "Trend Line", "cat": "Price Action", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "iBos", "name": "iBos", "cat": "ICT", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "FVG", "name": "FVG", "cat": "ICT", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "Pull Back", "name": "Pull Back", "cat": "Price Action", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "ETC", "name": "ETC", "cat": "Price Action", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "iFVG 15m", "name": "iFVG 15m", "cat": "ICT", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "By Alex", "name": "By Alex", "cat": "Price Action", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "5m FVG", "name": "5m FVG", "cat": "ICT", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "iFVG 5m", "name": "iFVG 5m", "cat": "ICT", "desc": "", "ses": "Any", "tf": "5m"}]};
+
+function loadNotionData() {
+  // Load accounts
+  const existingAccs = JSON.parse(localStorage.getItem(DB.accounts)||'[]');
+  if(!existingAccs.length || existingAccs[0].id === 'acc1') {
+    localStorage.setItem(DB.accounts, JSON.stringify(NOTION_DATA.accounts));
+    S.accounts = NOTION_DATA.accounts;
+  }
+  // Load models — always use fixed list
+  const fixedModels = [
+    {id:'m_pb',name:'Pullback',cat:'Price Action',desc:'Pullback in trend',ses:'Any',tf:'Any'},
+    {id:'m_ob15',name:'15m Order Block',cat:'ICT',desc:'15m OB mitigation',ses:'Any',tf:'15m'},
+    {id:'m_ob5',name:'5m Order Block',cat:'ICT',desc:'5m OB mitigation',ses:'Any',tf:'5m'},
+    {id:'m_fvg1',name:'1m FVG',cat:'ICT',desc:'1m Fair Value Gap',ses:'Any',tf:'1m'},
+    {id:'m_ifvg1',name:'1m iFVG',cat:'ICT',desc:'1m Inverse FVG',ses:'Any',tf:'1m'},
+    {id:'m_fvg5',name:'5m FVG',cat:'ICT',desc:'5m Fair Value Gap',ses:'Any',tf:'5m'},
+    {id:'m_ifvg5',name:'5m iFVG',cat:'ICT',desc:'5m Inverse FVG',ses:'Any',tf:'5m'},
+    {id:'m_fvg15',name:'15m FVG',cat:'ICT',desc:'15m Fair Value Gap',ses:'Any',tf:'15m'},
+    {id:'m_ifvg15',name:'15m iFVG',cat:'ICT',desc:'15m Inverse FVG',ses:'Any',tf:'15m'},
+    {id:'m_bb15',name:'15m Breaker Block',cat:'ICT',desc:'15m Breaker Block retest',ses:'Any',tf:'15m'},
+    {id:'m_bb5',name:'5m Breaker Block',cat:'ICT',desc:'5m Breaker Block retest',ses:'Any',tf:'5m'},
+  ];
+  localStorage.setItem(DB.models, JSON.stringify(fixedModels));
+  S.models = fixedModels;
+  // Load trades
+  const existingTrades = JSON.parse(localStorage.getItem(DB.trades)||'[]');
+  const hasNotionData = existingTrades.some(t => t.accId === 'acc_topstep' || t.accId === 'acc_ftmo' || t.accId === 'acc_hardcore');
+  if(!hasNotionData) {
+    localStorage.setItem(DB.trades, JSON.stringify(NOTION_DATA.trades));
+    S.trades = NOTION_DATA.trades;
+  }
+}
+
+function load(){
+  try{S.accounts=JSON.parse(localStorage.getItem(DB.accounts)||'[]')}catch(e){S.accounts=[]}
+  try{S.trades=JSON.parse(localStorage.getItem(DB.trades)||'[]')}catch(e){S.trades=[]}
+  try{S.models=JSON.parse(localStorage.getItem(DB.models)||'[]')}catch(e){S.models=[]}
+  if(!S.accounts.length){S.accounts=[{id:'acc1',name:'TopStep 50k',balance:50000,created:Date.now()}];saveAccounts()}
+  if(!S.models.length){
+    S.models=[
+      {id:'m1',name:'iFVG 5m',cat:'ICT',desc:'Inverse FVG on 5m timeframe',ses:'New York',tf:'5m'},
+      {id:'m2',name:'iFVG 15m',cat:'ICT',desc:'Inverse FVG on 15m timeframe',ses:'Asia',tf:'15m'},
+      {id:'m3',name:'Order Block',cat:'SMC',desc:'OB mitigation entry',ses:'Any',tf:'15m'},
+      {id:'m4',name:'Breaker Block',cat:'ICT',desc:'Breaker Block retest',ses:'London',tf:'5m'},
+      {id:'m5',name:'5m FVG',cat:'ICT',desc:'Standard FVG on 5m',ses:'New York',tf:'5m'},
+      {id:'m6',name:'Pull Back',cat:'Price Action',desc:'Pullback in trend',ses:'Any',tf:'15m'},
+    ];
+    saveModels();
+  }
+  loadNotionData();
+  S.currentAcc = S.accounts.find(a=>a.id==='acc_topstep')?.id || S.accounts[0].id;
+}
+
+function saveAccounts(){localStorage.setItem(DB.accounts,JSON.stringify(S.accounts))}
+function saveModels(){localStorage.setItem(DB.models,JSON.stringify(S.models))}
+function saveTrades(){
+  try{localStorage.setItem(DB.trades,JSON.stringify(S.trades))}
+  catch(e){alert('Storage เต็ม: ลองลบ trade เก่าหรือ export CSV ก่อนครับ')}
+}
+
+function loadSampleTrades(){
+  S.trades=[
+    {id:1,accId:'acc1',date:'2026/04/08',sym:'US100',pos:'Sell',lot:100,dur:'23m',entry:4815.5,modelId:'m1',ses:'New York',etf:'5m',ttype:'Intraday',mkt:'Strong downtrend (HT)',bias:'Bearish',news:'',kl:'Supply Zone',confs:['iFVG','LTF sweep'],ot:'Limit',grade:'B',arr:0.5,riskR:500,gross:416.64,fees:0,swap:0,net:416.64,slm:'',tpm:'Set and Forget',outcome:'Profit Taken',mistake:'Position Sizing',followed:true,plan:'Daily Bias',entryEmo:'Calm',exitEmo:'Satisfied',notes:'Clean setup. Sized too small.',htf:'',mtf:'',ltf:'',yt:''},
+    {id:2,accId:'acc1',date:'2026/04/08',sym:'XAUUSD',pos:'Sell',lot:100,dur:'1h 12m',entry:3180.5,modelId:'m2',ses:'Asia',etf:'15m',ttype:'Intraday',mkt:'Strong uptrend (HT)',bias:'Bullish',news:'',kl:'Order Block',confs:['iFVG','Order Block'],ot:'Limit',grade:'A',arr:1.4,riskR:500,gross:189.00,fees:1.24,swap:0,net:187.76,slm:'Locked Profit',tpm:'Final TP Hit',outcome:'Great Exit!',mistake:'',followed:true,plan:'Daily Bias',entryEmo:'Calm',exitEmo:'Satisfied',notes:'Perfect. Held through pullback.',htf:'',mtf:'',ltf:'',yt:''},
+    {id:3,accId:'acc1',date:'2026/04/07',sym:'XAUUSD',pos:'Sell',lot:100,dur:'45m',entry:3165.0,modelId:'m2',ses:'Asia',etf:'5m',ttype:'Scalp',mkt:'Strong downtrend (HT)',bias:'Bearish',news:'',kl:'Supply Zone',confs:['Supply Zone','Inversion FVG'],ot:'Limit',grade:'B',arr:0.8,riskR:500,gross:212.00,fees:4.96,swap:0,net:207.04,slm:'',tpm:'',outcome:'Profit Taken',mistake:'',followed:true,plan:'Daily Bias',entryEmo:'Calm',exitEmo:'Calm',notes:'',htf:'',mtf:'',ltf:'',yt:''},
+    {id:4,accId:'acc1',date:'2026/04/07',sym:'XAUUSD',pos:'Sell',lot:100,dur:'8m',entry:3158.0,modelId:'m1',ses:'Asia',etf:'5m',ttype:'Scalp',mkt:'',bias:'Bearish',news:'',kl:'',confs:['FVG'],ot:'Market',grade:'C',arr:-0.1,riskR:500,gross:-20.00,fees:0.74,swap:0,net:-20.74,slm:'Hit Initial SL',tpm:'Manual Close',outcome:'Loss, Review Setup',mistake:'Wrong Entry Point',followed:false,plan:'',entryEmo:'Fomo',exitEmo:'Fear',notes:'FOMO entry. Did not wait.',htf:'',mtf:'',ltf:'',yt:''},
+    {id:5,accId:'acc1',date:'2026/04/06',sym:'US100',pos:'Buy',lot:100,dur:'2h',entry:4790.0,modelId:'m5',ses:'New York',etf:'5m',ttype:'Intraday',mkt:'Trending',bias:'Bullish',news:'',kl:'FVG',confs:['FVG','LG sweep'],ot:'Limit',grade:'A',arr:1.49,riskR:500,gross:175.00,fees:4.96,swap:0,net:170.04,slm:'',tpm:'Manual Close',outcome:'Great Exit!',mistake:'',followed:true,plan:'Daily Bias',entryEmo:'Calm',exitEmo:'Satisfied',notes:'',htf:'',mtf:'',ltf:'',yt:''},
+    {id:6,accId:'acc1',date:'2026/04/06',sym:'US100',pos:'Sell',lot:100,dur:'35m',entry:4810.0,modelId:'m3',ses:'Asia',etf:'15m',ttype:'Intraday',mkt:'',bias:'Bearish',news:'',kl:'Order Block',confs:['Order Block'],ot:'Limit',grade:'B',arr:0,riskR:500,gross:-148.98,fees:0,swap:0,net:-148.98,slm:'Hit Initial SL',tpm:'',outcome:'Capital Protected',mistake:'Wrong Entry Point',followed:false,plan:'',entryEmo:'Overconfident',exitEmo:'Regret',notes:'Overconfident. No confirmation.',htf:'',mtf:'',ltf:'',yt:''},
+    {id:7,accId:'acc1',date:'2026/04/06',sym:'US100',pos:'Buy',lot:100,dur:'1h 20m',entry:4795.0,modelId:'m6',ses:'Asia',etf:'5m',ttype:'Intraday',mkt:'',bias:'Bullish',news:'',kl:'FVG',confs:['FVG'],ot:'Limit',grade:'A',arr:1.43,riskR:500,gross:135.50,fees:0.74,swap:0,net:134.76,slm:'Locked Profit',tpm:'Final TP Hit',outcome:'Great Exit!',mistake:'',followed:true,plan:'Daily Bias',entryEmo:'Calm',exitEmo:'Satisfied',notes:'Clean trade. Followed plan.',htf:'',mtf:'',ltf:'',yt:''},
+  ];
+  saveTrades();
+}
+
+function accTrades(){return S.trades.filter(x=>x.accId===S.currentAcc)}
+function modelName(mid){return S.models.find(x=>x.id===mid)?.name||mid||'—'}
+
+function nav(p,el){
+  document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(x=>x.classList.remove('on'));
+  document.getElementById('pg-'+p).classList.add('on');
+  if(el)el.classList.add('on');
+  ({dashboard:renderDash,history:renderHistory,models:renderModelDB,calendar:renderCal,weekly:renderWeekly})[p]?.();
+}
+
+function renderAccSelector(){
+  const sel=document.getElementById('acc-select');
+  sel.innerHTML=S.accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
+  sel.value=S.currentAcc;
+  const acc=S.accounts.find(a=>a.id===S.currentAcc);
+  const t=accTrades();
+  const net=t.reduce((a,x)=>a+(+x.net||0),0);
+  if(acc)document.getElementById('acc-info').textContent=`${t.length} trades | Net: ${net>=0?'+':''}$${net.toFixed(2)}`;
+  document.getElementById('log-acc-name').textContent=acc?.name||'—';
+  updateModelDropdown();
+}
+
+function switchAccount(id){S.currentAcc=id;renderAccSelector();renderDash()}
+
+function openModal(id){document.getElementById(id).classList.add('open');if(id==='modal-acc')renderAccList()}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+function overlayClose(e,id){if(e.target===document.getElementById(id))closeModal(id)}
+
+function renderAccList(){
+  document.getElementById('acc-list').innerHTML=S.accounts.map(a=>{
+    const t=S.trades.filter(x=>x.accId===a.id);
+    const net=t.reduce((s,x)=>s+(+x.net||0),0);
+    return`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f0f0ec;font-size:13px">
+      <div><strong>${a.name}</strong> <span style="color:#aaa;font-size:11px">$${a.balance.toLocaleString()}</span></div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <span style="color:${net>=0?'#1D9E75':'#E24B4A'};font-weight:600">${net>=0?'+':''}$${net.toFixed(2)}</span>
+        <span style="color:#aaa;font-size:11px">${t.length} trades</span>
+        ${S.accounts.length>1?`<button class="btn btn-sm btn-d" onclick="deleteAccount('${a.id}')">ลบ</button>`:''}
+      </div>
+    </div>`;
+  }).join('')||'<div style="color:#aaa;font-size:13px">ยังไม่มี account</div>';
+}
+
+function addAccount(){
+  const name=document.getElementById('new-acc-name').value.trim();
+  const bal=parseFloat(document.getElementById('new-acc-bal').value)||0;
+  if(!name){alert('กรุณาใส่ชื่อ Account');return}
+  S.accounts.push({id:'acc'+Date.now(),name,balance:bal,created:Date.now()});
+  saveAccounts();document.getElementById('new-acc-name').value='';document.getElementById('new-acc-bal').value='';
+  renderAccList();renderAccSelector();
+}
+
+function deleteAccount(id){
+  if(!confirm('ลบ account นี้? trade ทั้งหมดใน account จะหายด้วย'))return;
+  S.accounts=S.accounts.filter(a=>a.id!==id);
+  S.trades=S.trades.filter(t=>t.accId!==id);
+  saveAccounts();saveTrades();
+  if(S.currentAcc===id)S.currentAcc=S.accounts[0]?.id;
+  renderAccList();renderAccSelector();renderDash();
+}
+
+function updateModelDropdown(){
+  const sel=document.getElementById('f-model');
+  if(!sel)return;
+  sel.innerHTML=`<option value="">— เลือก Model —</option>`+S.models.map(m=>`<option value="${m.id}">${m.name} (${m.cat})</option>`).join('');
+}
+
+function saveModel(){
+  const name=document.getElementById('m-name').value.trim();
+  if(!name){alert('กรุณาใส่ชื่อ Model');return}
+  S.models.push({id:'m'+Date.now(),name,cat:document.getElementById('m-cat').value,desc:document.getElementById('m-desc').value,ses:document.getElementById('m-ses').value,tf:document.getElementById('m-tf').value});
+  saveModels();updateModelDropdown();closeModal('modal-model');
+  document.getElementById('m-name').value='';document.getElementById('m-desc').value='';
+  renderModelDB();
+}
+
+function deleteModel(id){
+  if(!confirm('ลบ Model นี้?'))return;
+  S.models=S.models.filter(m=>m.id!==id);saveModels();updateModelDropdown();renderModelDB();
+}
+
+function outBadge(o){
+  const m={'Great Exit!':'b-ge','Profit Taken':'b-pt','Loss, Review Setup':'b-loss2','Capital Protected':'b-cp','Breakeven':'b-be'};
+  return`<span class="badge ${m[o]||''}">${o||'—'}</span>`;
+}
+
+function buildChart(id,type,data,opts){
+  if(chartObjs[id])chartObjs[id].destroy();
+  const el=document.getElementById(id);if(!el)return;
+  chartObjs[id]=new Chart(el,{type,data,options:opts});
+}
+
+function calcScore(t){
+  if(!t.length)return 0;
+  const w=t.filter(x=>(+x.net||0)>0).length/t.length;
+  const rr=t.filter(x=>x.arr).reduce((a,x)=>a+(+x.arr),0)/(t.filter(x=>x.arr).length||1);
+  const fp=t.filter(x=>x.followed).length/t.length;
+  const ag=t.filter(x=>x.grade==='A').length/t.length;
+  const calm=t.filter(x=>x.entryEmo==='Calm').length/t.length;
+  return Math.min(100,Math.round(w*30+Math.min(rr/3,1)*25+fp*20+ag*15+calm*10));
+}
+
+function renderDash(){
+  const all=accTrades();
+  const now=new Date();
+  let t=all;
+  const pMode=window._dashPeriod||'all';
+  if(pMode==='month'){
+    const pfx=`${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}`;
+    t=all.filter(x=>x.date.startsWith(pfx));
+  } else if(pMode==='week'){
+    const mon=new Date(now);mon.setDate(now.getDate()-(now.getDay()===0?6:now.getDay()-1));
+    const monStr=`${mon.getFullYear()}/${String(mon.getMonth()+1).padStart(2,'0')}/${String(mon.getDate()).padStart(2,'0')}`;
+    const sun=new Date(mon);sun.setDate(mon.getDate()+6);
+    const sunStr=`${sun.getFullYear()}/${String(sun.getMonth()+1).padStart(2,'0')}/${String(sun.getDate()).padStart(2,'0')}`;
+    t=all.filter(x=>x.date>=monStr&&x.date<=sunStr);
+  }
+  document.getElementById('dash-period-label').textContent=t.length+' trades';
+
+  const net=t.reduce((a,x)=>a+(+x.net||0),0);
+  const wins=t.filter(x=>(+x.net||0)>0).length;
+  const losses=t.filter(x=>(+x.net||0)<0).length;
+  const wr=t.length?Math.round(wins/t.length*100):0;
+  const avgW=wins?t.filter(x=>(+x.net)>0).reduce((a,x)=>a+(+x.net),0)/wins:0;
+  const avgL=losses?Math.abs(t.filter(x=>(+x.net)<0).reduce((a,x)=>a+(+x.net),0)/losses):0;
+  const pf=avgL&&losses?((avgW*wins)/(avgL*losses)).toFixed(2):wins>0?'∞':'—';
+  const avgRR=t.filter(x=>x.arr).length?(t.filter(x=>x.arr).reduce((a,x)=>a+(+x.arr),0)/t.filter(x=>x.arr).length).toFixed(2):'—';
+  const sc=calcScore(t);
+  const acc=S.accounts.find(a=>a.id===S.currentAcc);
+  const totalBal=(acc?.balance||0)+all.reduce((a,x)=>a+(+x.net||0),0);
+
+  // Stats bar
+  const initBal=acc?.balance||0;
+  const totalBal2=initBal+all.reduce((a,x)=>a+(+x.net||0),0);
+  const balChange=all.reduce((a,x)=>a+(+x.net||0),0);
+  document.getElementById('tv-stats-bar').innerHTML=[
+    ['Balance',`$${totalBal2.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}`,balChange>=0?'gv':'rv',`Init $${initBal.toLocaleString()}`],
+    ['Net P&L',`${net>=0?'+':''}$${Math.abs(net).toFixed(2)}`,net>=0?'gv':'rv',`${t.length} trades`],
+    ['Win Rate',`${wr}%`,wr>=50?'gv':'rv',`${wins}W · ${losses}L`],
+    ['Avg RR',avgRR,parseFloat(avgRR)>=1?'gv':'rv',`Grade A: ${t.filter(x=>x.grade==='A').length}`],
+    ['Profit Factor',pf,parseFloat(pf)>=1.5?'gv':parseFloat(pf)>=1?'av':'rv',`Avg Win $${avgW.toFixed(0)}`],
+    ['Score',sc,sc>=70?'gv':sc>=50?'av':'rv','/ 100'],
+  ].map(([l,v,c,s])=>`<div class="tv-stat"><div class="tv-stat-l">${l}</div><div class="tv-stat-v ${c}">${v}</div><div class="tv-stat-sub">${s}</div></div>`).join('');
+
+  // Equity curve
+  document.getElementById('tv-equity-total').textContent=`$${totalBal.toFixed(2)}`;
+  const sorted=[...all].sort((a,b)=>a.date.localeCompare(b.date));
+  let cum=acc?.balance||0;const el=[],ed=[];
+  sorted.forEach(x=>{cum+=(+x.net||0);el.push(x.date.slice(5));ed.push(+cum.toFixed(2))});
+  buildChart('eqChart','line',{labels:el,datasets:[{data:ed,borderColor:'#185FA5',backgroundColor:'rgba(24,95,165,.06)',tension:.4,fill:true,pointRadius:0,borderWidth:2,pointHoverRadius:4}]},{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'$'+ctx.parsed.y.toLocaleString('en-US',{minimumFractionDigits:2})}}},scales:{x:{ticks:{font:{size:9},maxRotation:0,autoSkip:true,maxTicksLimit:8},grid:{display:false},border:{display:false}},y:{ticks:{font:{size:9},callback:v=>'$'+v.toLocaleString()},grid:{color:'rgba(0,0,0,.04)'},border:{display:false}}}});
+
+  // Returns chart
+  buildReturnsChart(all,'day');
+
+  // Session chart
+  const sess=['Asia','London Open','London Close','New York','Out of Session'];
+  const sd=sess.map(s=>+t.filter(x=>x.ses===s).reduce((a,x)=>a+(+x.net||0),0).toFixed(2));
+  buildChart('sesChart','bar',{labels:['Asia','Lon O','Lon C','NY','OOS'],datasets:[{data:sd,backgroundColor:sd.map(v=>v>=0?'rgba(29,158,117,.8)':'rgba(226,75,74,.8)'),borderRadius:4,borderSkipped:false}]},{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'$'+ctx.parsed.y.toFixed(2)}}},scales:{x:{ticks:{font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{font:{size:9},callback:v=>'$'+v},grid:{color:'rgba(0,0,0,.04)'},border:{display:false}}}});
+
+  // Outcomes donut
+  const outs=['Profit Taken','Great Exit!','Loss, Review Setup','Capital Protected','Breakeven'];
+  buildChart('outChart','doughnut',{labels:['Profit','Great Exit','Loss','Cap.Prot','BE'],datasets:[{data:outs.map(o=>t.filter(x=>x.outcome===o).length),backgroundColor:['#378ADD','#1D9E75','#E24B4A','#85B7EB','#EF9F27'],borderWidth:3,borderColor:'#ffffff'}]},{responsive:true,maintainAspectRatio:false,cutout:'48%',plugins:{legend:{position:'right',align:'center',labels:{font:{size:12},boxWidth:13,boxHeight:13,padding:14,color:'#555'}},tooltip:{callbacks:{label:ctx=>ctx.label+': '+ctx.parsed+' trades'}}}});
+
+  // Model WR
+  const mids=[...new Set(t.map(x=>x.modelId).filter(Boolean))];
+  const mRows=mids.map(mid=>{
+    const mt=t.filter(x=>x.modelId===mid);
+    const mw=mt.filter(x=>(+x.net||0)>0).length;
+    const mwr=mt.length?Math.round(mw/mt.length*100):0;
+    const mpnl=mt.reduce((a,x)=>a+(+x.net||0),0);
+    return{name:modelName(mid),count:mt.length,wr:mwr,pnl:mpnl};
+  }).sort((a,b)=>b.pnl-a.pnl);
+  document.getElementById('tv-model-wr').innerHTML=mRows.length?mRows.map(r=>`
+    <div class="tv-model-row">
+      <div class="tv-model-name" title="${r.name}">${r.name} <span style="color:#666;font-size:10px">${r.count}</span></div>
+      <div class="tv-model-bar-wrap"><div class="tv-model-bar-f" style="width:${r.wr}%;background:${r.wr>=50?'#1D9E75':'#E24B4A'}"></div></div>
+      <div class="tv-model-wr" style="color:${r.wr>=50?'#1D9E75':'#E24B4A'}">${r.wr}%</div>
+      <div class="tv-model-pnl" style="color:${r.pnl>=0?'#1D9E75':'#E24B4A'}">${r.pnl>=0?'+':''}$${r.pnl.toFixed(0)}</div>
+    </div>`).join(''):'<div style="color:#666;font-size:12px;padding:8px 0">ยังไม่มีข้อมูล</div>';
+
+  // Calendar
+  renderDashCal();
+
+  // Recent trades
+  const recent=[...all].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);
+  const eCol={'Calm':'#1D9E75','Fomo':'#E24B4A','Revenge':'#E24B4A','Overconfident':'#BA7517','Fear':'#E24B4A','Greed':'#BA7517','Satisfied':'#1D9E75','Regret':'#E24B4A'};
+  document.getElementById('tv-recent-trades').innerHTML=recent.length?recent.map(x=>{
+    const net=+x.net||0;
+    return`<div class="tv-recent-row">
+      <div style="width:76px;color:#666;font-size:11px;flex-shrink:0">${x.date.slice(5)}</div>
+      <div style="flex:1;font-weight:500">${x.sym||'—'}</div>
+      <div style="width:40px"><span class="badge ${x.pos==='Buy'?'b-buy':'b-sell'}">${x.pos}</span></div>
+      <div style="width:120px"><span class="badge b-model" style="font-size:10px;max-width:115px;overflow:hidden;text-overflow:ellipsis">${modelName(x.modelId)}</span></div>
+      <div style="width:36px"><span class="badge ${x.grade==='A'?'b-a':x.grade==='B'?'b-b':'b-c'}">${x.grade||'?'}</span></div>
+      <div style="width:80px;text-align:right;font-weight:600;color:${net>=0?'#1D9E75':'#E24B4A'}">${net>=0?'+':''}$${net.toFixed(2)}</div>
+    </div>`;
+  }).join(''):'<div style="color:#666;font-size:13px;padding:20px;text-align:center">ยังไม่มี trade</div>';
+
+  renderAccSelector();
+}
+
+function buildReturnsChart(all,mode){
+  const groups={};
+  all.forEach(x=>{
+    let key;
+    if(mode==='day') key=x.date;
+    else if(mode==='week'){
+      const d=new Date(x.date.replace(/\//g,'-'));
+      const day=d.getDay();const mon=new Date(d);
+      mon.setDate(d.getDate()-(day===0?6:day-1));
+      key=mon.toISOString().slice(0,10).replace(/-/g,'/');
+    } else {
+      key=x.date.slice(0,7);
+    }
+    groups[key]=(groups[key]||0)+(+x.net||0);
+  });
+  const keys=Object.keys(groups).sort().slice(-20);
+  const data=keys.map(k=>+groups[k].toFixed(2));
+  const labels=keys.map(k=>mode==='day'?k.slice(5):mode==='month'?k.slice(0,7):k.slice(5));
+  buildChart('returnsChart','bar',{labels,datasets:[{data,backgroundColor:data.map(v=>v>=0?'rgba(29,158,117,.8)':'rgba(226,75,74,.8)'),borderRadius:4,borderSkipped:false}]},{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`$${ctx.parsed.y.toFixed(2)}`}}},scales:{x:{ticks:{font:{size:9},maxRotation:45},grid:{display:false},border:{display:false}},y:{ticks:{font:{size:9},callback:v=>'$'+v},grid:{color:'rgba(0,0,0,.04)'},border:{display:false}}}});
+}
+
+function setReturns(mode,el){
+  document.querySelectorAll('.returns-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  buildReturnsChart(accTrades(),mode);
+}
+
+function setPeriod(mode,el){
+  document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  window._dashPeriod=mode;
+  renderDash();
+}
+
+let _dashCalY=new Date().getFullYear(),_dashCalM=new Date().getMonth();
+function calPrevDash(){_dashCalM--;if(_dashCalM<0){_dashCalM=11;_dashCalY--}renderDashCal()}
+function calNextDash(){_dashCalM++;if(_dashCalM>11){_dashCalM=0;_dashCalY++}renderDashCal()}
+
+function renderDashCal(){
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const thMonths=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  document.getElementById('tv-cal-title').textContent=`${thMonths[_dashCalM]} ${_dashCalY+543}`;
+  const t=accTrades();
+  const first=new Date(_dashCalY,_dashCalM,1).getDay();
+  const daysInMonth=new Date(_dashCalY,_dashCalM+1,0).getDate();
+  const adjFirst=first===0?6:first-1;
+
+  // Build day->trades map
+  const dayMap={};
+  t.forEach(x=>{dayMap[x.date]=(dayMap[x.date]||[]);dayMap[x.date].push(x)});
+
+  // Build week summaries (Mon-Sun)
+  // Grid: 8 columns (Mon-Sun + Week summary)
+  let html='<div style="display:grid;grid-template-columns:repeat(7,1fr) 80px;gap:3px">';
+  ['Mon','Tue','Wed','Thu','Fri','Sat','Sun','Week'].forEach(d=>{
+    html+=`<div class="tv-cal-head">${d}</div>`;
+  });
+
+  // Weeks
+  let day=1;
+  const totalWeeks=Math.ceil((adjFirst+daysInMonth)/7);
+  for(let w=0;w<totalWeeks;w++){
+    let weekNet=0;let weekTrades=0;
+    const weekCells=[];
+    for(let dow=0;dow<7;dow++){
+      const cellIdx=w*7+dow;
+      if(cellIdx<adjFirst||day>daysInMonth){
+        weekCells.push(`<div class="tv-cal-day empty"></div>`);
+      } else {
+        const ds=`${_dashCalY}/${String(_dashCalM+1).padStart(2,'0')}/${String(day).padStart(2,'0')}`;
+        const dt=dayMap[ds]||[];
+        const pnl=dt.reduce((a,x)=>a+(+x.net||0),0);
+        weekNet+=pnl;weekTrades+=dt.length;
+        let cls='tv-cal-day'+(dt.length?pnl>0?' profit':pnl<0?' loss':' be':'');
+        weekCells.push(`<div class="${cls}" onclick="showCalDay('${ds}')" style="position:relative;display:flex;flex-direction:column;justify-content:center;align-items:flex-start">
+          <div class="tv-cal-day-num" style="position:absolute;top:5px;right:7px">${day}</div>
+          ${dt.length?`<div class="tv-cal-day-pnl" style="font-size:15px;margin-top:6px">${pnl>=0?'+':''}$${Math.abs(pnl).toFixed(1)}</div>
+          <div class="tv-cal-day-cnt" style="margin-top:3px">${dt.length} trades</div>
+          <div class="tv-cal-day-cnt">${dt.filter(t=>(+t.net||0)>0).length>0?Math.round(dt.filter(t=>(+t.net||0)>0).length/dt.length*100):0}% win rate</div>`:''}
+        </div>`);
+        day++;
+      }
+    }
+    html+=weekCells.join('');
+    // Week summary
+    html+=`<div class="tv-week-row">
+      <div class="tv-week-label">Week ${w+1}</div>
+      ${weekTrades?`<div class="tv-week-pnl" style="color:${weekNet>=0?'#1D9E75':'#E24B4A'}">${weekNet>=0?'+':''}$${Math.abs(weekNet).toFixed(0)}</div>
+      <div style="font-size:9px;color:#666">${weekTrades} trades</div>`:'<div style="font-size:10px;color:#666">—</div>'}
+    </div>`;
+  }
+  html+='</div>';
+  document.getElementById('tv-calendar').innerHTML=html;
+}
+
+
+function renderModelDB(){
+  const el=document.getElementById('model-db-list');
+  if(!S.models.length){el.innerHTML='<div class="empty-state">ยังไม่มี Model — กด "+ เพิ่ม Model" เพื่อเริ่มต้น</div>';return}
+  el.innerHTML=S.models.map(m=>{
+    const mt=accTrades().filter(x=>x.modelId===m.id);
+    const w=mt.filter(x=>(+x.net||0)>0).length;
+    const pnl=mt.reduce((a,x)=>a+(+x.net||0),0);
+    const wr=mt.length?Math.round(w/mt.length*100):0;
+    const avgRR=mt.filter(x=>x.arr).length?(mt.filter(x=>x.arr).reduce((a,x)=>a+(+x.arr),0)/mt.filter(x=>x.arr).length).toFixed(2):'—';
+    return`<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div>
+          <span class="badge b-model" style="margin-right:7px">${m.cat}</span>
+          <strong style="font-size:15px">${m.name}</strong>
+          <div style="font-size:12px;color:#888;margin-top:4px">${m.ses} · ${m.tf}${m.desc?' · '+m.desc:''}</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="font-size:18px;font-weight:500;color:${pnl>=0?'#1D9E75':'#E24B4A'}">${pnl>=0?'+':''}$${pnl.toFixed(2)}</span>
+          <button class="btn btn-sm btn-d" onclick="deleteModel('${m.id}')">ลบ</button>
+        </div>
+      </div>
+      <div class="g4" style="margin-bottom:8px">
+        <div class="mc"><div class="mc-l">Trades</div><div class="mc-v">${mt.length}</div></div>
+        <div class="mc"><div class="mc-l">Win Rate</div><div class="mc-v ${wr>=50?'gv':'rv'}">${wr}%</div></div>
+        <div class="mc"><div class="mc-l">W / L</div><div class="mc-v">${w} / ${mt.length-w}</div></div>
+        <div class="mc"><div class="mc-l">Avg RR</div><div class="mc-v">${avgRR}</div></div>
+      </div>
+      <div class="prog"><div class="prog-f" style="width:${wr}%;background:${wr>=50?'#1D9E75':'#E24B4A'}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderHistory(){
+  const q=(document.getElementById('hs-q').value||'').toLowerCase();
+  const fo=document.getElementById('hs-out').value;
+  const fg=document.getElementById('hs-grade').value;
+  let f=[...accTrades()].sort((a,b)=>b.date.localeCompare(a.date));
+  if(q)f=f.filter(x=>(x.sym+modelName(x.modelId)+x.notes).toLowerCase().includes(q));
+  if(fo)f=f.filter(x=>x.outcome===fo);
+  if(fg)f=f.filter(x=>x.grade===fg);
+  const b=document.getElementById('hist-body');
+  if(!f.length){b.innerHTML='<tr><td colspan="13" style="text-align:center;padding:30px;color:#aaa">ไม่มีข้อมูล</td></tr>';return}
+  const eCol={'Calm':'#1D9E75','Fomo':'#E24B4A','Revenge':'#E24B4A','Overconfident':'#854F0B','Fear':'#E24B4A','Greed':'#854F0B','Satisfied':'#1D9E75','Regret':'#E24B4A'};
+  b.innerHTML=f.map(x=>{
+    const net=+x.net||0;
+      const charts=[x.htf?'HTF':'',x.mtf?'MTF':'',x.ltf?'LTF':''].filter(Boolean);
+    return`<tr>
+      <td style="white-space:nowrap;font-size:11px;color:#666">${x.date}</td>
+      <td><strong>${x.sym}</strong></td>
+      <td><span class="badge ${x.pos==='Buy'?'b-buy':'b-sell'}">${x.pos}</span></td>
+      <td><span class="badge b-model" style="font-size:10px">${modelName(x.modelId)}</span></td>
+      <td style="font-size:11px;color:#888">${x.ses||'—'}</td>
+      <td><span class="badge ${x.grade==='A'?'b-a':x.grade==='B'?'b-b':'b-c'}">${x.grade||'—'}</span></td>
+      <td style="font-weight:700;color:${net>=0?'#1D9E75':'#E24B4A'}">${net>=0?'+':''}$${net.toFixed(2)}</td>
+      <td style="font-size:12px">${x.arr||'—'}</td>
+      <td>${outBadge(x.outcome)}</td>
+      <td style="font-size:11px;font-weight:600;color:${eCol[x.entryEmo]||'#aaa'}">${x.entryEmo||'—'}</td>
+      <td style="font-size:11px;color:#aaa">${charts.join(' ')||'—'}</td>
+      <td><button class="btn btn-sm btn-d" onclick="deleteTrade(${x.id})">ลบ</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderCal(){
+  const months=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  document.getElementById('cal-title').textContent=`${months[S.calM]} ${S.calY+543}`;
+  const first=new Date(S.calY,S.calM,1).getDay();
+  const days=new Date(S.calY,S.calM+1,0).getDate();
+  let html='';
+  ['อา','จ','อ','พ','พฤ','ศ','ส'].forEach(d=>{html+=`<div class="cal-h">${d}</div>`});
+  for(let i=0;i<first;i++)html+=`<div class="cal-d empty">x</div>`;
+  for(let d=1;d<=days;d++){
+    const ds=`${S.calY}/${String(S.calM+1).padStart(2,'0')}/${String(d).padStart(2,'0')}`;
+    const dt=accTrades().filter(x=>x.date===ds);
+    const pnl=dt.reduce((a,x)=>a+(+x.net||0),0);
+    let cls='cal-d';if(dt.length)cls+=pnl>0?' profit':pnl<0?' loss':' be';
+    html+=`<div class="${cls}" onclick="showCalDay('${ds}')" title="${dt.length?`${dt.length} trades | ${pnl>=0?'+':''}$${pnl.toFixed(0)}`:''}">${d}${dt.length?`<br><span style="font-size:9px">${pnl>=0?'+':''}$${pnl.toFixed(0)}</span>`:''}</div>`;
+  }
+  document.getElementById('cal-days').innerHTML=html;
+}
+
+function showCalDay(ds){
+  const dt=accTrades().filter(x=>x.date===ds);
+  const det=document.getElementById('cal-detail');
+  if(!dt.length){det.style.display='none';return}
+  det.style.display='block';
+  document.getElementById('cal-detail-date').textContent=ds;
+  document.getElementById('cal-detail-body').innerHTML=dt.map(x=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f2"><div><span class="badge b-model" style="margin-right:6px;font-size:10px">${modelName(x.modelId)}</span><strong>${x.sym}</strong> <span class="badge ${x.pos==='Buy'?'b-buy':'b-sell'}">${x.pos}</span></div><div style="display:flex;gap:9px;align-items:center">${outBadge(x.outcome)}<strong style="color:${(+x.net||0)>=0?'#1D9E75':'#E24B4A'}">${(+x.net||0)>=0?'+':''}$${(+x.net||0).toFixed(2)}</strong></div></div>`).join('');
+}
+
+function calPrev(){S.calM--;if(S.calM<0){S.calM=11;S.calY--}renderCal()}
+function calNext(){S.calM++;if(S.calM>11){S.calM=0;S.calY++}renderCal()}
+
+function getWeeks(){
+  const t=accTrades();const weeks={};
+  t.forEach(x=>{
+    const d=new Date(x.date.replace(/\//g,'-'));
+    const day=d.getDay();
+    const mon=new Date(d);mon.setDate(d.getDate()-(day===0?6:day-1));
+    const key=mon.toISOString().slice(0,10);
+    if(!weeks[key])weeks[key]=[];
+    weeks[key].push(x);
+  });
+  return Object.entries(weeks).sort((a,b)=>b[0].localeCompare(a[0]));
+}
+
+function renderWeekly(){
+  const weeks=getWeeks();
+  const sel=document.getElementById('week-sel');
+  sel.innerHTML=weeks.map(([k,v])=>{
+    const sun=new Date(k);sun.setDate(sun.getDate()+6);
+    return`<option value="${k}">${k} — ${sun.toISOString().slice(0,10)} (${v.length} trades)</option>`;
+  }).join('');
+  if(!weeks.length)sel.innerHTML='<option>ยังไม่มีข้อมูล</option>';
+  loadWeekPreview();
+}
+
+function loadWeekPreview(){
+  const key=document.getElementById('week-sel').value;
+  const weeks=getWeeks();
+  const entry=weeks.find(([k])=>k===key);
+  const el=document.getElementById('week-preview');
+  if(!entry){el.innerHTML='<div class="empty-state">ไม่มีข้อมูลสัปดาห์นี้</div>';return}
+  const wt=entry[1].sort((a,b)=>a.date.localeCompare(b.date));
+  const net=wt.reduce((a,x)=>a+(+x.net||0),0);
+  const w=wt.filter(x=>(+x.net||0)>0).length;
+  const wr=wt.length?Math.round(w/wt.length*100):0;
+  const avgRR=wt.filter(x=>x.arr).length?(wt.filter(x=>x.arr).reduce((a,x)=>a+(+x.arr),0)/wt.filter(x=>x.arr).length).toFixed(2):'—';
+  el.innerHTML=`
+    <div class="g4" style="margin-bottom:12px">
+      <div class="mc"><div class="mc-l">Trades</div><div class="mc-v">${wt.length}</div></div>
+      <div class="mc"><div class="mc-l">Net P&L</div><div class="mc-v ${net>=0?'gv':'rv'}">${net>=0?'+':''}$${net.toFixed(2)}</div></div>
+      <div class="mc"><div class="mc-l">Win Rate</div><div class="mc-v ${wr>=50?'gv':'rv'}">${wr}%</div></div>
+      <div class="mc"><div class="mc-l">Avg RR</div><div class="mc-v">${avgRR}</div></div>
+    </div>
+    <div style="font-size:12px;color:#888;margin-bottom:10px">กด "Export PDF" เพื่อดาวน์โหลด PDF พร้อมรูป HTF/MTF/LTF ทุก trade</div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Date</th><th>Symbol</th><th>Dir</th><th>Model</th><th>Session</th><th>Grade</th><th>Net P&L</th><th>RR</th><th>Outcome</th><th>Charts</th></tr></thead>
+        <tbody>${wt.map(x=>{const net2=+x.net||0;const ch=[x.htf?'HTF':'',x.mtf?'MTF':'',x.ltf?'LTF':''].filter(Boolean);return`<tr><td style="font-size:11px">${x.date}</td><td><strong>${x.sym}</strong></td><td><span class="badge ${x.pos==='Buy'?'b-buy':'b-sell'}">${x.pos}</span></td><td><span class="badge b-model" style="font-size:10px">${modelName(x.modelId)}</span></td><td style="font-size:11px">${x.ses}</td><td><span class="badge ${x.grade==='A'?'b-a':x.grade==='B'?'b-b':'b-c'}">${x.grade}</span></td><td style="font-weight:700;color:${net2>=0?'#1D9E75':'#E24B4A'}">${net2>=0?'+':''}$${net2.toFixed(2)}</td><td>${x.arr||'—'}</td><td>${outBadge(x.outcome)}</td><td style="font-size:11px;color:#aaa">${ch.join(' ')||'—'}</td></tr>`;}).join('')}</tbody>
+      </table>
+    </div>`;
+}
+
+function exportWeekPDF(){
+  const key=document.getElementById('week-sel').value;
+  if(!key)return;
+  const weeks=getWeeks();
+  const entry=weeks.find(([k])=>k===key);
+  if(!entry){alert('ไม่มีข้อมูลสัปดาห์นี้');return}
+  const wt=entry[1].sort((a,b)=>a.date.localeCompare(b.date));
+  const acc=S.accounts.find(a=>a.id===S.currentAcc);
+  const net=wt.reduce((a,x)=>a+(+x.net||0),0);
+  const w=wt.filter(x=>(+x.net||0)>0).length;
+  const wr=wt.length?Math.round(w/wt.length*100):0;
+  const avgRR=wt.filter(x=>x.arr).length?(wt.filter(x=>x.arr).reduce((a,x)=>a+(+x.arr),0)/wt.filter(x=>x.arr).length).toFixed(2):'—';
+  const sun=new Date(key);sun.setDate(sun.getDate()+6);
+  const weekLabel=`${key} — ${sun.toISOString().slice(0,10)}`;
+  const pfVal=()=>{
+    const gw=wt.filter(x=>(+x.net)>0).reduce((a,x)=>a+(+x.net),0);
+    const gl=Math.abs(wt.filter(x=>(+x.net)<0).reduce((a,x)=>a+(+x.net),0));
+    return gl?(gw/gl).toFixed(2):'—';
+  };
+  const mistakes={};wt.forEach(x=>{if(x.mistake)mistakes[x.mistake]=(mistakes[x.mistake]||0)+1});
+  const topM=Object.entries(mistakes).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>`${k} (${v}x)`).join(', ')||'None';
+
+  const tradesHtml=wt.map((x,i)=>{
+    const net2=+x.net||0;
+    const nc=net2>=0?'#1D9E75':'#E24B4A';
+    const oc={'Great Exit!':'#1D9E75','Profit Taken':'#0C447C','Loss, Review Setup':'#E24B4A','Capital Protected':'#0C447C','Breakeven':'#854F0B'}[x.outcome]||'#333';
+    const gc=x.grade==='A'?'#1D9E75':x.grade==='B'?'#854F0B':'#E24B4A';
+    const chartImgs=[
+      x.htf?`<div style="flex:1"><div style="font-size:9px;font-weight:700;color:#888;text-align:center;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em">HTF</div><img src="${x.htf}" style="width:100%;border-radius:6px;border:1px solid #2a2a2a;display:block"></div>`:`<div style="flex:1;border:1px dashed #ddd;border-radius:6px;min-height:70px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#ccc;flex-direction:column;gap:3px"><span>HTF</span><span>—</span></div>`,
+      x.mtf?`<div style="flex:1"><div style="font-size:9px;font-weight:700;color:#888;text-align:center;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em">MTF</div><img src="${x.mtf}" style="width:100%;border-radius:6px;border:1px solid #2a2a2a;display:block"></div>`:`<div style="flex:1;border:1px dashed #ddd;border-radius:6px;min-height:70px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#ccc;flex-direction:column;gap:3px"><span>MTF</span><span>—</span></div>`,
+      x.ltf?`<div style="flex:1"><div style="font-size:9px;font-weight:700;color:#888;text-align:center;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em">LTF</div><img src="${x.ltf}" style="width:100%;border-radius:6px;border:1px solid #2a2a2a;display:block"></div>`:`<div style="flex:1;border:1px dashed #ddd;border-radius:6px;min-height:70px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#ccc;flex-direction:column;gap:3px"><span>LTF</span><span>—</span></div>`,
+    ].join('');
+    return`<div style="page-break-inside:avoid;margin-bottom:22px;border:1px solid #e8e8e4;border-radius:10px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="background:#fafaf8;padding:11px 16px;border-bottom:1px solid #e8e8e4;display:flex;justify-content:space-between;align-items:center">
+        <div style="display:flex;gap:10px;align-items:center">
+          <span style="font-size:14px;font-weight:700;color:#1a1a1a">#${i+1} &nbsp;${x.sym}</span>
+          <span style="font-size:11px;padding:3px 9px;border-radius:20px;background:${x.pos==='Buy'?'#EAF3DE':'#FCEBEB'};color:${x.pos==='Buy'?'#27500A':'#E24B4A'};font-weight:700">${x.pos}</span>
+          <span style="font-size:11px;color:#888">${x.date} &nbsp;·&nbsp; ${x.ses} &nbsp;·&nbsp; ${x.dur||''}</span>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center">
+          <span style="font-size:12px;padding:3px 9px;border-radius:20px;background:${gc}18;color:${gc};font-weight:700">Grade ${x.grade}</span>
+          <span style="font-size:16px;font-weight:800;color:${nc}">${net2>=0?'+':''}$${net2.toFixed(2)}</span>
+        </div>
+      </div>
+      <div style="padding:14px 16px">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:12px">
+          <div style="background:#fafaf8;border-radius:7px;padding:8px 11px;border:1px solid #2a2a2a"><div style="font-size:9px;color:#aaa;font-weight:700;text-transform:uppercase;margin-bottom:3px">Model</div><div style="font-size:12px;font-weight:700">${modelName(x.modelId)}</div></div>
+          <div style="background:#fafaf8;border-radius:7px;padding:8px 11px;border:1px solid #2a2a2a"><div style="font-size:9px;color:#aaa;font-weight:700;text-transform:uppercase;margin-bottom:3px">RR</div><div style="font-size:12px;font-weight:700">${x.arr||'—'}</div></div>
+          <div style="background:#fafaf8;border-radius:7px;padding:8px 11px;border:1px solid #2a2a2a"><div style="font-size:9px;color:#aaa;font-weight:700;text-transform:uppercase;margin-bottom:3px">Outcome</div><div style="font-size:12px;font-weight:700;color:${oc}">${x.outcome||'—'}</div></div>
+          <div style="background:#fafaf8;border-radius:7px;padding:8px 11px;border:1px solid #2a2a2a"><div style="font-size:9px;color:#aaa;font-weight:700;text-transform:uppercase;margin-bottom:3px">Emotion</div><div style="font-size:12px;font-weight:700">${x.entryEmo||'—'}</div></div>
+        </div>
+        ${(x.confs||[]).length?`<div style="margin-bottom:10px">${(x.confs||[]).map(c=>`<span style="font-size:10px;padding:2px 8px;border-radius:12px;background:#EEEDFE;color:#3C3489;margin-right:4px;font-weight:600">${c}</span>`).join('')}</div>`:''}
+        ${x.notes?`<div style="background:#fffdf0;border-left:3px solid #EF9F27;padding:8px 12px;border-radius:0 6px 6px 0;margin-bottom:10px;font-size:12px;color:#aaa;line-height:1.6">${x.notes}</div>`:''}
+        ${x.mistake?`<div style="background:#fff5f5;border-left:3px solid #E24B4A;padding:6px 12px;border-radius:0 6px 6px 0;margin-bottom:10px;font-size:11px;color:#A32D2D"><strong>Mistake:</strong> ${x.mistake}</div>`:''}
+        <div style="display:flex;gap:10px">${chartImgs}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const html=`<!DOCTYPE html><html lang="th"><head><meta charset="utf-8">
+<title>Weekly Report ${weekLabel}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;background:#fff;padding:30px;max-width:960px;margin:0 auto;font-size:13px}
+@page{margin:15mm;size:A4}
+@media print{body{padding:0;max-width:none}.no-print{display:none}}
+h1{font-size:24px;font-weight:800;color:#a78bfa;margin-bottom:4px}
+.meta{font-size:13px;color:#888;margin-bottom:22px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.scard{background:#fafaf8;border-radius:9px;padding:13px 16px;border:1px solid #2a2a2a}
+.sl{font-size:10px;color:#aaa;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.sv{font-size:22px;font-weight:800}
+.divider{height:2px;background:#a78bfa;margin:20px 0 16px;border-radius:2px}
+.sec-title{font-size:14px;font-weight:800;color:#1a1a1a;margin-bottom:14px;text-transform:uppercase;letter-spacing:.04em}
+</style>
+</head><body>
+<div class="no-print" style="background:#e6f1fb;padding:12px 16px;border-radius:8px;margin-bottom:20px;font-size:13px;color:#a78bfa">
+  กด <strong>Ctrl+P</strong> (หรือ Cmd+P บน Mac) เพื่อ Print เป็น PDF &nbsp;·&nbsp; เลือก "Save as PDF" ใน Destination
+</div>
+<h1>Weekly Trading Report</h1>
+<div class="meta">${acc?.name||'Account'} &nbsp;·&nbsp; ${weekLabel} &nbsp;·&nbsp; Generated ${new Date().toLocaleDateString('th-TH')}</div>
+<div class="divider"></div>
+<div class="sec-title">Summary</div>
+<div class="grid">
+  <div class="scard"><div class="sl">Total Trades</div><div class="sv" style="color:#a78bfa">${wt.length}</div></div>
+  <div class="scard"><div class="sl">Net P&L</div><div class="sv" style="color:${net>=0?'#1D9E75':'#E24B4A'}">${net>=0?'+':''}$${net.toFixed(2)}</div></div>
+  <div class="scard"><div class="sl">Win Rate</div><div class="sv" style="color:${wr>=50?'#1D9E75':'#E24B4A'}">${wr}%</div></div>
+  <div class="scard"><div class="sl">Avg RR</div><div class="sv">${avgRR}</div></div>
+  <div class="scard"><div class="sl">W / L</div><div class="sv">${w} / ${wt.length-w}</div></div>
+  <div class="scard"><div class="sl">Profit Factor</div><div class="sv">${pfVal()}</div></div>
+  <div class="scard"><div class="sl">Grade A</div><div class="sv" style="color:#0F6E56">${wt.filter(x=>x.grade==='A').length}</div></div>
+  <div class="scard"><div class="sl">Top Mistakes</div><div style="font-size:11px;color:#A32D2D;margin-top:5px;font-weight:700;line-height:1.5">${topM}</div></div>
+</div>
+<div class="divider"></div>
+<div class="sec-title">Trade Details — ${wt.length} trades</div>
+${tradesHtml}
+<div style="margin-top:24px;text-align:center;font-size:10px;color:#ccc;padding-top:12px;border-top:1px solid #f0f0ec">
+  Trading Journal Pro &nbsp;·&nbsp; ${acc?.name||''} &nbsp;·&nbsp; Week ${weekLabel}
+</div>
+</body></html>`;
+
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const win=window.open(url,'_blank');
+  if(win){setTimeout(()=>{try{win.print()}catch(e){}},1000)}
+  else{alert('กรุณาอนุญาต popup ใน browser แล้วลองใหม่ครับ')}
+}
+
+function toggleTag(btn){btn.classList.toggle('on')}
+function selEmo(type,btn,val){
+  document.getElementById(type+'-emo').querySelectorAll('.emo-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  if(type==='entry')S.entryEmo=val;else S.exitEmo=val;
+}
+function triggerUpload(id){document.getElementById(id).click()}
+function loadChart(inp,slotId,field){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    const sl=document.getElementById(slotId);
+    let img=sl.querySelector('img');if(!img){img=document.createElement('img');sl.appendChild(img)}
+    img.src=e.target.result;sl.querySelectorAll('span').forEach(s=>s.style.display='none');
+    S['_'+field]=e.target.result;
+  };
+  r.readAsDataURL(f);
+}
+
+function saveTrade(){
+  const gross=parseFloat(document.getElementById('f-gross').value)||0;
+  const fees=parseFloat(document.getElementById('f-fees').value)||0;
+  const swap=parseFloat(document.getElementById('f-swap').value)||0;
+  const ni=parseFloat(document.getElementById('f-net').value);
+  const net=isNaN(ni)?(gross-fees-swap):ni;
+  const confs=[...document.querySelectorAll('#conf-tags .conf-tag.on')].map(b=>b.textContent);
+  const t={
+    id:Date.now(),accId:S.currentAcc,
+    date:document.getElementById('f-date').value,
+    sym:document.getElementById('f-sym').value,
+    pos:document.getElementById('f-pos').value,
+    
+    dur:document.getElementById('f-dur').value,
+    entry:parseFloat(document.getElementById('f-entry').value)||0,
+    modelId:document.getElementById('f-model').value,
+    ses:document.getElementById('f-ses').value,
+    etf:document.getElementById('f-etf').value,
+    ttype:document.getElementById('f-ttype').value,
+    mkt:document.getElementById('f-mkt').value,
+    bias:document.getElementById('f-bias').value,
+    news:document.getElementById('f-news').value,
+    kl:document.getElementById('f-kl').value,
+    confs,
+    ot:document.getElementById('f-ot').value,
+    grade:document.getElementById('f-grade').value,
+    arr:parseFloat(document.getElementById('f-arr').value)||0,
+    riskR:parseFloat(document.getElementById('f-risk-r').value)||0,
+    gross,fees,swap,net,
+    slm:document.getElementById('f-slm').value,
+    tpm:document.getElementById('f-tpm').value,
+    outcome:document.getElementById('f-outcome').value,
+    mistake:document.getElementById('f-mistake').value,
+    followed:document.getElementById('f-followed').checked,
+    plan:document.getElementById('f-plan').value,
+    entryEmo:S.entryEmo,exitEmo:S.exitEmo,
+    notes:document.getElementById('f-notes').value,
+    htf:S._htf||'',mtf:S._mtf||'',ltf:S._ltf||'',
+    
+  };
+  if(!t.date||!t.sym){alert('กรุณากรอก Date และ Symbol');return}
+  S.trades.unshift(t);saveTrades();
+  const msg=document.getElementById('save-msg');msg.style.display='block';
+  setTimeout(()=>msg.style.display='none',2500);
+  clearForm();renderAccSelector();
+}
+
+function clearForm(){
+  ['f-date','f-sym','f-dur','f-entry','f-kl','f-arr','f-risk-r','f-gross','f-fees','f-swap','f-net','f-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  document.getElementById('f-fees').value='0';document.getElementById('f-swap').value='0';
+  document.getElementById('f-followed').checked=false;
+  document.querySelectorAll('#conf-tags .conf-tag.on').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.emo-btn.on').forEach(b=>b.classList.remove('on'));
+    S._htf=S._mtf=S._ltf='';S.entryEmo='';S.exitEmo='';
+  ['slot-htf','slot-mtf','slot-ltf'].forEach(id=>{
+    const sl=document.getElementById(id);const img=sl.querySelector('img');
+    if(img)img.remove();sl.querySelectorAll('span').forEach(s=>s.style.display='');
+  });
+}
+
+function deleteTrade(id){
+  if(!confirm('ลบ trade นี้?'))return;
+  S.trades=S.trades.filter(x=>x.id!==id);saveTrades();renderHistory();renderAccSelector();
+}
+
+function exportCSV(){
+  const t=accTrades();
+  const h=['Date','Symbol','Account','Direction','Lots','Model','Session','ETF','Market','Bias','Confluences','Grade','Actual RR','Net PnL','Outcome','Entry Emotion','Exit Emotion','Followed Plan','Mistake','Notes'];
+  const rows=t.map(x=>[x.date,x.sym,S.accounts.find(a=>a.id===x.accId)?.name||'',x.pos,x.lot,modelName(x.modelId),x.ses,x.etf,x.mkt,x.bias,(x.confs||[]).join('|'),x.grade,x.arr,x.net,x.outcome,x.entryEmo,x.exitEmo,x.followed?'Yes':'No',x.mistake,`"${(x.notes||'').replace(/"/g,'""')}"`]);
+  const csv=[h,...rows].map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download='trades_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+}
+
+document.getElementById('f-gross').addEventListener('input',autoNet);
+document.getElementById('f-fees').addEventListener('input',autoNet);
+document.getElementById('f-swap').addEventListener('input',autoNet);
+function autoNet(){
+  const g=parseFloat(document.getElementById('f-gross').value)||0;
+  const f=parseFloat(document.getElementById('f-fees').value)||0;
+  const sw=parseFloat(document.getElementById('f-swap').value)||0;
+  document.getElementById('f-net').value=(g-f-sw).toFixed(2);
+}
+
+document.getElementById('f-date').valueAsDate=new Date();
+load();renderAccSelector();renderDash();
+</script>
+</body></html>
