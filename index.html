@@ -1335,7 +1335,7 @@ function saveTrade(){
   const confs=[...document.querySelectorAll('#conf-tags .conf-tag.on')].map(b=>b.textContent);
   const t={
     id:Date.now(),accId:S.currentAcc,
-    date:document.getElementById('f-date').value,
+    date:document.getElementById('f-date').value.replace(/-/g,'/'),
     sym:document.getElementById('f-sym').value,
     pos:document.getElementById('f-pos').value,
     
@@ -1410,6 +1410,9 @@ function autoNet(){
 }
 
 document.getElementById('f-date').valueAsDate=new Date();
+// Normalize all trade dates to YYYY/MM/DD
+S.trades = S.trades.map(t=>({...t, date:(t.date||'').replace(/-/g,'/')}));
+saveTrades();
 load();renderAccSelector();renderDash();loadCustomConfsIntoForm();
 
 let _editId = null;
@@ -1429,7 +1432,7 @@ function openEditModal(id) {
 
   // Fill all fields
   document.getElementById('edit-trade-id').textContent = `#${id}`;
-  document.getElementById('e-date').value = t.date || '';
+  document.getElementById('e-date').value = (t.date||'').replace(/\//g,'-');
   document.getElementById('e-dur').value = t.dur || '';
   document.getElementById('e-kl').value = t.kl || '';
   document.getElementById('e-arr').value = t.arr || '';
@@ -1488,7 +1491,7 @@ function saveEdit() {
 
   S.trades[idx] = {
     ...S.trades[idx],
-    date:     document.getElementById('e-date').value,
+    date:     document.getElementById('e-date').value.replace(/-/g,'/'),
     sym:      document.getElementById('e-sym').value,
     pos:      document.getElementById('e-pos').value,
     dur:      document.getElementById('e-dur').value,
