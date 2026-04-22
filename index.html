@@ -130,7 +130,7 @@ function saveEdit() {
 
 
 // ===== CONFLUENCE MANAGEMENT =====
-const DEFAULT_CONFS = ['LG sweep','LTF POI Mitigation','MS Break','FVG','iFVG','Order Block','Breaker Block','Supply Zone','Demand Zone','Inversion FVG','PDH/PDL','LTF sweep'];
+const DEFAULT_CONFS = ['LG sweep','LTF POI Mitigation','MS Break','FVG','iFVG','Order Block','Breaker Block','Supply Zone','Demand Zone','Inversion FVG','PDH/PDL','LTF sweep','MR-','MR+'];
 const CUSTOM_CONF_KEY = 'tj_custom_confs';
 
 function getCustomConfs() {
@@ -588,6 +588,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <button class="conf-tag" onclick="toggleTag(this)">Inversion FVG</button>
         <button class="conf-tag" onclick="toggleTag(this)">PDH/PDL</button>
         <button class="conf-tag" onclick="toggleTag(this)">LTF sweep</button>
+        <button class="conf-tag" onclick="toggleTag(this)">MR-</button>
+        <button class="conf-tag" onclick="toggleTag(this)">MR+</button>
       </div>
       <div style="display:flex;gap:6px;margin-top:8px;align-items:center">
         <input type="text" id="conf-custom-input" placeholder="เพิ่ม confluence ใหม่..." style="font-size:12px;padding:5px 10px;border:1px solid #e0e0e0;border-radius:20px;background:#fff;color:#1a1a1a;flex:1;max-width:240px" onkeydown="if(event.key==='Enter'){addCustomConf();event.preventDefault()}">
