@@ -4,236 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Trading Journal Pro</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js">
-let _editId = null;
-let _editEntryEmo = '';
-let _editExitEmo = '';
-
-function openEditModal(id) {
-  const t = S.trades.find(x => x.id === id);
-  if (!t) return;
-  _editId = id;
-  _editEntryEmo = t.entryEmo || '';
-  _editExitEmo = t.exitEmo || '';
-
-  // Populate model dropdown
-  const msel = document.getElementById('e-model');
-  msel.innerHTML = '<option value="">— เลือก Model —</option>' + S.models.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
-
-  // Fill all fields
-  document.getElementById('edit-trade-id').textContent = `#${id}`;
-  document.getElementById('e-date').value = t.date || '';
-  document.getElementById('e-dur').value = t.dur || '';
-  document.getElementById('e-kl').value = t.kl || '';
-  document.getElementById('e-arr').value = t.arr || '';
-  document.getElementById('e-gross').value = t.gross || '';
-  document.getElementById('e-fees').value = t.fees || '';
-  document.getElementById('e-swap').value = t.swap || '';
-  document.getElementById('e-net').value = t.net || '';
-  document.getElementById('e-notes').value = t.notes || '';
-  document.getElementById('e-followed').checked = t.followed || false;
-
-  // Set selects
-  const setSelect = (id, val) => { const el = document.getElementById(id); if(el) [...el.options].forEach(o => { o.selected = o.value === val || o.text === val; }); };
-  setSelect('e-sym', t.sym);
-  setSelect('e-pos', t.pos);
-  setSelect('e-ses', t.ses);
-  setSelect('e-ttype', t.ttype);
-  setSelect('e-bias', t.bias);
-  setSelect('e-mkt', t.mkt);
-  setSelect('e-model', t.modelId);
-  setSelect('e-etf', t.etf);
-  setSelect('e-ot', t.ot);
-  setSelect('e-slm', t.slm);
-  setSelect('e-tpm', t.tpm);
-  setSelect('e-outcome', t.outcome);
-  setSelect('e-grade', t.grade);
-  setSelect('e-mistake', t.mistake);
-
-  // Set emotions
-  document.querySelectorAll('#e-entry-emo .emo-btn').forEach(b => {
-    b.classList.toggle('on', b.textContent === t.entryEmo);
-  });
-  document.querySelectorAll('#e-exit-emo .emo-btn').forEach(b => {
-    b.classList.toggle('on', b.textContent === t.exitEmo);
-  });
-
-  buildEditConfTags(t.confs || []);
-  openModal('modal-edit');
-}
-
-function selEditEmo(type, btn, val) {
-  document.getElementById(`e-${type}-emo`).querySelectorAll('.emo-btn').forEach(b => b.classList.remove('on'));
-  btn.classList.add('on');
-  if (type === 'entry') _editEntryEmo = val;
-  else _editExitEmo = val;
-}
-
-function saveEdit() {
-  const idx = S.trades.findIndex(x => x.id === _editId);
-  if (idx === -1) return;
-
-  const gross = parseFloat(document.getElementById('e-gross').value) || 0;
-  const fees  = parseFloat(document.getElementById('e-fees').value)  || 0;
-  const swap  = parseFloat(document.getElementById('e-swap').value)  || 0;
-  const netIn = parseFloat(document.getElementById('e-net').value);
-  const net   = isNaN(netIn) ? (gross - fees - swap) : netIn;
-
-  S.trades[idx] = {
-    ...S.trades[idx],
-    date:     document.getElementById('e-date').value,
-    sym:      document.getElementById('e-sym').value,
-    pos:      document.getElementById('e-pos').value,
-    dur:      document.getElementById('e-dur').value,
-    ses:      document.getElementById('e-ses').value,
-    ttype:    document.getElementById('e-ttype').value,
-    bias:     document.getElementById('e-bias').value,
-    mkt:      document.getElementById('e-mkt').value,
-    modelId:  document.getElementById('e-model').value,
-    etf:      document.getElementById('e-etf').value,
-    kl:       document.getElementById('e-kl').value,
-    ot:       document.getElementById('e-ot').value,
-    arr:      parseFloat(document.getElementById('e-arr').value) || 0,
-    gross, fees, swap, net,
-    slm:      document.getElementById('e-slm').value,
-    tpm:      document.getElementById('e-tpm').value,
-    outcome:  document.getElementById('e-outcome').value,
-    grade:    document.getElementById('e-grade').value,
-    mistake:  document.getElementById('e-mistake').value,
-    followed: document.getElementById('e-followed').checked,
-    entryEmo: _editEntryEmo,
-    exitEmo:  _editExitEmo,
-    notes:    document.getElementById('e-notes').value,
-    confs:    getEditSelectedConfs(),
-  };
-
-  saveTrades();
-  closeModal('modal-edit');
-  renderHistory();
-  renderAccSelector();
-
-  // Show success flash
-  const msg = document.getElementById('save-msg');
-  if (msg) { msg.textContent = 'แก้ไขสำเร็จ!'; msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 2000); }
-}
-
-// Auto-calc net in edit modal
-['e-gross','e-fees','e-swap'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) el.addEventListener('input', () => {
-    const g = parseFloat(document.getElementById('e-gross').value) || 0;
-    const f = parseFloat(document.getElementById('e-fees').value)  || 0;
-    const s = parseFloat(document.getElementById('e-swap').value)  || 0;
-    document.getElementById('e-net').value = (g - f - s).toFixed(2);
-  });
-});
-
-
-// ===== CONFLUENCE MANAGEMENT =====
-const DEFAULT_CONFS = ['LG sweep','LTF POI Mitigation','MS Break','FVG','iFVG','Order Block','Breaker Block','Supply Zone','Demand Zone','Inversion FVG','PDH/PDL','LTF sweep','MR-','MR+'];
-const CUSTOM_CONF_KEY = 'tj_custom_confs';
-
-function getCustomConfs() {
-  try { return JSON.parse(localStorage.getItem(CUSTOM_CONF_KEY)||'[]'); } catch(e) { return []; }
-}
-function saveCustomConfs(arr) {
-  localStorage.setItem(CUSTOM_CONF_KEY, JSON.stringify(arr));
-}
-
-function addCustomConf() {
-  const inp = document.getElementById('conf-custom-input');
-  const val = inp.value.trim();
-  if (!val) return;
-  // Check not duplicate
-  const existing = [...document.querySelectorAll('#conf-tags .conf-tag')].map(b=>b.dataset.label||b.textContent);
-  if (existing.includes(val)) { inp.value=''; return; }
-  // Save to persistent list
-  const customs = getCustomConfs();
-  if (!customs.includes(val)) { customs.push(val); saveCustomConfs(customs); }
-  // Add button and auto-select
-  const btn = document.createElement('button');
-  btn.className = 'conf-tag on';
-  btn.textContent = val;
-  btn.dataset.label = val;
-  btn.onclick = function(){ toggleTag(this); };
-  // Add remove x
-  const x = document.createElement('span');
-  x.textContent = ' ×';
-  x.style.cssText = 'margin-left:3px;opacity:.5;cursor:pointer;font-size:12px';
-  x.onclick = function(e){ e.stopPropagation(); removeCustomConf(val, btn); };
-  btn.appendChild(x);
-  document.getElementById('conf-tags').appendChild(btn);
-  inp.value = '';
-}
-
-function removeCustomConf(val, btn) {
-  const customs = getCustomConfs().filter(c => c !== val);
-  saveCustomConfs(customs);
-  btn.remove();
-}
-
-function loadCustomConfsIntoForm() {
-  const customs = getCustomConfs();
-  const existing = [...document.querySelectorAll('#conf-tags .conf-tag')].map(b=>b.dataset.label||b.textContent.replace(' ×','').trim());
-  customs.forEach(val => {
-    if (existing.includes(val)) return;
-    const btn = document.createElement('button');
-    btn.className = 'conf-tag';
-    btn.textContent = val;
-    btn.dataset.label = val;
-    btn.onclick = function(){ toggleTag(this); };
-    const x = document.createElement('span');
-    x.textContent = ' ×';
-    x.style.cssText = 'margin-left:3px;opacity:.5;cursor:pointer;font-size:12px';
-    x.onclick = function(e){ e.stopPropagation(); removeCustomConf(val, btn); };
-    btn.appendChild(x);
-    document.getElementById('conf-tags').appendChild(btn);
-  });
-}
-
-// EDIT MODAL CONFLUENCES
-function buildEditConfTags(selectedConfs) {
-  const container = document.getElementById('e-conf-tags');
-  if (!container) return;
-  const allConfs = [...DEFAULT_CONFS, ...getCustomConfs()];
-  container.innerHTML = '';
-  allConfs.forEach(val => {
-    const btn = document.createElement('button');
-    btn.className = 'conf-tag' + (selectedConfs.includes(val) ? ' on' : '');
-    btn.textContent = val;
-    btn.dataset.label = val;
-    btn.onclick = function(){ this.classList.toggle('on'); };
-    container.appendChild(btn);
-  });
-}
-
-function addEditCustomConf() {
-  const inp = document.getElementById('e-conf-custom-input');
-  const val = inp.value.trim();
-  if (!val) return;
-  const container = document.getElementById('e-conf-tags');
-  const existing = [...container.querySelectorAll('.conf-tag')].map(b=>b.dataset.label||b.textContent);
-  if (existing.includes(val)) { inp.value=''; return; }
-  // Save to persistent list
-  const customs = getCustomConfs();
-  if (!customs.includes(val)) { customs.push(val); saveCustomConfs(customs); }
-  // Add to edit modal and select it
-  const btn = document.createElement('button');
-  btn.className = 'conf-tag on';
-  btn.textContent = val;
-  btn.dataset.label = val;
-  btn.onclick = function(){ this.classList.toggle('on'); };
-  container.appendChild(btn);
-  // Also add to log form if not there
-  loadCustomConfsIntoForm();
-  inp.value = '';
-}
-
-function getEditSelectedConfs() {
-  return [...document.querySelectorAll('#e-conf-tags .conf-tag.on')].map(b => b.dataset.label || b.textContent);
-}
-
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a1a;min-height:100vh}
@@ -565,7 +336,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <select id="f-model"><option value="">— เลือก Model —</option></select>
       </div>
       <div class="fg"><label>Entry Timeframe</label><select id="f-etf"><option>1m</option><option>5m</option><option>15m</option><option>1h</option><option>4h</option></select></div>
-      <div class="fg"><label>Market Conditions</label><select id="f-mkt"><option>Strong uptrend (HT)</option><option>Strong downtrend (HT)</option><option>Ranging</option><option>Volatile</option><option>Trending</option></select></div>
+      <div class="fg"><label>Market Conditions</label><select id="f-mkt"><option>Strong uptrend (HT)</option><option>Strong downtrend (HT)</option><option>15m Strong Uptrend</option><option>15m Strong Downtrend</option><option>Ranging</option><option>Volatile</option><option>Trending</option></select></div>
       <div class="fg"><label>Bias</label><select id="f-bias"><option>Bullish</option><option>Bearish</option><option>Neutral</option></select></div>
     </div>
     <div class="fr">
@@ -1451,7 +1222,7 @@ ${tradesHtml}
         <div class="fg"><label>Duration</label><input type="text" id="e-dur" placeholder="23m, 2h..."></div>
         <div class="fg"><label>Type of Trade</label><select id="e-ttype"><option>Intraday</option><option>Swing</option><option>Scalp</option></select></div>
         <div class="fg"><label>Bias</label><select id="e-bias"><option>Bullish</option><option>Bearish</option><option>Neutral</option></select></div>
-        <div class="fg"><label>Market Conditions</label><select id="e-mkt"><option>Strong uptrend (HT)</option><option>Strong downtrend (HT)</option><option>Ranging</option><option>Volatile</option><option>Trending</option></select></div>
+        <div class="fg"><label>Market Conditions</label><select id="e-mkt"><option>Strong uptrend (HT)</option><option>Strong downtrend (HT)</option><option>15m Strong Uptrend</option><option>15m Strong Downtrend</option><option>Ranging</option><option>Volatile</option><option>Trending</option></select></div>
       </div>
     </div>
 
@@ -1640,6 +1411,236 @@ function autoNet(){
 
 document.getElementById('f-date').valueAsDate=new Date();
 load();renderAccSelector();renderDash();loadCustomConfsIntoForm();
+
+let _editId = null;
+let _editEntryEmo = '';
+let _editExitEmo = '';
+
+function openEditModal(id) {
+  const t = S.trades.find(x => x.id === id);
+  if (!t) return;
+  _editId = id;
+  _editEntryEmo = t.entryEmo || '';
+  _editExitEmo = t.exitEmo || '';
+
+  // Populate model dropdown
+  const msel = document.getElementById('e-model');
+  msel.innerHTML = '<option value="">— เลือก Model —</option>' + S.models.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+
+  // Fill all fields
+  document.getElementById('edit-trade-id').textContent = `#${id}`;
+  document.getElementById('e-date').value = t.date || '';
+  document.getElementById('e-dur').value = t.dur || '';
+  document.getElementById('e-kl').value = t.kl || '';
+  document.getElementById('e-arr').value = t.arr || '';
+  document.getElementById('e-gross').value = t.gross || '';
+  document.getElementById('e-fees').value = t.fees || '';
+  document.getElementById('e-swap').value = t.swap || '';
+  document.getElementById('e-net').value = t.net || '';
+  document.getElementById('e-notes').value = t.notes || '';
+  document.getElementById('e-followed').checked = t.followed || false;
+
+  // Set selects
+  const setSelect = (id, val) => { const el = document.getElementById(id); if(el) [...el.options].forEach(o => { o.selected = o.value === val || o.text === val; }); };
+  setSelect('e-sym', t.sym);
+  setSelect('e-pos', t.pos);
+  setSelect('e-ses', t.ses);
+  setSelect('e-ttype', t.ttype);
+  setSelect('e-bias', t.bias);
+  setSelect('e-mkt', t.mkt);
+  setSelect('e-model', t.modelId);
+  setSelect('e-etf', t.etf);
+  setSelect('e-ot', t.ot);
+  setSelect('e-slm', t.slm);
+  setSelect('e-tpm', t.tpm);
+  setSelect('e-outcome', t.outcome);
+  setSelect('e-grade', t.grade);
+  setSelect('e-mistake', t.mistake);
+
+  // Set emotions
+  document.querySelectorAll('#e-entry-emo .emo-btn').forEach(b => {
+    b.classList.toggle('on', b.textContent === t.entryEmo);
+  });
+  document.querySelectorAll('#e-exit-emo .emo-btn').forEach(b => {
+    b.classList.toggle('on', b.textContent === t.exitEmo);
+  });
+
+  buildEditConfTags(t.confs || []);
+  openModal('modal-edit');
+}
+
+function selEditEmo(type, btn, val) {
+  document.getElementById(`e-${type}-emo`).querySelectorAll('.emo-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  if (type === 'entry') _editEntryEmo = val;
+  else _editExitEmo = val;
+}
+
+function saveEdit() {
+  const idx = S.trades.findIndex(x => x.id === _editId);
+  if (idx === -1) return;
+
+  const gross = parseFloat(document.getElementById('e-gross').value) || 0;
+  const fees  = parseFloat(document.getElementById('e-fees').value)  || 0;
+  const swap  = parseFloat(document.getElementById('e-swap').value)  || 0;
+  const netIn = parseFloat(document.getElementById('e-net').value);
+  const net   = isNaN(netIn) ? (gross - fees - swap) : netIn;
+
+  S.trades[idx] = {
+    ...S.trades[idx],
+    date:     document.getElementById('e-date').value,
+    sym:      document.getElementById('e-sym').value,
+    pos:      document.getElementById('e-pos').value,
+    dur:      document.getElementById('e-dur').value,
+    ses:      document.getElementById('e-ses').value,
+    ttype:    document.getElementById('e-ttype').value,
+    bias:     document.getElementById('e-bias').value,
+    mkt:      document.getElementById('e-mkt').value,
+    modelId:  document.getElementById('e-model').value,
+    etf:      document.getElementById('e-etf').value,
+    kl:       document.getElementById('e-kl').value,
+    ot:       document.getElementById('e-ot').value,
+    arr:      parseFloat(document.getElementById('e-arr').value) || 0,
+    gross, fees, swap, net,
+    slm:      document.getElementById('e-slm').value,
+    tpm:      document.getElementById('e-tpm').value,
+    outcome:  document.getElementById('e-outcome').value,
+    grade:    document.getElementById('e-grade').value,
+    mistake:  document.getElementById('e-mistake').value,
+    followed: document.getElementById('e-followed').checked,
+    entryEmo: _editEntryEmo,
+    exitEmo:  _editExitEmo,
+    notes:    document.getElementById('e-notes').value,
+    confs:    getEditSelectedConfs(),
+  };
+
+  saveTrades();
+  closeModal('modal-edit');
+  renderHistory();
+  renderAccSelector();
+
+  // Show success flash
+  const msg = document.getElementById('save-msg');
+  if (msg) { msg.textContent = 'แก้ไขสำเร็จ!'; msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 2000); }
+}
+
+// Auto-calc net in edit modal
+['e-gross','e-fees','e-swap'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', () => {
+    const g = parseFloat(document.getElementById('e-gross').value) || 0;
+    const f = parseFloat(document.getElementById('e-fees').value)  || 0;
+    const s = parseFloat(document.getElementById('e-swap').value)  || 0;
+    document.getElementById('e-net').value = (g - f - s).toFixed(2);
+  });
+});
+
+
+// ===== CONFLUENCE MANAGEMENT =====
+const DEFAULT_CONFS = ['LG sweep','LTF POI Mitigation','MS Break','FVG','iFVG','Order Block','Breaker Block','Supply Zone','Demand Zone','Inversion FVG','PDH/PDL','LTF sweep','MR-','MR+'];
+const CUSTOM_CONF_KEY = 'tj_custom_confs';
+
+function getCustomConfs() {
+  try { return JSON.parse(localStorage.getItem(CUSTOM_CONF_KEY)||'[]'); } catch(e) { return []; }
+}
+function saveCustomConfs(arr) {
+  localStorage.setItem(CUSTOM_CONF_KEY, JSON.stringify(arr));
+}
+
+function addCustomConf() {
+  const inp = document.getElementById('conf-custom-input');
+  const val = inp.value.trim();
+  if (!val) return;
+  // Check not duplicate
+  const existing = [...document.querySelectorAll('#conf-tags .conf-tag')].map(b=>b.dataset.label||b.textContent);
+  if (existing.includes(val)) { inp.value=''; return; }
+  // Save to persistent list
+  const customs = getCustomConfs();
+  if (!customs.includes(val)) { customs.push(val); saveCustomConfs(customs); }
+  // Add button and auto-select
+  const btn = document.createElement('button');
+  btn.className = 'conf-tag on';
+  btn.textContent = val;
+  btn.dataset.label = val;
+  btn.onclick = function(){ toggleTag(this); };
+  // Add remove x
+  const x = document.createElement('span');
+  x.textContent = ' ×';
+  x.style.cssText = 'margin-left:3px;opacity:.5;cursor:pointer;font-size:12px';
+  x.onclick = function(e){ e.stopPropagation(); removeCustomConf(val, btn); };
+  btn.appendChild(x);
+  document.getElementById('conf-tags').appendChild(btn);
+  inp.value = '';
+}
+
+function removeCustomConf(val, btn) {
+  const customs = getCustomConfs().filter(c => c !== val);
+  saveCustomConfs(customs);
+  btn.remove();
+}
+
+function loadCustomConfsIntoForm() {
+  const customs = getCustomConfs();
+  const existing = [...document.querySelectorAll('#conf-tags .conf-tag')].map(b=>b.dataset.label||b.textContent.replace(' ×','').trim());
+  customs.forEach(val => {
+    if (existing.includes(val)) return;
+    const btn = document.createElement('button');
+    btn.className = 'conf-tag';
+    btn.textContent = val;
+    btn.dataset.label = val;
+    btn.onclick = function(){ toggleTag(this); };
+    const x = document.createElement('span');
+    x.textContent = ' ×';
+    x.style.cssText = 'margin-left:3px;opacity:.5;cursor:pointer;font-size:12px';
+    x.onclick = function(e){ e.stopPropagation(); removeCustomConf(val, btn); };
+    btn.appendChild(x);
+    document.getElementById('conf-tags').appendChild(btn);
+  });
+}
+
+// EDIT MODAL CONFLUENCES
+function buildEditConfTags(selectedConfs) {
+  const container = document.getElementById('e-conf-tags');
+  if (!container) return;
+  const allConfs = [...DEFAULT_CONFS, ...getCustomConfs()];
+  container.innerHTML = '';
+  allConfs.forEach(val => {
+    const btn = document.createElement('button');
+    btn.className = 'conf-tag' + (selectedConfs.includes(val) ? ' on' : '');
+    btn.textContent = val;
+    btn.dataset.label = val;
+    btn.onclick = function(){ this.classList.toggle('on'); };
+    container.appendChild(btn);
+  });
+}
+
+function addEditCustomConf() {
+  const inp = document.getElementById('e-conf-custom-input');
+  const val = inp.value.trim();
+  if (!val) return;
+  const container = document.getElementById('e-conf-tags');
+  const existing = [...container.querySelectorAll('.conf-tag')].map(b=>b.dataset.label||b.textContent);
+  if (existing.includes(val)) { inp.value=''; return; }
+  // Save to persistent list
+  const customs = getCustomConfs();
+  if (!customs.includes(val)) { customs.push(val); saveCustomConfs(customs); }
+  // Add to edit modal and select it
+  const btn = document.createElement('button');
+  btn.className = 'conf-tag on';
+  btn.textContent = val;
+  btn.dataset.label = val;
+  btn.onclick = function(){ this.classList.toggle('on'); };
+  container.appendChild(btn);
+  // Also add to log form if not there
+  loadCustomConfsIntoForm();
+  inp.value = '';
+}
+
+function getEditSelectedConfs() {
+  return [...document.querySelectorAll('#e-conf-tags .conf-tag.on')].map(b => b.dataset.label || b.textContent);
+}
+
+
 </script>
 
 <!-- MODAL: EDIT TRADE -->
@@ -1681,7 +1682,7 @@ load();renderAccSelector();renderDash();loadCustomConfsIntoForm();
         <div class="fg"><label>Duration</label><input type="text" id="e-dur" placeholder="23m, 2h..."></div>
         <div class="fg"><label>Type of Trade</label><select id="e-ttype"><option>Intraday</option><option>Swing</option><option>Scalp</option></select></div>
         <div class="fg"><label>Bias</label><select id="e-bias"><option>Bullish</option><option>Bearish</option><option>Neutral</option></select></div>
-        <div class="fg"><label>Market Conditions</label><select id="e-mkt"><option>Strong uptrend (HT)</option><option>Strong downtrend (HT)</option><option>Ranging</option><option>Volatile</option><option>Trending</option></select></div>
+        <div class="fg"><label>Market Conditions</label><select id="e-mkt"><option>Strong uptrend (HT)</option><option>Strong downtrend (HT)</option><option>15m Strong Uptrend</option><option>15m Strong Downtrend</option><option>Ranging</option><option>Volatile</option><option>Trending</option></select></div>
       </div>
     </div>
 
