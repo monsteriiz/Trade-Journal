@@ -58,6 +58,7 @@ function openEditModal(id) {
     b.classList.toggle('on', b.textContent === t.exitEmo);
   });
 
+  buildEditConfTags(t.confs || []);
   openModal('modal-edit');
 }
 
@@ -103,6 +104,7 @@ function saveEdit() {
     entryEmo: _editEntryEmo,
     exitEmo:  _editExitEmo,
     notes:    document.getElementById('e-notes').value,
+    confs:    getEditSelectedConfs(),
   };
 
   saveTrades();
@@ -125,6 +127,111 @@ function saveEdit() {
     document.getElementById('e-net').value = (g - f - s).toFixed(2);
   });
 });
+
+
+// ===== CONFLUENCE MANAGEMENT =====
+const DEFAULT_CONFS = ['LG sweep','LTF POI Mitigation','MS Break','FVG','iFVG','Order Block','Breaker Block','Supply Zone','Demand Zone','Inversion FVG','PDH/PDL','LTF sweep'];
+const CUSTOM_CONF_KEY = 'tj_custom_confs';
+
+function getCustomConfs() {
+  try { return JSON.parse(localStorage.getItem(CUSTOM_CONF_KEY)||'[]'); } catch(e) { return []; }
+}
+function saveCustomConfs(arr) {
+  localStorage.setItem(CUSTOM_CONF_KEY, JSON.stringify(arr));
+}
+
+function addCustomConf() {
+  const inp = document.getElementById('conf-custom-input');
+  const val = inp.value.trim();
+  if (!val) return;
+  // Check not duplicate
+  const existing = [...document.querySelectorAll('#conf-tags .conf-tag')].map(b=>b.dataset.label||b.textContent);
+  if (existing.includes(val)) { inp.value=''; return; }
+  // Save to persistent list
+  const customs = getCustomConfs();
+  if (!customs.includes(val)) { customs.push(val); saveCustomConfs(customs); }
+  // Add button and auto-select
+  const btn = document.createElement('button');
+  btn.className = 'conf-tag on';
+  btn.textContent = val;
+  btn.dataset.label = val;
+  btn.onclick = function(){ toggleTag(this); };
+  // Add remove x
+  const x = document.createElement('span');
+  x.textContent = ' ×';
+  x.style.cssText = 'margin-left:3px;opacity:.5;cursor:pointer;font-size:12px';
+  x.onclick = function(e){ e.stopPropagation(); removeCustomConf(val, btn); };
+  btn.appendChild(x);
+  document.getElementById('conf-tags').appendChild(btn);
+  inp.value = '';
+}
+
+function removeCustomConf(val, btn) {
+  const customs = getCustomConfs().filter(c => c !== val);
+  saveCustomConfs(customs);
+  btn.remove();
+}
+
+function loadCustomConfsIntoForm() {
+  const customs = getCustomConfs();
+  const existing = [...document.querySelectorAll('#conf-tags .conf-tag')].map(b=>b.dataset.label||b.textContent.replace(' ×','').trim());
+  customs.forEach(val => {
+    if (existing.includes(val)) return;
+    const btn = document.createElement('button');
+    btn.className = 'conf-tag';
+    btn.textContent = val;
+    btn.dataset.label = val;
+    btn.onclick = function(){ toggleTag(this); };
+    const x = document.createElement('span');
+    x.textContent = ' ×';
+    x.style.cssText = 'margin-left:3px;opacity:.5;cursor:pointer;font-size:12px';
+    x.onclick = function(e){ e.stopPropagation(); removeCustomConf(val, btn); };
+    btn.appendChild(x);
+    document.getElementById('conf-tags').appendChild(btn);
+  });
+}
+
+// EDIT MODAL CONFLUENCES
+function buildEditConfTags(selectedConfs) {
+  const container = document.getElementById('e-conf-tags');
+  if (!container) return;
+  const allConfs = [...DEFAULT_CONFS, ...getCustomConfs()];
+  container.innerHTML = '';
+  allConfs.forEach(val => {
+    const btn = document.createElement('button');
+    btn.className = 'conf-tag' + (selectedConfs.includes(val) ? ' on' : '');
+    btn.textContent = val;
+    btn.dataset.label = val;
+    btn.onclick = function(){ this.classList.toggle('on'); };
+    container.appendChild(btn);
+  });
+}
+
+function addEditCustomConf() {
+  const inp = document.getElementById('e-conf-custom-input');
+  const val = inp.value.trim();
+  if (!val) return;
+  const container = document.getElementById('e-conf-tags');
+  const existing = [...container.querySelectorAll('.conf-tag')].map(b=>b.dataset.label||b.textContent);
+  if (existing.includes(val)) { inp.value=''; return; }
+  // Save to persistent list
+  const customs = getCustomConfs();
+  if (!customs.includes(val)) { customs.push(val); saveCustomConfs(customs); }
+  // Add to edit modal and select it
+  const btn = document.createElement('button');
+  btn.className = 'conf-tag on';
+  btn.textContent = val;
+  btn.dataset.label = val;
+  btn.onclick = function(){ this.classList.toggle('on'); };
+  container.appendChild(btn);
+  // Also add to log form if not there
+  loadCustomConfsIntoForm();
+  inp.value = '';
+}
+
+function getEditSelectedConfs() {
+  return [...document.querySelectorAll('#e-conf-tags .conf-tag.on')].map(b => b.dataset.label || b.textContent);
+}
 
 </script>
 <style>
@@ -481,6 +588,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <button class="conf-tag" onclick="toggleTag(this)">Inversion FVG</button>
         <button class="conf-tag" onclick="toggleTag(this)">PDH/PDL</button>
         <button class="conf-tag" onclick="toggleTag(this)">LTF sweep</button>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:8px;align-items:center">
+        <input type="text" id="conf-custom-input" placeholder="เพิ่ม confluence ใหม่..." style="font-size:12px;padding:5px 10px;border:1px solid #e0e0e0;border-radius:20px;background:#fff;color:#1a1a1a;flex:1;max-width:240px" onkeydown="if(event.key==='Enter'){addCustomConf();event.preventDefault()}">
+        <button class="btn btn-sm" onclick="addCustomConf()" style="border-radius:20px;white-space:nowrap">+ เพิ่ม</button>
       </div>
     </div>
   </div>
@@ -1350,6 +1461,14 @@ ${tradesHtml}
         <div class="fg"><label>Key Levels</label><input type="text" id="e-kl"></div>
         <div class="fg"><label>Order Type</label><select id="e-ot"><option>Limit</option><option>Market</option><option>Stop Limit</option></select></div>
       </div>
+      <div style="margin-top:6px">
+        <label style="font-size:11px;color:#666;font-weight:500;display:block;margin-bottom:6px">Entry Confluences</label>
+        <div class="tags-row" id="e-conf-tags"></div>
+        <div style="display:flex;gap:6px;margin-top:8px;align-items:center">
+          <input type="text" id="e-conf-custom-input" placeholder="เพิ่ม confluence ใหม่..." style="font-size:12px;padding:5px 10px;border:1px solid #e0e0e0;border-radius:20px;background:#fff;color:#1a1a1a;flex:1;max-width:240px" onkeydown="if(event.key==='Enter'){addEditCustomConf();event.preventDefault()}">
+          <button class="btn btn-sm" onclick="addEditCustomConf()" style="border-radius:20px;white-space:nowrap">+ เพิ่ม</button>
+        </div>
+      </div>
     </div>
 
     <div class="card" style="margin-bottom:10px">
@@ -1518,7 +1637,7 @@ function autoNet(){
 }
 
 document.getElementById('f-date').valueAsDate=new Date();
-load();renderAccSelector();renderDash();
+load();renderAccSelector();renderDash();loadCustomConfsIntoForm();
 </script>
 
 <!-- MODAL: EDIT TRADE -->
@@ -1571,6 +1690,14 @@ load();renderAccSelector();renderDash();
         <div class="fg"><label>Entry Timeframe</label><select id="e-etf"><option>1m</option><option>5m</option><option>15m</option><option>1h</option><option>4h</option></select></div>
         <div class="fg"><label>Key Levels</label><input type="text" id="e-kl"></div>
         <div class="fg"><label>Order Type</label><select id="e-ot"><option>Limit</option><option>Market</option><option>Stop Limit</option></select></div>
+      </div>
+      <div style="margin-top:6px">
+        <label style="font-size:11px;color:#666;font-weight:500;display:block;margin-bottom:6px">Entry Confluences</label>
+        <div class="tags-row" id="e-conf-tags"></div>
+        <div style="display:flex;gap:6px;margin-top:8px;align-items:center">
+          <input type="text" id="e-conf-custom-input" placeholder="เพิ่ม confluence ใหม่..." style="font-size:12px;padding:5px 10px;border:1px solid #e0e0e0;border-radius:20px;background:#fff;color:#1a1a1a;flex:1;max-width:240px" onkeydown="if(event.key==='Enter'){addEditCustomConf();event.preventDefault()}">
+          <button class="btn btn-sm" onclick="addEditCustomConf()" style="border-radius:20px;white-space:nowrap">+ เพิ่ม</button>
+        </div>
       </div>
     </div>
 
