@@ -4,7 +4,129 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Trading Journal Pro</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js">
+let _editId = null;
+let _editEntryEmo = '';
+let _editExitEmo = '';
+
+function openEditModal(id) {
+  const t = S.trades.find(x => x.id === id);
+  if (!t) return;
+  _editId = id;
+  _editEntryEmo = t.entryEmo || '';
+  _editExitEmo = t.exitEmo || '';
+
+  // Populate model dropdown
+  const msel = document.getElementById('e-model');
+  msel.innerHTML = '<option value="">— เลือก Model —</option>' + S.models.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+
+  // Fill all fields
+  document.getElementById('edit-trade-id').textContent = `#${id}`;
+  document.getElementById('e-date').value = t.date || '';
+  document.getElementById('e-dur').value = t.dur || '';
+  document.getElementById('e-kl').value = t.kl || '';
+  document.getElementById('e-arr').value = t.arr || '';
+  document.getElementById('e-gross').value = t.gross || '';
+  document.getElementById('e-fees').value = t.fees || '';
+  document.getElementById('e-swap').value = t.swap || '';
+  document.getElementById('e-net').value = t.net || '';
+  document.getElementById('e-notes').value = t.notes || '';
+  document.getElementById('e-followed').checked = t.followed || false;
+
+  // Set selects
+  const setSelect = (id, val) => { const el = document.getElementById(id); if(el) [...el.options].forEach(o => { o.selected = o.value === val || o.text === val; }); };
+  setSelect('e-sym', t.sym);
+  setSelect('e-pos', t.pos);
+  setSelect('e-ses', t.ses);
+  setSelect('e-ttype', t.ttype);
+  setSelect('e-bias', t.bias);
+  setSelect('e-mkt', t.mkt);
+  setSelect('e-model', t.modelId);
+  setSelect('e-etf', t.etf);
+  setSelect('e-ot', t.ot);
+  setSelect('e-slm', t.slm);
+  setSelect('e-tpm', t.tpm);
+  setSelect('e-outcome', t.outcome);
+  setSelect('e-grade', t.grade);
+  setSelect('e-mistake', t.mistake);
+
+  // Set emotions
+  document.querySelectorAll('#e-entry-emo .emo-btn').forEach(b => {
+    b.classList.toggle('on', b.textContent === t.entryEmo);
+  });
+  document.querySelectorAll('#e-exit-emo .emo-btn').forEach(b => {
+    b.classList.toggle('on', b.textContent === t.exitEmo);
+  });
+
+  openModal('modal-edit');
+}
+
+function selEditEmo(type, btn, val) {
+  document.getElementById(`e-${type}-emo`).querySelectorAll('.emo-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  if (type === 'entry') _editEntryEmo = val;
+  else _editExitEmo = val;
+}
+
+function saveEdit() {
+  const idx = S.trades.findIndex(x => x.id === _editId);
+  if (idx === -1) return;
+
+  const gross = parseFloat(document.getElementById('e-gross').value) || 0;
+  const fees  = parseFloat(document.getElementById('e-fees').value)  || 0;
+  const swap  = parseFloat(document.getElementById('e-swap').value)  || 0;
+  const netIn = parseFloat(document.getElementById('e-net').value);
+  const net   = isNaN(netIn) ? (gross - fees - swap) : netIn;
+
+  S.trades[idx] = {
+    ...S.trades[idx],
+    date:     document.getElementById('e-date').value,
+    sym:      document.getElementById('e-sym').value,
+    pos:      document.getElementById('e-pos').value,
+    dur:      document.getElementById('e-dur').value,
+    ses:      document.getElementById('e-ses').value,
+    ttype:    document.getElementById('e-ttype').value,
+    bias:     document.getElementById('e-bias').value,
+    mkt:      document.getElementById('e-mkt').value,
+    modelId:  document.getElementById('e-model').value,
+    etf:      document.getElementById('e-etf').value,
+    kl:       document.getElementById('e-kl').value,
+    ot:       document.getElementById('e-ot').value,
+    arr:      parseFloat(document.getElementById('e-arr').value) || 0,
+    gross, fees, swap, net,
+    slm:      document.getElementById('e-slm').value,
+    tpm:      document.getElementById('e-tpm').value,
+    outcome:  document.getElementById('e-outcome').value,
+    grade:    document.getElementById('e-grade').value,
+    mistake:  document.getElementById('e-mistake').value,
+    followed: document.getElementById('e-followed').checked,
+    entryEmo: _editEntryEmo,
+    exitEmo:  _editExitEmo,
+    notes:    document.getElementById('e-notes').value,
+  };
+
+  saveTrades();
+  closeModal('modal-edit');
+  renderHistory();
+  renderAccSelector();
+
+  // Show success flash
+  const msg = document.getElementById('save-msg');
+  if (msg) { msg.textContent = 'แก้ไขสำเร็จ!'; msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 2000); }
+}
+
+// Auto-calc net in edit modal
+['e-gross','e-fees','e-swap'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', () => {
+    const g = parseFloat(document.getElementById('e-gross').value) || 0;
+    const f = parseFloat(document.getElementById('e-fees').value)  || 0;
+    const s = parseFloat(document.getElementById('e-swap').value)  || 0;
+    document.getElementById('e-net').value = (g - f - s).toFixed(2);
+  });
+});
+
+</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a1a;min-height:100vh}
@@ -991,7 +1113,7 @@ function renderHistory(){
       <td>${outBadge(x.outcome)}</td>
       <td style="font-size:11px;font-weight:600;color:${eCol[x.entryEmo]||'#aaa'}">${x.entryEmo||'—'}</td>
       <td style="font-size:11px;color:#aaa">${charts.join(' ')||'—'}</td>
-      <td><button class="btn btn-sm btn-d" onclick="deleteTrade(${x.id})">ลบ</button></td>
+      <td><div class="row-actions"><button class="btn btn-sm" onclick="openEditModal(${x.id})">แก้ไข</button><button class="btn btn-sm btn-d" onclick="deleteTrade(${x.id})">ลบ</button></div></td>
     </tr>`;
   }).join('');
 }
@@ -1176,6 +1298,114 @@ ${tradesHtml}
 <div style="margin-top:24px;text-align:center;font-size:10px;color:#ccc;padding-top:12px;border-top:1px solid #f0f0ec">
   Trading Journal Pro &nbsp;·&nbsp; ${acc?.name||''} &nbsp;·&nbsp; Week ${weekLabel}
 </div>
+
+<!-- MODAL: EDIT TRADE -->
+<div class="modal-overlay" id="modal-edit" onclick="overlayClose(event,'modal-edit')">
+  <div class="modal" style="max-width:700px;max-height:90vh;overflow-y:auto">
+    <button class="modal-close" onclick="closeModal('modal-edit')">x</button>
+    <div class="ct" style="margin-bottom:14px">แก้ไข Trade <span id="edit-trade-id" style="color:#aaa;font-weight:400"></span></div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div class="ct">Trade Details</div>
+      <div class="fr">
+        <div class="fg"><label>Date</label><input type="date" id="e-date"></div>
+        <div class="fg"><label>Symbol</label>
+          <select id="e-sym">
+            <option value="">— เลือก —</option>
+            <optgroup label="Favorite">
+              <option value="XAUUSD">Gold (XAUUSD)</option>
+              <option value="NQ">NQ</option>
+              <option value="ES">ES</option>
+              <option value="XAGUSD">Silver (XAGUSD)</option>
+            </optgroup>
+            <optgroup label="Forex">
+              <option value="EURUSD">EURUSD</option>
+              <option value="USDJPY">USDJPY</option>
+              <option value="EURGBP">EURGBP</option>
+            </optgroup>
+            <optgroup label="Crypto">
+              <option value="BTCUSD">BTC</option>
+              <option value="ETHUSD">ETH</option>
+              <option value="BNBUSD">BNB</option>
+            </optgroup>
+            <optgroup label="ETC"><option value="OTHER">Other</option></optgroup>
+          </select>
+        </div>
+        <div class="fg"><label>Direction</label><select id="e-pos"><option>Buy</option><option>Sell</option></select></div>
+        <div class="fg"><label>Session</label><select id="e-ses"><option>Asia</option><option>London Open</option><option>London Close</option><option>New York</option><option>Out of Session</option></select></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>Duration</label><input type="text" id="e-dur" placeholder="23m, 2h..."></div>
+        <div class="fg"><label>Type of Trade</label><select id="e-ttype"><option>Intraday</option><option>Swing</option><option>Scalp</option></select></div>
+        <div class="fg"><label>Bias</label><select id="e-bias"><option>Bullish</option><option>Bearish</option><option>Neutral</option></select></div>
+        <div class="fg"><label>Market Conditions</label><select id="e-mkt"><option>Strong uptrend (HT)</option><option>Strong downtrend (HT)</option><option>Ranging</option><option>Volatile</option><option>Trending</option></select></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div class="ct">Model / Strategy</div>
+      <div class="fr">
+        <div class="fg"><label>Model</label><select id="e-model"><option value="">— เลือก Model —</option></select></div>
+        <div class="fg"><label>Entry Timeframe</label><select id="e-etf"><option>1m</option><option>5m</option><option>15m</option><option>1h</option><option>4h</option></select></div>
+        <div class="fg"><label>Key Levels</label><input type="text" id="e-kl"></div>
+        <div class="fg"><label>Order Type</label><select id="e-ot"><option>Limit</option><option>Market</option><option>Stop Limit</option></select></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div class="ct">P&L & Risk</div>
+      <div class="fr">
+        <div class="fg"><label>Actual RR</label><input type="number" id="e-arr" step="0.01"></div>
+        <div class="fg"><label>Gross P&L ($)</label><input type="number" id="e-gross" step="0.01"></div>
+        <div class="fg"><label>Fees ($)</label><input type="number" id="e-fees" step="0.01"></div>
+        <div class="fg"><label>Swap ($)</label><input type="number" id="e-swap" step="0.01"></div>
+        <div class="fg"><label>Net P&L ($)</label><input type="number" id="e-net" step="0.01"></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>SL Management</label><select id="e-slm"><option value="">—</option><option>Hit Initial SL</option><option>Locked Profit</option><option>Moved to BE</option><option>Manual Close</option></select></div>
+        <div class="fg"><label>TP Management</label><select id="e-tpm"><option>Set and Forget</option><option>Manual Close</option><option>Partial TP</option><option>Move to BE</option><option>Final TP Hit</option><option>Locked Profit</option></select></div>
+        <div class="fg"><label>Outcome</label><select id="e-outcome"><option>Profit Taken</option><option>Great Exit!</option><option>Loss, Review Setup</option><option>Capital Protected</option><option>Breakeven</option></select></div>
+        <div class="fg"><label>Setup Grade</label><select id="e-grade"><option value="A">A — Best</option><option value="B">B — Good</option><option value="C">C — Marginal</option></select></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>Mistakes</label><select id="e-mistake"><option value="">None</option><option>Position Sizing</option><option>Wrong Exit Point</option><option>Wrong Entry Point</option><option>FOMO</option><option>Early Exit</option><option>Late Entry</option><option>No Stop Loss</option></select></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div class="ct">Review & Reflection</div>
+      <label class="review-check"><input type="checkbox" id="e-followed"><span>I followed my trade plan</span></label>
+      <div style="margin-bottom:8px">
+        <label style="font-size:11px;color:#666;font-weight:500;display:block;margin-bottom:5px">Entry Emotion</label>
+        <div style="display:flex;gap:5px;flex-wrap:wrap" id="e-entry-emo">
+          <button class="emo-btn" onclick="selEditEmo('entry',this,'Calm')">Calm</button>
+          <button class="emo-btn" onclick="selEditEmo('entry',this,'Fomo')">Fomo</button>
+          <button class="emo-btn" onclick="selEditEmo('entry',this,'Revenge')">Revenge</button>
+          <button class="emo-btn" onclick="selEditEmo('entry',this,'Boredom')">Boredom</button>
+          <button class="emo-btn" onclick="selEditEmo('entry',this,'Overconfident')">Overconfident</button>
+          <button class="emo-btn" onclick="selEditEmo('entry',this,'Fear')">Fear</button>
+          <button class="emo-btn" onclick="selEditEmo('entry',this,'Greed')">Greed</button>
+        </div>
+      </div>
+      <div style="margin-bottom:10px">
+        <label style="font-size:11px;color:#666;font-weight:500;display:block;margin-bottom:5px">Exit Emotion</label>
+        <div style="display:flex;gap:5px;flex-wrap:wrap" id="e-exit-emo">
+          <button class="emo-btn" onclick="selEditEmo('exit',this,'Calm')">Calm</button>
+          <button class="emo-btn" onclick="selEditEmo('exit',this,'Fomo')">Fomo</button>
+          <button class="emo-btn" onclick="selEditEmo('exit',this,'Fear')">Fear</button>
+          <button class="emo-btn" onclick="selEditEmo('exit',this,'Satisfied')">Satisfied</button>
+          <button class="emo-btn" onclick="selEditEmo('exit',this,'Regret')">Regret</button>
+        </div>
+      </div>
+      <div class="fg"><label>Note / Reflection</label><textarea id="e-notes" rows="3"></textarea></div>
+    </div>
+
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
+      <button class="btn" onclick="closeModal('modal-edit')">ยกเลิก</button>
+      <button class="btn btn-p" onclick="saveEdit()">บันทึกการแก้ไข</button>
+    </div>
+  </div>
+</div>
 </body></html>`;
 
   const blob=new Blob([html],{type:'text/html;charset=utf-8'});
@@ -1290,4 +1520,112 @@ function autoNet(){
 document.getElementById('f-date').valueAsDate=new Date();
 load();renderAccSelector();renderDash();
 </script>
+
+<!-- MODAL: EDIT TRADE -->
+<div class="modal-overlay" id="modal-edit" onclick="overlayClose(event,'modal-edit')">
+  <div class="modal" style="max-width:700px;max-height:90vh;overflow-y:auto">
+    <button class="modal-close" onclick="closeModal('modal-edit')">x</button>
+    <div class="ct" style="margin-bottom:14px">แก้ไข Trade <span id="edit-trade-id" style="color:#aaa;font-weight:400"></span></div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div class="ct">Trade Details</div>
+      <div class="fr">
+        <div class="fg"><label>Date</label><input type="date" id="e-date"></div>
+        <div class="fg"><label>Symbol</label>
+          <select id="e-sym">
+            <option value="">— เลือก —</option>
+            <optgroup label="Favorite">
+              <option value="XAUUSD">Gold (XAUUSD)</option>
+              <option value="NQ">NQ</option>
+              <option value="ES">ES</option>
+              <option value="XAGUSD">Silver (XAGUSD)</option>
+            </optgroup>
+            <optgroup label="Forex">
+              <option value="EURUSD">EURUSD</option>
+              <option value="USDJPY">USDJPY</option>
+              <option value="EURGBP">EURGBP</option>
+            </optgroup>
+            <optgroup label="Crypto">
+              <option value="BTCUSD">BTC</option>
+              <option value="ETHUSD">ETH</option>
+              <option value="BNBUSD">BNB</option>
+            </optgroup>
+            <optgroup label="ETC"><option value="OTHER">Other</option></optgroup>
+          </select>
+        </div>
+        <div class="fg"><label>Direction</label><select id="e-pos"><option>Buy</option><option>Sell</option></select></div>
+        <div class="fg"><label>Session</label><select id="e-ses"><option>Asia</option><option>London Open</option><option>London Close</option><option>New York</option><option>Out of Session</option></select></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>Duration</label><input type="text" id="e-dur" placeholder="23m, 2h..."></div>
+        <div class="fg"><label>Type of Trade</label><select id="e-ttype"><option>Intraday</option><option>Swing</option><option>Scalp</option></select></div>
+        <div class="fg"><label>Bias</label><select id="e-bias"><option>Bullish</option><option>Bearish</option><option>Neutral</option></select></div>
+        <div class="fg"><label>Market Conditions</label><select id="e-mkt"><option>Strong uptrend (HT)</option><option>Strong downtrend (HT)</option><option>Ranging</option><option>Volatile</option><option>Trending</option></select></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div class="ct">Model / Strategy</div>
+      <div class="fr">
+        <div class="fg"><label>Model</label><select id="e-model"><option value="">— เลือก Model —</option></select></div>
+        <div class="fg"><label>Entry Timeframe</label><select id="e-etf"><option>1m</option><option>5m</option><option>15m</option><option>1h</option><option>4h</option></select></div>
+        <div class="fg"><label>Key Levels</label><input type="text" id="e-kl"></div>
+        <div class="fg"><label>Order Type</label><select id="e-ot"><option>Limit</option><option>Market</option><option>Stop Limit</option></select></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div class="ct">P&L & Risk</div>
+      <div class="fr">
+        <div class="fg"><label>Actual RR</label><input type="number" id="e-arr" step="0.01"></div>
+        <div class="fg"><label>Gross P&L ($)</label><input type="number" id="e-gross" step="0.01"></div>
+        <div class="fg"><label>Fees ($)</label><input type="number" id="e-fees" step="0.01"></div>
+        <div class="fg"><label>Swap ($)</label><input type="number" id="e-swap" step="0.01"></div>
+        <div class="fg"><label>Net P&L ($)</label><input type="number" id="e-net" step="0.01"></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>SL Management</label><select id="e-slm"><option value="">—</option><option>Hit Initial SL</option><option>Locked Profit</option><option>Moved to BE</option><option>Manual Close</option></select></div>
+        <div class="fg"><label>TP Management</label><select id="e-tpm"><option>Set and Forget</option><option>Manual Close</option><option>Partial TP</option><option>Move to BE</option><option>Final TP Hit</option><option>Locked Profit</option></select></div>
+        <div class="fg"><label>Outcome</label><select id="e-outcome"><option>Profit Taken</option><option>Great Exit!</option><option>Loss, Review Setup</option><option>Capital Protected</option><option>Breakeven</option></select></div>
+        <div class="fg"><label>Setup Grade</label><select id="e-grade"><option value="A">A — Best</option><option value="B">B — Good</option><option value="C">C — Marginal</option></select></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>Mistakes</label><select id="e-mistake"><option value="">None</option><option>Position Sizing</option><option>Wrong Exit Point</option><option>Wrong Entry Point</option><option>FOMO</option><option>Early Exit</option><option>Late Entry</option><option>No Stop Loss</option></select></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div class="ct">Review & Reflection</div>
+      <label class="review-check"><input type="checkbox" id="e-followed"><span>I followed my trade plan</span></label>
+      <div style="margin-bottom:8px">
+        <label style="font-size:11px;color:#666;font-weight:500;display:block;margin-bottom:5px">Entry Emotion</label>
+        <div style="display:flex;gap:5px;flex-wrap:wrap" id="e-entry-emo">
+          <button class="emo-btn" onclick="selEditEmo('entry',this,'Calm')">Calm</button>
+          <button class="emo-btn" onclick="selEditEmo('entry',this,'Fomo')">Fomo</button>
+          <button class="emo-btn" onclick="selEditEmo('entry',this,'Revenge')">Revenge</button>
+          <button class="emo-btn" onclick="selEditEmo('entry',this,'Boredom')">Boredom</button>
+          <button class="emo-btn" onclick="selEditEmo('entry',this,'Overconfident')">Overconfident</button>
+          <button class="emo-btn" onclick="selEditEmo('entry',this,'Fear')">Fear</button>
+          <button class="emo-btn" onclick="selEditEmo('entry',this,'Greed')">Greed</button>
+        </div>
+      </div>
+      <div style="margin-bottom:10px">
+        <label style="font-size:11px;color:#666;font-weight:500;display:block;margin-bottom:5px">Exit Emotion</label>
+        <div style="display:flex;gap:5px;flex-wrap:wrap" id="e-exit-emo">
+          <button class="emo-btn" onclick="selEditEmo('exit',this,'Calm')">Calm</button>
+          <button class="emo-btn" onclick="selEditEmo('exit',this,'Fomo')">Fomo</button>
+          <button class="emo-btn" onclick="selEditEmo('exit',this,'Fear')">Fear</button>
+          <button class="emo-btn" onclick="selEditEmo('exit',this,'Satisfied')">Satisfied</button>
+          <button class="emo-btn" onclick="selEditEmo('exit',this,'Regret')">Regret</button>
+        </div>
+      </div>
+      <div class="fg"><label>Note / Reflection</label><textarea id="e-notes" rows="3"></textarea></div>
+    </div>
+
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
+      <button class="btn" onclick="closeModal('modal-edit')">ยกเลิก</button>
+      <button class="btn btn-p" onclick="saveEdit()">บันทึกการแก้ไข</button>
+    </div>
+  </div>
+</div>
 </body></html>
