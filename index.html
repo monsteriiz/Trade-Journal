@@ -4,7 +4,43 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Trading Journal Pro</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js">
+function showRestorePanel(){
+  const p=document.getElementById('restore-panel');
+  p.style.display=p.style.display==='none'?'block':'none';
+}
+
+function restoreFromPaste(){
+  const raw=document.getElementById('restore-input').value.trim();
+  if(!raw){alert('กรุณาวางข้อมูล JSON ก่อน');return}
+  try{
+    let data=JSON.parse(raw);
+    // Handle if it's a string (double-encoded)
+    if(typeof data==='string') data=JSON.parse(data);
+    if(!Array.isArray(data)){alert('ข้อมูลไม่ถูกต้อง ต้องเป็น array ของ trades');return}
+    // Normalize dates
+    data=data.map(t=>({...t,date:(t.date||'').replace(/-/g,'/')}));
+    S.trades=data;
+    saveTrades();
+    // Also restore accounts if needed
+    const accs=['acc_hardcore','acc_ftmo','acc_topstep'];
+    const accNames={'acc_hardcore':'HardCORE','acc_ftmo':'FTMO PA$$','acc_topstep':'TopStep 50k'};
+    const accBals={'acc_hardcore':1074.43,'acc_ftmo':279.29,'acc_topstep':2323.10};
+    if(!S.accounts.length||S.accounts[0].id==='acc1'){
+      S.accounts=accs.map(id=>({id,name:accNames[id],balance:accBals[id],type:'Challenge'}));
+      saveAccounts();
+    }
+    S.currentAcc='acc_topstep';
+    document.getElementById('restore-panel').style.display='none';
+    document.getElementById('restore-input').value='';
+    renderAccSelector();renderDash();renderHistory();
+    alert('กู้คืนสำเร็จ! '+data.length+' trades');
+  }catch(e){
+    alert('JSON ไม่ถูกต้อง: '+e.message);
+  }
+}
+
+</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a1a;min-height:100vh}
@@ -199,6 +235,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <button class="btn-acc" onclick="openModal('modal-acc')">+ จัดการ Account</button>
   <span style="flex:1"></span>
   <span class="acc-badge" id="acc-info"></span>
+  <button class="btn-acc" onclick="showRestorePanel()" title="กู้คืนข้อมูล" style="font-size:11px;padding:4px 10px">↩ กู้คืน</button>
+</div>
+<div id="restore-panel" style="display:none;background:#fffdf0;border-bottom:1px solid #f0e8c0;padding:10px 20px;font-size:12px;color:#633806">
+  <strong>กู้คืนข้อมูลจาก Console:</strong> เปิด F12 → Console → วางข้อมูล JSON แล้วกดปุ่ม
+  <textarea id="restore-input" placeholder='วาง JSON ที่ได้จาก localStorage.getItem(...) ที่นี่...' style="width:100%;margin-top:6px;font-size:11px;padding:6px;border:1px solid #ddd;border-radius:6px;min-height:60px;font-family:monospace;color:#1a1a1a;background:#fff"></textarea>
+  <div style="display:flex;gap:8px;margin-top:6px">
+    <button class="btn btn-p btn-sm" onclick="restoreFromPaste()">กู้คืนข้อมูล</button>
+    <button class="btn btn-sm" onclick="document.getElementById('restore-panel').style.display='none'">ปิด</button>
+  </div>
 </div>
 
 <!-- NAV -->
@@ -602,9 +647,26 @@ function loadNotionData() {
 }
 
 function load(){
+  // Try current key first
   try{S.accounts=JSON.parse(localStorage.getItem(DB.accounts)||'[]')}catch(e){S.accounts=[]}
   try{S.trades=JSON.parse(localStorage.getItem(DB.trades)||'[]')}catch(e){S.trades=[]}
   try{S.models=JSON.parse(localStorage.getItem(DB.models)||'[]')}catch(e){S.models=[]}
+
+  // If no trades, try migrating from older keys
+  if(!S.trades.length){
+    const oldKeys=['tj_trades_v4','tj_tz_v3','tj_tz_v2','tj_trades_v3','tj_trades_v2'];
+    for(const k of oldKeys){
+      try{
+        const old=JSON.parse(localStorage.getItem(k)||'[]');
+        if(old.length){
+          S.trades=old;
+          localStorage.setItem(DB.trades,JSON.stringify(old));
+          console.log('Migrated',old.length,'trades from',k);
+          break;
+        }
+      }catch(e){}
+    }
+  }
   if(!S.accounts.length){S.accounts=[{id:'acc1',name:'TopStep 50k',balance:50000,created:Date.now()}];saveAccounts()}
   if(!S.models.length){
     S.models=[
@@ -1410,10 +1472,10 @@ function autoNet(){
 }
 
 document.getElementById('f-date').valueAsDate=new Date();
-// Normalize all trade dates to YYYY/MM/DD
+load();
+// Normalize dates after load
 S.trades = S.trades.map(t=>({...t, date:(t.date||'').replace(/-/g,'/')}));
-saveTrades();
-load();renderAccSelector();renderDash();loadCustomConfsIntoForm();
+renderAccSelector();renderDash();loadCustomConfsIntoForm();
 
 let _editId = null;
 let _editEntryEmo = '';
