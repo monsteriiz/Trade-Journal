@@ -99,6 +99,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .save-msg{display:none;text-align:center;padding:10px;background:#E1F5EE;color:#085041;border-radius:8px;margin-bottom:12px;font-size:13px;font-weight:500;border:1px solid #9FE1CB}
 .section-sub{font-size:12px;color:#999;font-weight:400;margin-left:5px}
 .empty-state{text-align:center;padding:36px;color:#aaa;font-size:13px}
+
+/* Star Rating */
+.star-rating{display:inline-flex;gap:1px;align-items:center;cursor:pointer}
+.star-rating .star{font-size:16px;color:#e0e0e0;cursor:pointer;transition:color .1s;line-height:1;user-select:none}
+.star-rating .star.on{color:#EF9F27}
+.star-rating .star:hover,.star-rating .star:hover ~ .star{color:#e0e0e0}
+.star-rating:hover .star{color:#EF9F27}
+.star-rating .star:hover ~ .star{color:#e0e0e0}
+.stars-display{display:inline-flex;gap:1px;align-items:center}
+.stars-display .s{font-size:13px;line-height:1}
+.stars-display .s.on{color:#EF9F27}
+.stars-display .s.off{color:#e0e0e0}
+
 @media(max-width:600px){.g4{grid-template-columns:repeat(2,1fr)}.chart-zone{grid-template-columns:1fr}.fr{grid-template-columns:1fr}}
 
 
@@ -216,7 +229,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <button class="nb on" onclick="nav('dashboard',this)">Dashboard</button>
   <button class="nb" onclick="nav('log',this)">+ Log Trade</button>
   <button class="nb" onclick="nav('history',this)">Trade History</button>
-  <button class="nb" onclick="nav('models',this)">Models DB</button>
+  
   <button class="nb" onclick="nav('calendar',this)">Calendar</button>
   <button class="nb" onclick="nav('weekly',this)">Weekly Report</button>
 </div>
@@ -277,7 +290,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <!-- Bottom row: Model WR + Session + Outcome -->
   <div class="tv-3col" style="margin-bottom:14px">
     <div class="tv-card">
-      <div class="tv-card-head"><span>Win Rate by Model</span></div>
+      <div class="tv-card-head"><span>Win Rate by Setup</span></div>
       <div id="tv-model-wr"></div>
     </div>
     <div class="tv-card">
@@ -339,15 +352,41 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 
   <div class="card">
-    <div class="ct">Model / Strategy <span class="section-sub">จาก Model DB</span></div>
+    <div class="ct">Setup / Confluences</div>
     <div class="fr">
-      <div class="fg">
-        <label>Model</label>
-        <select id="f-model"><option value="">— เลือก Model —</option></select>
-      </div>
       <div class="fg"><label>Entry Timeframe</label><select id="f-etf"><option>1m</option><option>5m</option><option>15m</option><option>1h</option><option>4h</option></select></div>
       <div class="fg"><label>Market Conditions</label><select id="f-mkt"><option>Strong uptrend (HT)</option><option>Strong downtrend (HT)</option><option>15m Strong Uptrend</option><option>15m Strong Downtrend</option><option>Ranging</option><option>Volatile</option><option>Trending</option></select></div>
       <div class="fg"><label>Bias</label><select id="f-bias"><option>Bullish</option><option>Bearish</option><option>Neutral</option></select></div>
+      <div class="fg"><label>Setup Type</label>
+        <select id="f-model">
+          <option value="">— เลือก Setup —</option>
+          <optgroup label="ICT Concepts">
+            <option value="fvg">FVG (Fair Value Gap)</option>
+            <option value="ifvg">iFVG (Inverse FVG)</option>
+            <option value="ob">Order Block</option>
+            <option value="bb">Breaker Block</option>
+            <option value="ob_5m">5m Order Block</option>
+            <option value="ob_15m">15m Order Block</option>
+            <option value="ifvg_1m">1m iFVG</option>
+            <option value="ifvg_5m">5m iFVG</option>
+            <option value="ifvg_15m">15m iFVG</option>
+            <option value="fvg_5m">5m FVG</option>
+            <option value="fvg_15m">15m FVG</option>
+            <option value="bb_5m">5m Breaker Block</option>
+            <option value="bb_15m">15m Breaker Block</option>
+          </optgroup>
+          <optgroup label="SMC / Price Action">
+            <option value="supply_zone">Supply Zone</option>
+            <option value="demand_zone">Demand Zone</option>
+            <option value="pullback">Pullback</option>
+            <option value="ms_break">Market Structure Break</option>
+            <option value="liq_sweep">Liquidity Sweep</option>
+          </optgroup>
+          <optgroup label="Other">
+            <option value="custom">Custom / Other</option>
+          </optgroup>
+        </select>
+      </div>
     </div>
     <div class="fr">
       <div class="fg"><label>Key Levels</label><input type="text" id="f-kl" placeholder="Supply Zone, OB, PDH..."></div>
@@ -357,20 +396,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div style="margin-top:4px">
       <label style="font-size:11px;color:#666;font-weight:500;display:block;margin-bottom:6px">Entry Confluences</label>
       <div class="tags-row" id="conf-tags">
-        <button class="conf-tag" onclick="toggleTag(this)">LG sweep</button>
-        <button class="conf-tag" onclick="toggleTag(this)">LTF POI Mitigation</button>
-        <button class="conf-tag" onclick="toggleTag(this)">MS Break</button>
-        <button class="conf-tag" onclick="toggleTag(this)">FVG</button>
-        <button class="conf-tag" onclick="toggleTag(this)">iFVG</button>
-        <button class="conf-tag" onclick="toggleTag(this)">Order Block</button>
-        <button class="conf-tag" onclick="toggleTag(this)">Breaker Block</button>
-        <button class="conf-tag" onclick="toggleTag(this)">Supply Zone</button>
-        <button class="conf-tag" onclick="toggleTag(this)">Demand Zone</button>
-        <button class="conf-tag" onclick="toggleTag(this)">Inversion FVG</button>
-        <button class="conf-tag" onclick="toggleTag(this)">PDH/PDL</button>
-        <button class="conf-tag" onclick="toggleTag(this)">LTF sweep</button>
-        <button class="conf-tag" onclick="toggleTag(this)">MR-</button>
-        <button class="conf-tag" onclick="toggleTag(this)">MR+</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="FVG">FVG (Fair Value Gap)</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="iFVG">iFVG (Inverse FVG)</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="Order Block">Order Block</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="Breaker Block">Breaker Block</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="5m Order Block">5m Order Block</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="15m Order Block">15m Order Block</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="1m iFVG">1m iFVG</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="5m iFVG">5m iFVG</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="15m iFVG">15m iFVG</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="5m FVG">5m FVG</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="15m FVG">15m FVG</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="5m Breaker Block">5m Breaker Block</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="15m Breaker Block">15m Breaker Block</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="LG sweep">LG sweep</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="LTF POI Mitigation">LTF POI Mitigation</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="MS Break">MS Break</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="Supply Zone">Supply Zone</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="Demand Zone">Demand Zone</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="Inversion FVG">Inversion FVG</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="PDH/PDL">PDH/PDL</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="LTF sweep">LTF sweep</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="MR-">MR-</button>
+        <button class="conf-tag" onclick="toggleTag(this)" data-label="MR+">MR+</button>
       </div>
       <div style="display:flex;gap:6px;margin-top:8px;align-items:center">
         <input type="text" id="conf-custom-input" placeholder="เพิ่ม confluence ใหม่..." style="font-size:12px;padding:5px 10px;border:1px solid #e0e0e0;border-radius:20px;background:#fff;color:#1a1a1a;flex:1;max-width:240px" onkeydown="if(event.key==='Enter'){addCustomConf();event.preventDefault()}">
@@ -396,7 +444,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="fg"><label>Mistakes</label><select id="f-mistake"><option value="">None</option><option>Position Sizing</option><option>Wrong Exit Point</option><option>Wrong Entry Point</option><option>FOMO</option><option>Early Exit</option><option>Late Entry</option><option>No Stop Loss</option></select></div>
     </div>
     <div class="fr">
-      <div class="fg"><label>Setup Grade</label><select id="f-grade"><option value="A">A — Best</option><option value="B">B — Good</option><option value="C">C — Marginal</option></select></div>
+      <div class="fg">
+        <label>Setup Rating</label>
+        <div style="padding:6px 0">
+          <div class="star-rating" id="f-grade-stars" onclick="setStarRating('f-grade-stars','f-grade',this)">
+            <span class="star" data-val="1">&#9733;</span>
+            <span class="star" data-val="2">&#9733;</span>
+            <span class="star" data-val="3">&#9733;</span>
+            <span class="star" data-val="4">&#9733;</span>
+            <span class="star" data-val="5">&#9733;</span>
+          </div>
+          <input type="hidden" id="f-grade" value="3">
+          <div style="font-size:10px;color:#aaa;margin-top:3px" id="f-grade-label">3 stars</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -480,7 +541,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <option>Profit Taken</option><option>Great Exit!</option><option>Loss, Review Setup</option><option>Capital Protected</option><option>Breakeven</option>
     </select>
     <select id="hs-grade" onchange="renderHistory()" style="font-size:12px;padding:7px 11px;border:1px solid #2a2a2a;border-radius:8px;background:#fff;color:#1a1a1a">
-      <option value="">All Grades</option><option value="A">Grade A</option><option value="B">Grade B</option><option value="C">Grade C</option>
+      <option value="">All Ratings</option><option value="5">★★★★★ (5)</option><option value="4">★★★★ (4)</option><option value="3">★★★ (3)</option><option value="2">★★ (2)</option><option value="1">★ (1)</option>
     </select>
     <button class="btn btn-sm" onclick="exportCSV()">Export CSV</button>
   </div>
@@ -495,12 +556,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
-<!-- ===== MODELS DB ===== -->
-<div id="pg-models" class="pg">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-    <span style="font-size:16px;font-weight:600">Model Database</span>
-    <button class="btn btn-p btn-sm" onclick="openModal('modal-model')">+ เพิ่ม Model</button>
-  </div>
   <div id="model-db-list"></div>
 </div>
 
@@ -669,7 +724,19 @@ function loadSampleTrades(){
 }
 
 function accTrades(){return S.trades.filter(x=>x.accId===S.currentAcc)}
-function modelName(mid){return S.models.find(x=>x.id===mid)?.name||mid||'—'}
+function modelName(mid){
+  const setupLabels = {
+    'fvg':'FVG','ifvg':'iFVG','ob':'Order Block','bb':'Breaker Block',
+    'ob_5m':'5m OB','ob_15m':'15m OB','ifvg_1m':'1m iFVG','ifvg_5m':'5m iFVG',
+    'ifvg_15m':'15m iFVG','fvg_5m':'5m FVG','fvg_15m':'15m FVG',
+    'bb_5m':'5m Breaker','bb_15m':'15m Breaker',
+    'supply_zone':'Supply Zone','demand_zone':'Demand Zone',
+    'pullback':'Pullback','ms_break':'MS Break','liq_sweep':'Liq Sweep','custom':'Custom'
+  };
+  if(setupLabels[mid]) return setupLabels[mid];
+  // Fallback to old model DB for backward compatibility
+  return S.models.find(x=>x.id===mid)?.name||mid||'—';
+}
 
 function nav(p,el){
   document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));
@@ -731,9 +798,8 @@ function deleteAccount(id){
 }
 
 function updateModelDropdown(){
-  const sel=document.getElementById('f-model');
-  if(!sel)return;
-  sel.innerHTML=`<option value="">— เลือก Model —</option>`+S.models.map(m=>`<option value="${m.id}">${m.name} (${m.cat})</option>`).join('');
+  // models DB no longer used - setup dropdown has fixed options
+  // kept for backward compat
 }
 
 function saveModel(){
@@ -766,7 +832,7 @@ function calcScore(t){
   const w=t.filter(x=>(+x.net||0)>0).length/t.length;
   const rr=t.filter(x=>x.arr).reduce((a,x)=>a+(+x.arr),0)/(t.filter(x=>x.arr).length||1);
   const fp=t.filter(x=>x.followed).length/t.length;
-  const ag=t.filter(x=>x.grade==='A').length/t.length;
+  const ag=t.filter(x=>+x.grade>=4).length/t.length;
   const calm=t.filter(x=>x.entryEmo==='Calm').length/t.length;
   return Math.min(100,Math.round(w*30+Math.min(rr/3,1)*25+fp*20+ag*15+calm*10));
 }
@@ -808,7 +874,7 @@ function renderDash(){
     ['Balance',`$${totalBal2.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}`,balChange>=0?'gv':'rv',`Init $${initBal.toLocaleString()}`],
     ['Net P&L',`${net>=0?'+':''}$${Math.abs(net).toFixed(2)}`,net>=0?'gv':'rv',`${t.length} trades`],
     ['Win Rate',`${wr}%`,wr>=50?'gv':'rv',`${wins}W · ${losses}L`],
-    ['Avg RR',avgRR,parseFloat(avgRR)>=1?'gv':'rv',`Grade A: ${t.filter(x=>x.grade==='A').length}`],
+    ['Avg RR',avgRR,parseFloat(avgRR)>=1?'gv':'rv',`5★: ${t.filter(x=>+x.grade>=5).length}`],
     ['Profit Factor',pf,parseFloat(pf)>=1.5?'gv':parseFloat(pf)>=1?'av':'rv',`Avg Win $${avgW.toFixed(0)}`],
     ['Score',sc,sc>=70?'gv':sc>=50?'av':'rv','/ 100'],
   ].map(([l,v,c,s])=>`<div class="tv-stat"><div class="tv-stat-l">${l}</div><div class="tv-stat-v ${c}">${v}</div><div class="tv-stat-sub">${s}</div></div>`).join('');
@@ -862,7 +928,7 @@ function renderDash(){
       <div style="flex:1;font-weight:500">${x.sym||'—'}</div>
       <div style="width:40px"><span class="badge ${x.pos==='Buy'?'b-buy':'b-sell'}">${x.pos}</span></div>
       <div style="width:120px"><span class="badge b-model" style="font-size:10px;max-width:115px;overflow:hidden;text-overflow:ellipsis">${modelName(x.modelId)}</span></div>
-      <div style="width:36px"><span class="badge ${x.grade==='A'?'b-a':x.grade==='B'?'b-b':'b-c'}">${x.grade||'?'}</span></div>
+      <div style="width:50px">${renderStars(x.grade)}</div>
       <div style="width:80px;text-align:right;font-weight:600;color:${net>=0?'#1D9E75':'#E24B4A'}">${net>=0?'+':''}$${net.toFixed(2)}</div>
     </div>`;
   }).join(''):'<div style="color:#666;font-size:13px;padding:20px;text-align:center">ยังไม่มี trade</div>';
@@ -1018,7 +1084,7 @@ function renderHistory(){
       <td><span class="badge ${x.pos==='Buy'?'b-buy':'b-sell'}">${x.pos}</span></td>
       <td><span class="badge b-model" style="font-size:10px">${modelName(x.modelId)}</span></td>
       <td style="font-size:11px;color:#888">${x.ses||'—'}</td>
-      <td><span class="badge ${x.grade==='A'?'b-a':x.grade==='B'?'b-b':'b-c'}">${x.grade||'—'}</span></td>
+      <td>${renderStars(x.grade)}</td>
       <td style="font-weight:700;color:${net>=0?'#1D9E75':'#E24B4A'}">${net>=0?'+':''}$${net.toFixed(2)}</td>
       <td style="font-size:12px">${x.arr||'—'}</td>
       <td>${outBadge(x.outcome)}</td>
@@ -1105,7 +1171,7 @@ function loadWeekPreview(){
     <div class="tbl-wrap">
       <table class="tbl">
         <thead><tr><th>Date</th><th>Symbol</th><th>Dir</th><th>Model</th><th>Session</th><th>Grade</th><th>Net P&L</th><th>RR</th><th>Outcome</th><th>Charts</th></tr></thead>
-        <tbody>${wt.map(x=>{const net2=+x.net||0;const ch=[x.htf?'HTF':'',x.mtf?'MTF':'',x.ltf?'LTF':''].filter(Boolean);return`<tr><td style="font-size:11px">${x.date}</td><td><strong>${x.sym}</strong></td><td><span class="badge ${x.pos==='Buy'?'b-buy':'b-sell'}">${x.pos}</span></td><td><span class="badge b-model" style="font-size:10px">${modelName(x.modelId)}</span></td><td style="font-size:11px">${x.ses}</td><td><span class="badge ${x.grade==='A'?'b-a':x.grade==='B'?'b-b':'b-c'}">${x.grade}</span></td><td style="font-weight:700;color:${net2>=0?'#1D9E75':'#E24B4A'}">${net2>=0?'+':''}$${net2.toFixed(2)}</td><td>${x.arr||'—'}</td><td>${outBadge(x.outcome)}</td><td style="font-size:11px;color:#aaa">${ch.join(' ')||'—'}</td></tr>`;}).join('')}</tbody>
+        <tbody>${wt.map(x=>{const net2=+x.net||0;const ch=[x.htf?'HTF':'',x.mtf?'MTF':'',x.ltf?'LTF':''].filter(Boolean);return`<tr><td style="font-size:11px">${x.date}</td><td><strong>${x.sym}</strong></td><td><span class="badge ${x.pos==='Buy'?'b-buy':'b-sell'}">${x.pos}</span></td><td><span class="badge b-model" style="font-size:10px">${modelName(x.modelId)}</span></td><td style="font-size:11px">${x.ses}</td><td>${renderStars(x.grade)}</td><td style="font-weight:700;color:${net2>=0?'#1D9E75':'#E24B4A'}">${net2>=0?'+':''}$${net2.toFixed(2)}</td><td>${x.arr||'—'}</td><td>${outBadge(x.outcome)}</td><td style="font-size:11px;color:#aaa">${ch.join(' ')||'—'}</td></tr>`;}).join('')}</tbody>
       </table>
     </div>`;
 }
@@ -1136,7 +1202,7 @@ function exportWeekPDF(){
     const net2=+x.net||0;
     const nc=net2>=0?'#1D9E75':'#E24B4A';
     const oc={'Great Exit!':'#1D9E75','Profit Taken':'#0C447C','Loss, Review Setup':'#E24B4A','Capital Protected':'#0C447C','Breakeven':'#854F0B'}[x.outcome]||'#333';
-    const gc=x.grade==='A'?'#1D9E75':x.grade==='B'?'#854F0B':'#E24B4A';
+    const gc=+x.grade>=4?'#1D9E75':+x.grade===3?'#854F0B':'#E24B4A';
     const chartImgs=[
       x.htf?`<div style="flex:1"><div style="font-size:9px;font-weight:700;color:#888;text-align:center;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em">HTF</div><img src="${x.htf}" style="width:100%;border-radius:6px;border:1px solid #2a2a2a;display:block"></div>`:`<div style="flex:1;border:1px dashed #ddd;border-radius:6px;min-height:70px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#ccc;flex-direction:column;gap:3px"><span>HTF</span><span>—</span></div>`,
       x.mtf?`<div style="flex:1"><div style="font-size:9px;font-weight:700;color:#888;text-align:center;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em">MTF</div><img src="${x.mtf}" style="width:100%;border-radius:6px;border:1px solid #2a2a2a;display:block"></div>`:`<div style="flex:1;border:1px dashed #ddd;border-radius:6px;min-height:70px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#ccc;flex-direction:column;gap:3px"><span>MTF</span><span>—</span></div>`,
@@ -1150,7 +1216,7 @@ function exportWeekPDF(){
           <span style="font-size:11px;color:#888">${x.date} &nbsp;·&nbsp; ${x.ses} &nbsp;·&nbsp; ${x.dur||''}</span>
         </div>
         <div style="display:flex;gap:12px;align-items:center">
-          <span style="font-size:12px;padding:3px 9px;border-radius:20px;background:${gc}18;color:${gc};font-weight:700">Grade ${x.grade}</span>
+          <span style="font-size:12px;font-weight:700;color:#EF9F27">${'★'.repeat(Math.min(5,Math.max(1,+x.grade||3)))}</span>
           <span style="font-size:16px;font-weight:800;color:${nc}">${net2>=0?'+':''}$${net2.toFixed(2)}</span>
         </div>
       </div>
@@ -1200,7 +1266,7 @@ h1{font-size:24px;font-weight:800;color:#a78bfa;margin-bottom:4px}
   <div class="scard"><div class="sl">Avg RR</div><div class="sv">${avgRR}</div></div>
   <div class="scard"><div class="sl">W / L</div><div class="sv">${w} / ${wt.length-w}</div></div>
   <div class="scard"><div class="sl">Profit Factor</div><div class="sv">${pfVal()}</div></div>
-  <div class="scard"><div class="sl">Grade A</div><div class="sv" style="color:#0F6E56">${wt.filter(x=>x.grade==='A').length}</div></div>
+  <div class="scard"><div class="sl">5★ Trades</div><div class="sv" style="color:#EF9F27">${wt.filter(x=>+x.grade>=5).length}</div></div>
   <div class="scard"><div class="sl">Top Mistakes</div><div style="font-size:11px;color:#A32D2D;margin-top:5px;font-weight:700;line-height:1.5">${topM}</div></div>
 </div>
 <div class="divider"></div>
@@ -1254,9 +1320,38 @@ ${tradesHtml}
     </div>
 
     <div class="card" style="margin-bottom:10px">
-      <div class="ct">Model / Strategy</div>
+      <div class="ct">Setup / Confluences</div>
       <div class="fr">
-        <div class="fg"><label>Model</label><select id="e-model"><option value="">— เลือก Model —</option></select></div>
+        <div class="fg"><label>Setup Type</label>
+          <select id="e-model">
+            <option value="">— เลือก Setup —</option>
+            <optgroup label="ICT Concepts">
+              <option value="fvg">FVG (Fair Value Gap)</option>
+              <option value="ifvg">iFVG (Inverse FVG)</option>
+              <option value="ob">Order Block</option>
+              <option value="bb">Breaker Block</option>
+              <option value="ob_5m">5m Order Block</option>
+              <option value="ob_15m">15m Order Block</option>
+              <option value="ifvg_1m">1m iFVG</option>
+              <option value="ifvg_5m">5m iFVG</option>
+              <option value="ifvg_15m">15m iFVG</option>
+              <option value="fvg_5m">5m FVG</option>
+              <option value="fvg_15m">15m FVG</option>
+              <option value="bb_5m">5m Breaker Block</option>
+              <option value="bb_15m">15m Breaker Block</option>
+            </optgroup>
+            <optgroup label="SMC / Price Action">
+              <option value="supply_zone">Supply Zone</option>
+              <option value="demand_zone">Demand Zone</option>
+              <option value="pullback">Pullback</option>
+              <option value="ms_break">Market Structure Break</option>
+              <option value="liq_sweep">Liquidity Sweep</option>
+            </optgroup>
+            <optgroup label="Other">
+              <option value="custom">Custom / Other</option>
+            </optgroup>
+          </select>
+        </div>
         <div class="fg"><label>Entry Timeframe</label><select id="e-etf"><option>1m</option><option>5m</option><option>15m</option><option>1h</option><option>4h</option></select></div>
         <div class="fg"><label>Key Levels</label><input type="text" id="e-kl"></div>
         <div class="fg"><label>Order Type</label><select id="e-ot"><option>Limit</option><option>Market</option><option>Stop Limit</option></select></div>
@@ -1284,7 +1379,20 @@ ${tradesHtml}
         <div class="fg"><label>SL Management</label><select id="e-slm"><option value="">—</option><option>Hit Initial SL</option><option>Locked Profit</option><option>Moved to BE</option><option>Manual Close</option></select></div>
         <div class="fg"><label>TP Management</label><select id="e-tpm"><option>Set and Forget</option><option>Manual Close</option><option>Partial TP</option><option>Move to BE</option><option>Final TP Hit</option><option>Locked Profit</option></select></div>
         <div class="fg"><label>Outcome</label><select id="e-outcome"><option>Profit Taken</option><option>Great Exit!</option><option>Loss, Review Setup</option><option>Capital Protected</option><option>Breakeven</option></select></div>
-        <div class="fg"><label>Setup Grade</label><select id="e-grade"><option value="A">A — Best</option><option value="B">B — Good</option><option value="C">C — Marginal</option></select></div>
+        <div class="fg">
+          <label>Setup Rating</label>
+          <div style="padding:6px 0">
+            <div class="star-rating" id="e-grade-stars" onclick="setStarRating('e-grade-stars','e-grade',this)">
+              <span class="star" data-val="1">&#9733;</span>
+              <span class="star" data-val="2">&#9733;</span>
+              <span class="star" data-val="3">&#9733;</span>
+              <span class="star" data-val="4">&#9733;</span>
+              <span class="star" data-val="5">&#9733;</span>
+            </div>
+            <input type="hidden" id="e-grade" value="3">
+            <div style="font-size:10px;color:#aaa;margin-top:3px" id="e-grade-label">3 stars</div>
+          </div>
+        </div>
       </div>
       <div class="fr">
         <div class="fg"><label>Mistakes</label><select id="e-mistake"><option value="">None</option><option>Position Sizing</option><option>Wrong Exit Point</option><option>Wrong Entry Point</option><option>FOMO</option><option>Early Exit</option><option>Late Entry</option><option>No Stop Loss</option></select></div>
@@ -1360,9 +1468,13 @@ ${tradesHtml}
         <select id="import-acc-sel" style="font-size:12px;padding:6px 9px;border:1px solid #e0e0e0;border-radius:7px;background:#fff;color:#1a1a1a;width:100%"></select>
       </div>
       <div class="fg" style="min-width:120px">
-        <label>Default Grade</label>
+        <label>Default Rating</label>
         <select id="import-grade" style="font-size:12px;padding:6px 9px;border:1px solid #e0e0e0;border-radius:7px;background:#fff;color:#1a1a1a">
-          <option value="B">B</option><option value="A">A</option><option value="C">C</option>
+          <option value="3">★★★ (3)</option>
+          <option value="4">★★★★ (4)</option>
+          <option value="5">★★★★★ (5)</option>
+          <option value="2">★★ (2)</option>
+          <option value="1">★ (1)</option>
         </select>
       </div>
       <div class="fg" style="min-width:120px">
@@ -1441,7 +1553,7 @@ function saveTrade(){
   const swap=parseFloat(document.getElementById('f-swap').value)||0;
   const ni=parseFloat(document.getElementById('f-net').value);
   const net=isNaN(ni)?(gross-fees-swap):ni;
-  const confs=[...document.querySelectorAll('#conf-tags .conf-tag.on')].map(b=>b.textContent);
+  const confs=[...document.querySelectorAll('#conf-tags .conf-tag.on')].map(b=>b.dataset.label||b.textContent.replace(' ×','').trim());
   const t={
     id:Date.now(),accId:S.currentAcc,
     date:document.getElementById('f-date').value.replace(/-/g,'/'),
@@ -1518,6 +1630,59 @@ function autoNet(){
   document.getElementById('f-net').value=(g-f-sw).toFixed(2);
 }
 
+
+// ===== STAR RATING =====
+function renderStars(val) {
+  const n = Math.min(5, Math.max(1, parseInt(val) || 3));
+  let html = '<span class="stars-display">';
+  for(let i=1;i<=5;i++) html += `<span class="s ${i<=n?'on':'off'}">&#9733;</span>`;
+  html += '</span>';
+  return html;
+}
+
+function setStarRating(wrapperId, hiddenId, clickedEl) {
+  const star = clickedEl.closest('.star');
+  if(!star) return;
+  const val = parseInt(star.dataset.val);
+  document.getElementById(hiddenId).value = val;
+  // Update label
+  const labels = {1:'1 star — Marginal',2:'2 stars — Below avg',3:'3 stars — Average',4:'4 stars — Good',5:'5 stars — Best setup'};
+  const lbl = document.getElementById(hiddenId+'-label');
+  if(lbl) lbl.textContent = labels[val] || val+' stars';
+  // Update visual
+  const stars = document.getElementById(wrapperId).querySelectorAll('.star');
+  stars.forEach((s,i) => s.classList.toggle('on', i < val));
+}
+
+function initStarWidget(wrapperId, hiddenId, val) {
+  const n = Math.min(5, Math.max(1, parseInt(val) || 3));
+  document.getElementById(hiddenId).value = n;
+  const stars = document.getElementById(wrapperId).querySelectorAll('.star');
+  stars.forEach((s,i) => s.classList.toggle('on', i < n));
+  const labels = {1:'1 star — Marginal',2:'2 stars — Below avg',3:'3 stars — Average',4:'4 stars — Good',5:'5 stars — Best setup'};
+  const lbl = document.getElementById(hiddenId+'-label');
+  if(lbl) lbl.textContent = labels[n] || n+' stars';
+}
+
+// Hover effect for star rating
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.star-rating').forEach(wrapper => {
+    const stars = wrapper.querySelectorAll('.star');
+    stars.forEach((star, idx) => {
+      star.addEventListener('mouseenter', () => {
+        stars.forEach((s,i) => s.classList.toggle('on', i <= idx));
+      });
+    });
+    wrapper.addEventListener('mouseleave', () => {
+      const hiddenId = wrapper.id.replace('-stars','');
+      const val = parseInt(document.getElementById(hiddenId)?.value) || 3;
+      stars.forEach((s,i) => s.classList.toggle('on', i < val));
+    });
+  });
+  // Init log form stars at 3
+  initStarWidget('f-grade-stars','f-grade',3);
+});
+
 document.getElementById('f-date').valueAsDate=new Date();
 load();
 // Normalize dates after load
@@ -1566,7 +1731,7 @@ function openEditModal(id) {
   setSelect('e-slm', t.slm);
   setSelect('e-tpm', t.tpm);
   setSelect('e-outcome', t.outcome);
-  setSelect('e-grade', t.grade);
+  // grade handled by initStarWidget above
   setSelect('e-mistake', t.mistake);
 
   // Set emotions
@@ -1578,6 +1743,9 @@ function openEditModal(id) {
   });
 
   buildEditConfTags(t.confs || []);
+  // Init star rating
+  const gradeVal = parseInt(t.grade) || 3;
+  setTimeout(() => initStarWidget('e-grade-stars','e-grade', gradeVal), 50);
   openModal('modal-edit');
 }
 
@@ -1649,7 +1817,7 @@ function saveEdit() {
 
 
 // ===== CONFLUENCE MANAGEMENT =====
-const DEFAULT_CONFS = ['LG sweep','LTF POI Mitigation','MS Break','FVG','iFVG','Order Block','Breaker Block','Supply Zone','Demand Zone','Inversion FVG','PDH/PDL','LTF sweep','MR-','MR+'];
+const DEFAULT_CONFS = ['FVG (Fair Value Gap)','iFVG (Inverse FVG)','Order Block','Breaker Block','5m Order Block','15m Order Block','1m iFVG','5m iFVG','15m iFVG','5m FVG','15m FVG','5m Breaker Block','15m Breaker Block','LG sweep','LTF POI Mitigation','MS Break','Supply Zone','Demand Zone','Inversion FVG','PDH/PDL','LTF sweep','MR-','MR+'];
 const CUSTOM_CONF_KEY = 'tj_custom_confs';
 
 function getCustomConfs() {
@@ -1961,7 +2129,7 @@ function confirmImport() {
     confs: [],
     esig: '',
     ot: 'Market',
-    grade,
+    grade: parseInt(grade)||3,
     arr: 0,
     riskR: 0,
     gross: t.gross,
@@ -2155,9 +2323,38 @@ Output TSV only, one row per trade:`
     </div>
 
     <div class="card" style="margin-bottom:10px">
-      <div class="ct">Model / Strategy</div>
+      <div class="ct">Setup / Confluences</div>
       <div class="fr">
-        <div class="fg"><label>Model</label><select id="e-model"><option value="">— เลือก Model —</option></select></div>
+        <div class="fg"><label>Setup Type</label>
+          <select id="e-model">
+            <option value="">— เลือก Setup —</option>
+            <optgroup label="ICT Concepts">
+              <option value="fvg">FVG (Fair Value Gap)</option>
+              <option value="ifvg">iFVG (Inverse FVG)</option>
+              <option value="ob">Order Block</option>
+              <option value="bb">Breaker Block</option>
+              <option value="ob_5m">5m Order Block</option>
+              <option value="ob_15m">15m Order Block</option>
+              <option value="ifvg_1m">1m iFVG</option>
+              <option value="ifvg_5m">5m iFVG</option>
+              <option value="ifvg_15m">15m iFVG</option>
+              <option value="fvg_5m">5m FVG</option>
+              <option value="fvg_15m">15m FVG</option>
+              <option value="bb_5m">5m Breaker Block</option>
+              <option value="bb_15m">15m Breaker Block</option>
+            </optgroup>
+            <optgroup label="SMC / Price Action">
+              <option value="supply_zone">Supply Zone</option>
+              <option value="demand_zone">Demand Zone</option>
+              <option value="pullback">Pullback</option>
+              <option value="ms_break">Market Structure Break</option>
+              <option value="liq_sweep">Liquidity Sweep</option>
+            </optgroup>
+            <optgroup label="Other">
+              <option value="custom">Custom / Other</option>
+            </optgroup>
+          </select>
+        </div>
         <div class="fg"><label>Entry Timeframe</label><select id="e-etf"><option>1m</option><option>5m</option><option>15m</option><option>1h</option><option>4h</option></select></div>
         <div class="fg"><label>Key Levels</label><input type="text" id="e-kl"></div>
         <div class="fg"><label>Order Type</label><select id="e-ot"><option>Limit</option><option>Market</option><option>Stop Limit</option></select></div>
@@ -2185,7 +2382,20 @@ Output TSV only, one row per trade:`
         <div class="fg"><label>SL Management</label><select id="e-slm"><option value="">—</option><option>Hit Initial SL</option><option>Locked Profit</option><option>Moved to BE</option><option>Manual Close</option></select></div>
         <div class="fg"><label>TP Management</label><select id="e-tpm"><option>Set and Forget</option><option>Manual Close</option><option>Partial TP</option><option>Move to BE</option><option>Final TP Hit</option><option>Locked Profit</option></select></div>
         <div class="fg"><label>Outcome</label><select id="e-outcome"><option>Profit Taken</option><option>Great Exit!</option><option>Loss, Review Setup</option><option>Capital Protected</option><option>Breakeven</option></select></div>
-        <div class="fg"><label>Setup Grade</label><select id="e-grade"><option value="A">A — Best</option><option value="B">B — Good</option><option value="C">C — Marginal</option></select></div>
+        <div class="fg">
+          <label>Setup Rating</label>
+          <div style="padding:6px 0">
+            <div class="star-rating" id="e-grade-stars" onclick="setStarRating('e-grade-stars','e-grade',this)">
+              <span class="star" data-val="1">&#9733;</span>
+              <span class="star" data-val="2">&#9733;</span>
+              <span class="star" data-val="3">&#9733;</span>
+              <span class="star" data-val="4">&#9733;</span>
+              <span class="star" data-val="5">&#9733;</span>
+            </div>
+            <input type="hidden" id="e-grade" value="3">
+            <div style="font-size:10px;color:#aaa;margin-top:3px" id="e-grade-label">3 stars</div>
+          </div>
+        </div>
       </div>
       <div class="fr">
         <div class="fg"><label>Mistakes</label><select id="e-mistake"><option value="">None</option><option>Position Sizing</option><option>Wrong Exit Point</option><option>Wrong Entry Point</option><option>FOMO</option><option>Early Exit</option><option>Late Entry</option><option>No Stop Loss</option></select></div>
@@ -2261,9 +2471,13 @@ Output TSV only, one row per trade:`
         <select id="import-acc-sel" style="font-size:12px;padding:6px 9px;border:1px solid #e0e0e0;border-radius:7px;background:#fff;color:#1a1a1a;width:100%"></select>
       </div>
       <div class="fg" style="min-width:120px">
-        <label>Default Grade</label>
+        <label>Default Rating</label>
         <select id="import-grade" style="font-size:12px;padding:6px 9px;border:1px solid #e0e0e0;border-radius:7px;background:#fff;color:#1a1a1a">
-          <option value="B">B</option><option value="A">A</option><option value="C">C</option>
+          <option value="3">★★★ (3)</option>
+          <option value="4">★★★★ (4)</option>
+          <option value="5">★★★★★ (5)</option>
+          <option value="2">★★ (2)</option>
+          <option value="1">★ (1)</option>
         </select>
       </div>
       <div class="fg" style="min-width:120px">
