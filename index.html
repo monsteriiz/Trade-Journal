@@ -434,7 +434,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="ct">P&L & Risk</div>
     <div class="fr">
       <div class="fg"><label>Risk (R $)</label><input type="number" id="f-risk-r" step="0.01"></div>
-      <div class="fg"><label>Actual RR</label><input type="number" id="f-arr" step="0.01"></div>
+      <div class="fg"><label>Actual RR</label><input type="number" id="f-arr" step="0.01" oninput="calcMaxRR()"></div>
+      <div class="fg"><label>Max RR <span style="font-size:10px;color:#aaa;font-weight:400">(ถ้าออกที่จุดดีสุด)</span></label><input type="number" id="f-maxrr" step="0.01" placeholder="0.00"></div>
       <div class="fg"><label>Gross P&L ($)</label><input type="number" id="f-gross" step="0.01"></div>
       <div class="fg"><label>Fees ($)</label><input type="number" id="f-fees" step="0.01" value="0"></div>
       <div class="fg"><label>Swap ($)</label><input type="number" id="f-swap" step="0.01" value="0"></div>
@@ -450,12 +451,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="fg">
         <label>Setup Rating</label>
         <div style="padding:6px 0">
-          <div class="star-rating" id="f-grade-stars" onclick="setStarRating('f-grade-stars','f-grade',this)">
-            <span class="star" data-val="1">&#9733;</span>
-            <span class="star" data-val="2">&#9733;</span>
-            <span class="star" data-val="3">&#9733;</span>
-            <span class="star" data-val="4">&#9733;</span>
-            <span class="star" data-val="5">&#9733;</span>
+          <div class="star-rating" id="f-grade-stars">
+            <span class="star" data-val="1" onclick="setStarRating('f-grade-stars','f-grade',1)">&#9733;</span>
+            <span class="star" data-val="2" onclick="setStarRating('f-grade-stars','f-grade',2)">&#9733;</span>
+            <span class="star" data-val="3" onclick="setStarRating('f-grade-stars','f-grade',3)">&#9733;</span>
+            <span class="star" data-val="4" onclick="setStarRating('f-grade-stars','f-grade',4)">&#9733;</span>
+            <span class="star" data-val="5" onclick="setStarRating('f-grade-stars','f-grade',5)">&#9733;</span>
           </div>
           <input type="hidden" id="f-grade" value="3">
           <div style="font-size:10px;color:#aaa;margin-top:3px" id="f-grade-label">3 stars</div>
@@ -552,7 +553,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <table class="tbl">
       <thead><tr>
         <th>Date</th><th>Symbol</th><th>Dir</th><th>Model</th><th>Session</th><th>Grade</th>
-        <th>Net P&L</th><th>RR</th><th>Outcome</th><th>Emotion</th><th>Charts</th><th></th>
+        <th>Net P&L</th><th>RR</th><th>Max RR</th><th>Outcome</th><th>Emotion</th><th>Charts</th><th></th>
       </tr></thead>
       <tbody id="hist-body"></tbody>
     </table>
@@ -630,6 +631,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <script>
 const DB={accounts:'tj_accounts_v5',trades:'tj_trades_v5',models:'tj_models_v5'};
+const PRIMARY_ACC_KEY = 'tj_primary_acc';
 let S={accounts:[],trades:[],models:[],currentAcc:null,entryEmo:'',exitEmo:'',_htf:'',_mtf:'',_ltf:'',calY:new Date().getFullYear(),calM:new Date().getMonth()};
 let chartObjs={};
 
@@ -703,7 +705,8 @@ function load(){
     saveModels();
   }
   loadNotionData();
-  S.currentAcc = S.accounts.find(a=>a.id==='acc_topstep')?.id || S.accounts[0].id;
+  const savedPrimary = localStorage.getItem(PRIMARY_ACC_KEY);
+  S.currentAcc = S.accounts.find(a=>a.id===savedPrimary)?.id || S.accounts.find(a=>a.id==='acc_topstep')?.id || S.accounts[0].id;
 }
 
 function saveAccounts(){localStorage.setItem(DB.accounts,JSON.stringify(S.accounts))}
@@ -753,6 +756,8 @@ function renderAccSelector(){
   const sel=document.getElementById('acc-select');
   sel.innerHTML=S.accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
   sel.value=S.currentAcc;
+  const primaryId2 = localStorage.getItem(PRIMARY_ACC_KEY);
+  // Bold primary account in dropdown label
   const acc=S.accounts.find(a=>a.id===S.currentAcc);
   const t=accTrades();
   const net=t.reduce((a,x)=>a+(+x.net||0),0);
@@ -768,15 +773,26 @@ function closeModal(id){document.getElementById(id).classList.remove('open')}
 function overlayClose(e,id){if(e.target===document.getElementById(id))closeModal(id)}
 
 function renderAccList(){
+  const primaryId = localStorage.getItem(PRIMARY_ACC_KEY) || S.currentAcc;
   document.getElementById('acc-list').innerHTML=S.accounts.map(a=>{
     const t=S.trades.filter(x=>x.accId===a.id);
     const net=t.reduce((s,x)=>s+(+x.net||0),0);
-    return`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f0f0ec;font-size:13px">
-      <div><strong>${a.name}</strong> <span style="color:#aaa;font-size:11px">$${a.balance.toLocaleString()}</span></div>
-      <div style="display:flex;gap:10px;align-items:center">
-        <span style="color:${net>=0?'#1D9E75':'#E24B4A'};font-weight:600">${net>=0?'+':''}$${net.toFixed(2)}</span>
+    const isPrimary = a.id === primaryId;
+    const isActive  = a.id === S.currentAcc;
+    return`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:8px;margin-bottom:6px;border:1.5px solid ${isPrimary?'#a78bfa':'#f0f0ec'};background:${isPrimary?'#faf8ff':'#fff'};font-size:13px">
+      <div style="display:flex;align-items:center;gap:8px">
+        ${isPrimary?'<span style="font-size:10px;padding:2px 7px;border-radius:10px;background:#a78bfa;color:#fff;font-weight:700">★ หลัก</span>':''}
+        ${isActive&&!isPrimary?'<span style="font-size:10px;padding:2px 7px;border-radius:10px;background:#e8f4fd;color:#185FA5;font-weight:600">ใช้งานอยู่</span>':''}
+        <div>
+          <strong>${a.name}</strong>
+          <span style="color:#aaa;font-size:11px;margin-left:6px">Init $${a.balance.toLocaleString()}</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <span style="color:${net>=0?'#1D9E75':'#E24B4A'};font-weight:600;font-size:12px">${net>=0?'+':''}$${net.toFixed(2)}</span>
         <span style="color:#aaa;font-size:11px">${t.length} trades</span>
-        ${S.accounts.length>1?`<button class="btn btn-sm btn-d" onclick="deleteAccount('${a.id}')">ลบ</button>`:''}
+        ${!isPrimary?`<button class="btn btn-sm" onclick="setPrimaryAccount('${a.id}')" style="white-space:nowrap;font-size:11px;border-color:#a78bfa;color:#6d28d9">★ ตั้งเป็นหลัก</button>`:''}
+        ${S.accounts.length>1?`<button class="btn btn-sm btn-d" onclick="deleteAccount('${a.id}')" style="font-size:11px">ลบ</button>`:''}
       </div>
     </div>`;
   }).join('')||'<div style="color:#aaa;font-size:13px">ยังไม่มี account</div>';
@@ -789,6 +805,19 @@ function addAccount(){
   S.accounts.push({id:'acc'+Date.now(),name,balance:bal,created:Date.now()});
   saveAccounts();document.getElementById('new-acc-name').value='';document.getElementById('new-acc-bal').value='';
   renderAccList();renderAccSelector();
+}
+
+
+function setPrimaryAccount(id) {
+  localStorage.setItem(PRIMARY_ACC_KEY, id);
+  S.currentAcc = id;
+  document.getElementById('acc-select').value = id;
+  renderAccList();
+  renderAccSelector();
+  renderDash();
+  // Flash topbar
+  const info = document.getElementById('acc-info');
+  if (info) { info.style.color = '#1D9E75'; setTimeout(() => info.style.color = '', 1500); }
 }
 
 function deleteAccount(id){
@@ -1173,8 +1202,8 @@ function loadWeekPreview(){
     <div style="font-size:12px;color:#888;margin-bottom:10px">กด "Export PDF" เพื่อดาวน์โหลด PDF พร้อมรูป HTF/MTF/LTF ทุก trade</div>
     <div class="tbl-wrap">
       <table class="tbl">
-        <thead><tr><th>Date</th><th>Symbol</th><th>Dir</th><th>Model</th><th>Session</th><th>Grade</th><th>Net P&L</th><th>RR</th><th>Outcome</th><th>Charts</th></tr></thead>
-        <tbody>${wt.map(x=>{const net2=+x.net||0;const ch=[x.htf?'HTF':'',x.mtf?'MTF':'',x.ltf?'LTF':''].filter(Boolean);return`<tr><td style="font-size:11px">${x.date}</td><td><strong>${x.sym}</strong></td><td><span class="badge ${x.pos==='Buy'?'b-buy':'b-sell'}">${x.pos}</span></td><td><span class="badge b-model" style="font-size:10px">${modelName(x.modelId)}</span></td><td style="font-size:11px">${x.ses}</td><td>${renderStars(x.grade)}</td><td style="font-weight:700;color:${net2>=0?'#1D9E75':'#E24B4A'}">${net2>=0?'+':''}$${net2.toFixed(2)}</td><td>${x.arr||'—'}</td><td>${outBadge(x.outcome)}</td><td style="font-size:11px;color:#aaa">${ch.join(' ')||'—'}</td></tr>`;}).join('')}</tbody>
+        <thead><tr><th>Date</th><th>Symbol</th><th>Dir</th><th>Model</th><th>Session</th><th>Grade</th><th>Net P&L</th><th>RR</th><th>Max RR</th><th>Outcome</th><th>Charts</th></tr></thead>
+        <tbody>${wt.map(x=>{const net2=+x.net||0;const ch=[x.htf?'HTF':'',x.mtf?'MTF':'',x.ltf?'LTF':''].filter(Boolean);return`<tr><td style="font-size:11px">${x.date}</td><td><strong>${x.sym}</strong></td><td><span class="badge ${x.pos==='Buy'?'b-buy':'b-sell'}">${x.pos}</span></td><td><span class="badge b-model" style="font-size:10px">${modelName(x.modelId)}</span></td><td style="font-size:11px">${x.ses}</td><td>${renderStars(x.grade)}</td><td style="font-weight:700;color:${net2>=0?'#1D9E75':'#E24B4A'}">${net2>=0?'+':''}$${net2.toFixed(2)}</td><td>${x.arr||'—'}</td><td style="color:#a78bfa">${x.maxrr||'—'}</td><td>${outBadge(x.outcome)}</td><td style="font-size:11px;color:#aaa">${ch.join(' ')||'—'}</td></tr>`;}).join('')}</tbody>
       </table>
     </div>`;
 }
@@ -1288,6 +1317,7 @@ ${tradesHtml}
     <div class="card" style="margin-bottom:10px">
       <div class="ct">Trade Details</div>
       <div class="fr">
+        <div class="fg"><label>Account</label><select id="e-accId" style="font-size:12px;padding:6px 8px;border:1px solid #e0e0e0;border-radius:7px;background:#fff;color:#1a1a1a;width:100%;font-family:inherit"></select></div>
         <div class="fg"><label>Date</label><input type="date" id="e-date"></div>
         <div class="fg"><label>Symbol</label>
           <select id="e-sym">
@@ -1373,6 +1403,7 @@ ${tradesHtml}
       <div class="ct">P&L & Risk</div>
       <div class="fr">
         <div class="fg"><label>Actual RR</label><input type="number" id="e-arr" step="0.01"></div>
+        <div class="fg"><label>Max RR</label><input type="number" id="e-maxrr" step="0.01" placeholder="0.00"></div>
         <div class="fg"><label>Gross P&L ($)</label><input type="number" id="e-gross" step="0.01"></div>
         <div class="fg"><label>Fees ($)</label><input type="number" id="e-fees" step="0.01"></div>
         <div class="fg"><label>Swap ($)</label><input type="number" id="e-swap" step="0.01"></div>
@@ -1385,12 +1416,12 @@ ${tradesHtml}
         <div class="fg">
           <label>Setup Rating</label>
           <div style="padding:6px 0">
-            <div class="star-rating" id="e-grade-stars" onclick="setStarRating('e-grade-stars','e-grade',this)">
-              <span class="star" data-val="1">&#9733;</span>
-              <span class="star" data-val="2">&#9733;</span>
-              <span class="star" data-val="3">&#9733;</span>
-              <span class="star" data-val="4">&#9733;</span>
-              <span class="star" data-val="5">&#9733;</span>
+            <div class="star-rating" id="e-grade-stars">
+              <span class="star" data-val="1" onclick="setStarRating('e-grade-stars','e-grade',1)">&#9733;</span>
+              <span class="star" data-val="2" onclick="setStarRating('e-grade-stars','e-grade',2)">&#9733;</span>
+              <span class="star" data-val="3" onclick="setStarRating('e-grade-stars','e-grade',3)">&#9733;</span>
+              <span class="star" data-val="4" onclick="setStarRating('e-grade-stars','e-grade',4)">&#9733;</span>
+              <span class="star" data-val="5" onclick="setStarRating('e-grade-stars','e-grade',5)">&#9733;</span>
             </div>
             <input type="hidden" id="e-grade" value="3">
             <div style="font-size:10px;color:#aaa;margin-top:3px" id="e-grade-label">3 stars</div>
@@ -1531,6 +1562,16 @@ ${tradesHtml}
   else{alert('กรุณาอนุญาต popup ใน browser แล้วลองใหม่ครับ')}
 }
 
+
+function calcMaxRR() {
+  // Auto-fill Max RR hint only if not already set
+  const arr = parseFloat(document.getElementById('f-arr').value) || 0;
+  const maxEl = document.getElementById('f-maxrr');
+  if (maxEl && !maxEl.value && arr > 0) {
+    // leave blank - user fills manually
+  }
+}
+
 function toggleTag(btn){btn.classList.toggle('on')}
 function selEmo(type,btn,val){
   document.getElementById(type+'-emo').querySelectorAll('.emo-btn').forEach(b=>b.classList.remove('on'));
@@ -1577,6 +1618,7 @@ function saveTrade(){
     ot:document.getElementById('f-ot').value,
     grade:document.getElementById('f-grade').value,
     arr:parseFloat(document.getElementById('f-arr').value)||0,
+    maxrr:parseFloat(document.getElementById('f-maxrr').value)||0,
     riskR:parseFloat(document.getElementById('f-risk-r').value)||0,
     gross,fees,swap,net,
     slm:document.getElementById('f-slm').value,
@@ -1599,7 +1641,7 @@ function saveTrade(){
 }
 
 function clearForm(){
-  ['f-date','f-sym','f-dur','f-entry','f-kl','f-arr','f-risk-r','f-gross','f-fees','f-swap','f-net','f-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  ['f-date','f-sym','f-dur','f-entry','f-kl','f-arr','f-maxrr','f-risk-r','f-gross','f-fees','f-swap','f-net','f-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
   document.getElementById('f-fees').value='0';document.getElementById('f-swap').value='0';
   document.getElementById('f-followed').checked=false;
   document.querySelectorAll('#conf-tags .conf-tag.on').forEach(b=>b.classList.remove('on'));
@@ -1618,8 +1660,8 @@ function deleteTrade(id){
 
 function exportCSV(){
   const t=accTrades();
-  const h=['Date','Symbol','Account','Direction','Lots','Model','Session','ETF','Market','Bias','Confluences','Grade','Actual RR','Net PnL','Outcome','Entry Emotion','Exit Emotion','Followed Plan','Mistake','Notes'];
-  const rows=t.map(x=>[x.date,x.sym,S.accounts.find(a=>a.id===x.accId)?.name||'',x.pos,x.lot,modelName(x.modelId),x.ses,x.etf,x.mkt,x.bias,(x.confs||[]).join('|'),x.grade,x.arr,x.net,x.outcome,x.entryEmo,x.exitEmo,x.followed?'Yes':'No',x.mistake,`"${(x.notes||'').replace(/"/g,'""')}"`]);
+  const h=['Date','Symbol','Account','Direction','Lots','Model','Session','ETF','Market','Bias','Confluences','Grade','Actual RR','Max RR','Net PnL','Outcome','Entry Emotion','Exit Emotion','Followed Plan','Mistake','Notes'];
+  const rows=t.map(x=>[x.date,x.sym,S.accounts.find(a=>a.id===x.accId)?.name||'',x.pos,x.lot,modelName(x.modelId),x.ses,x.etf,x.mkt,x.bias,(x.confs||[]).join('|'),x.grade,x.arr,x.maxrr||0,x.net,x.outcome,x.entryEmo,x.exitEmo,x.followed?'Yes':'No',x.mistake,`"${(x.notes||'').replace(/"/g,'""')}"`]);
   const csv=[h,...rows].map(r=>r.join(',')).join('\n');
   const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download='trades_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
 }
@@ -1644,16 +1686,12 @@ function renderStars(val) {
   return html;
 }
 
-function setStarRating(wrapperId, hiddenId, clickedEl) {
-  const star = clickedEl.closest('.star');
-  if(!star) return;
-  const val = parseInt(star.dataset.val);
+function setStarRating(wrapperId, hiddenId, val) {
+  val = parseInt(val);
   document.getElementById(hiddenId).value = val;
-  // Update label
   const labels = {1:'1 star — Marginal',2:'2 stars — Below avg',3:'3 stars — Average',4:'4 stars — Good',5:'5 stars — Best setup'};
   const lbl = document.getElementById(hiddenId+'-label');
   if(lbl) lbl.textContent = labels[val] || val+' stars';
-  // Update visual
   const stars = document.getElementById(wrapperId).querySelectorAll('.star');
   stars.forEach((s,i) => s.classList.toggle('on', i < val));
 }
@@ -1710,10 +1748,17 @@ function openEditModal(id) {
 
   // Fill all fields
   document.getElementById('edit-trade-id').textContent = `#${id}`;
+  // Populate account dropdown
+  const eAccSel = document.getElementById('e-accId');
+  if (eAccSel) {
+    eAccSel.innerHTML = S.accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+    eAccSel.value = t.accId || S.currentAcc;
+  }
   document.getElementById('e-date').value = (t.date||'').replace(/\//g,'-');
   document.getElementById('e-dur').value = t.dur || '';
   document.getElementById('e-kl').value = t.kl || '';
   document.getElementById('e-arr').value = t.arr || '';
+  document.getElementById('e-maxrr').value = t.maxrr || '';
   document.getElementById('e-gross').value = t.gross || '';
   document.getElementById('e-fees').value = t.fees || '';
   document.getElementById('e-swap').value = t.swap || '';
@@ -1770,8 +1815,10 @@ function saveEdit() {
   const netIn = parseFloat(document.getElementById('e-net').value);
   const net   = isNaN(netIn) ? (gross - fees - swap) : netIn;
 
+  const newAccId = document.getElementById('e-accId')?.value || S.trades[idx].accId;
   S.trades[idx] = {
     ...S.trades[idx],
+    accId:    newAccId,
     date:     document.getElementById('e-date').value.replace(/-/g,'/'),
     sym:      document.getElementById('e-sym').value,
     pos:      document.getElementById('e-pos').value,
@@ -1785,6 +1832,7 @@ function saveEdit() {
     kl:       document.getElementById('e-kl').value,
     ot:       document.getElementById('e-ot').value,
     arr:      parseFloat(document.getElementById('e-arr').value) || 0,
+    maxrr:    parseFloat(document.getElementById('e-maxrr').value) || 0,
     gross, fees, swap, net,
     slm:      document.getElementById('e-slm').value,
     tpm:      document.getElementById('e-tpm').value,
@@ -2293,6 +2341,7 @@ Output TSV only, one row per trade:`
     <div class="card" style="margin-bottom:10px">
       <div class="ct">Trade Details</div>
       <div class="fr">
+        <div class="fg"><label>Account</label><select id="e-accId" style="font-size:12px;padding:6px 8px;border:1px solid #e0e0e0;border-radius:7px;background:#fff;color:#1a1a1a;width:100%;font-family:inherit"></select></div>
         <div class="fg"><label>Date</label><input type="date" id="e-date"></div>
         <div class="fg"><label>Symbol</label>
           <select id="e-sym">
@@ -2390,12 +2439,12 @@ Output TSV only, one row per trade:`
         <div class="fg">
           <label>Setup Rating</label>
           <div style="padding:6px 0">
-            <div class="star-rating" id="e-grade-stars" onclick="setStarRating('e-grade-stars','e-grade',this)">
-              <span class="star" data-val="1">&#9733;</span>
-              <span class="star" data-val="2">&#9733;</span>
-              <span class="star" data-val="3">&#9733;</span>
-              <span class="star" data-val="4">&#9733;</span>
-              <span class="star" data-val="5">&#9733;</span>
+            <div class="star-rating" id="e-grade-stars">
+              <span class="star" data-val="1" onclick="setStarRating('e-grade-stars','e-grade',1)">&#9733;</span>
+              <span class="star" data-val="2" onclick="setStarRating('e-grade-stars','e-grade',2)">&#9733;</span>
+              <span class="star" data-val="3" onclick="setStarRating('e-grade-stars','e-grade',3)">&#9733;</span>
+              <span class="star" data-val="4" onclick="setStarRating('e-grade-stars','e-grade',4)">&#9733;</span>
+              <span class="star" data-val="5" onclick="setStarRating('e-grade-stars','e-grade',5)">&#9733;</span>
             </div>
             <input type="hidden" id="e-grade" value="3">
             <div style="font-size:10px;color:#aaa;margin-top:3px" id="e-grade-label">3 stars</div>
