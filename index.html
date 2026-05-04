@@ -213,6 +213,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <span style="flex:1"></span>
   <span class="acc-badge" id="acc-info"></span>
   <button class="btn-acc" onclick="showRestorePanel()" title="กู้คืนข้อมูล" style="font-size:11px;padding:4px 10px">↩ กู้คืน</button>
+  <button id="gist-sync-btn" onclick="openModal('modal-gist')" title="Click to open sync settings" style="font-size:11px;padding:4px 12px;border-radius:6px;border:1px solid #a78bfa;background:#f5f3ff;color:#6d28d9;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:5px">
+    <span id="gist-sync-icon">☁</span> <span id="gist-sync-label">Gist Sync</span>
+  </button>
   <button class="btn-acc" onclick="openImportModal();openModal('modal-import')" style="font-size:11px;padding:4px 10px;background:#185FA5;color:#fff;border-color:#185FA5">⬆ Import Orders</button>
 </div>
 <div id="restore-panel" style="display:none;background:#fffdf0;border-bottom:1px solid #f0e8c0;padding:10px 20px;font-size:12px;color:#633806">
@@ -1519,8 +1522,8 @@ ${tradesHtml}
     </div>
   </div>
 </div>
-</body></html>`;
 
+</body></html>`
   const blob=new Blob([html],{type:'text/html;charset=utf-8'});
   const url=URL.createObjectURL(blob);
   const win=window.open(url,'_blank');
@@ -1592,6 +1595,7 @@ function saveTrade(){
   const msg=document.getElementById('save-msg');msg.style.display='block';
   setTimeout(()=>msg.style.display='none',2500);
   clearForm();renderAccSelector();
+  gistAutoPush();
 }
 
 function clearForm(){
@@ -1798,6 +1802,7 @@ function saveEdit() {
   closeModal('modal-edit');
   renderHistory();
   renderAccSelector();
+  gistAutoPush();
 
   // Show success flash
   const msg = document.getElementById('save-msg');
@@ -2522,4 +2527,271 @@ Output TSV only, one row per trade:`
     </div>
   </div>
 </div>
+
+<!-- MODAL: GITHUB GIST SYNC -->
+<div class="modal-overlay" id="modal-gist" onclick="overlayClose(event,'modal-gist')">
+  <div class="modal" style="max-width:500px">
+    <button class="modal-close" onclick="closeModal('modal-gist')">x</button>
+    <div class="ct" style="margin-bottom:4px">&#9729; GitHub Gist Sync</div>
+    <p style="font-size:12px;color:#888;margin-bottom:14px;line-height:1.6">บันทึก/โหลดข้อมูลผ่าน GitHub Gist — ใช้ได้ทุกเครื่อง ทุก browser</p>
+    <div style="background:#f0f6ff;border:1px solid #dce8f8;border-radius:8px;padding:12px 14px;margin-bottom:14px">
+      <label style="font-size:11px;color:#0C447C;font-weight:600;display:block;margin-bottom:6px">&#128273; GitHub Personal Access Token</label>
+      <div style="display:flex;gap:6px;align-items:center">
+        <input type="password" id="gist-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+          style="flex:1;font-size:12px;padding:6px 10px;border:1px solid #dce8f8;border-radius:6px;background:#fff;color:#1a1a1a;font-family:monospace">
+        <button onclick="saveGistToken()" style="font-size:12px;padding:6px 12px;background:#185FA5;color:#fff;border:none;border-radius:6px;cursor:pointer;white-space:nowrap">บันทึก</button>
+      </div>
+      <div style="font-size:10px;color:#888;margin-top:5px;line-height:1.5">
+        สร้าง token ที่ <a href="https://github.com/settings/tokens/new" target="_blank" style="color:#185FA5">github.com/settings/tokens/new</a><br>
+        &#10003; เลือก scope: <strong>gist</strong> เท่านั้น &nbsp;&#183;&nbsp; Token เก็บใน localStorage ของ browser นี้
+      </div>
+      <div id="gist-token-status" style="font-size:11px;margin-top:5px;font-weight:600"></div>
+    </div>
+    <div style="background:#fafaf8;border:1px solid #e8e8e4;border-radius:8px;padding:12px 14px;margin-bottom:14px">
+      <label style="font-size:11px;color:#555;font-weight:600;display:block;margin-bottom:6px">&#128206; Gist ID <span style="font-weight:400;color:#aaa">(เว้นว่างถ้าต้องการสร้างใหม่)</span></label>
+      <input type="text" id="gist-id-input" placeholder="e.g. a1b2c3d4e5f6... (ทิ้งว่างเพื่อสร้าง Gist ใหม่)"
+        style="width:100%;font-size:12px;padding:6px 10px;border:1px solid #e0e0e0;border-radius:6px;background:#fff;color:#1a1a1a;font-family:monospace">
+      <div id="gist-id-status" style="font-size:11px;color:#888;margin-top:4px"></div>
+    </div>
+    <div id="gist-last-sync" style="font-size:11px;color:#aaa;margin-bottom:14px;text-align:center"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+      <button onclick="gistPush()" style="padding:10px;border-radius:8px;border:1px solid #a78bfa;background:#f5f3ff;color:#6d28d9;font-size:13px;font-weight:600;cursor:pointer">
+        &#8679; Push
+      </button>
+      <button onclick="gistPull()" style="padding:10px;border-radius:8px;border:1px solid #10b981;background:#ecfdf5;color:#065f46;font-size:13px;font-weight:600;cursor:pointer">
+        &#8681; Pull
+      </button>
+    </div>
+    <div id="gist-action-status" style="font-size:12px;text-align:center;min-height:20px;font-weight:600;padding:6px"></div>
+    <div style="border-top:1px solid #eee;margin-top:10px;padding-top:8px;font-size:10px;color:#bbb;line-height:1.6;text-align:center">
+      Gist จะเป็น Secret (ไม่ public) &#183; Push จะทับข้อมูลเก่าใน Gist &#183; Pull จะทับข้อมูลในเครื่องนี้
+    </div>
+  </div>
+</div>
+
+<script>
+const GIST_TOKEN_KEY = 'tj_gist_token';
+const GIST_ID_KEY    = 'tj_gist_id';
+const GIST_ID_DEFAULT = 'f95bf306ff88133ff36ab93153df2532';
+const GIST_FILENAME  = 'trading_journal_data.json';
+
+function saveGistToken() {
+  const tok = document.getElementById('gist-token-input').value.trim();
+  if (!tok) { setGistTokenStatus('กรุณาใส่ token', '#E24B4A'); return; }
+  localStorage.setItem(GIST_TOKEN_KEY, tok);
+  setGistTokenStatus('✓ บันทึก token แล้ว', '#1D9E75');
+  document.getElementById('gist-token-input').value = '';
+  loadGistUI();
+}
+
+function loadGistUI() {
+  const tok  = localStorage.getItem(GIST_TOKEN_KEY) || '';
+  const gid  = localStorage.getItem(GIST_ID_KEY)    || '';
+  const last = localStorage.getItem('tj_gist_last_sync') || '';
+  const tsel = document.getElementById('gist-token-status');
+  const isel = document.getElementById('gist-id-status');
+  const lsel = document.getElementById('gist-last-sync');
+  if (tsel) { tsel.textContent = tok ? '✓ Token บันทึกแล้ว (' + tok.slice(0,8) + '...)' : '⚠ ยังไม่มี token'; tsel.style.color = tok ? '#1D9E75' : '#E24B4A'; }
+  const ginp = document.getElementById('gist-id-input');
+  if (ginp) ginp.value = gid || GIST_ID_DEFAULT;
+  if (isel) isel.textContent = gid ? '✓ Gist ID: ' + gid.slice(0,12) + '...' : 'ทิ้งว่างเพื่อสร้าง Gist ใหม่อัตโนมัติ';
+  if (lsel) lsel.textContent = last ? 'Last sync: ' + last : 'ยังไม่เคย sync';
+  updateGistTopbarBtn();
+}
+
+function updateGistTopbarBtn() {
+  const tok = localStorage.getItem(GIST_TOKEN_KEY) || '';
+  const gid = localStorage.getItem(GIST_ID_KEY) || '';
+  const btn = document.getElementById('gist-sync-btn');
+  const lbl = document.getElementById('gist-sync-label');
+  const ico = document.getElementById('gist-sync-icon');
+  if (!btn) return;
+  if (tok && gid) {
+    if (lbl) lbl.textContent = 'Synced';
+    if (ico) ico.textContent = '✓';
+    btn.style.cssText = 'font-size:11px;padding:4px 12px;border-radius:6px;border:1px solid #10b981;background:#ecfdf5;color:#065f46;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:5px';
+  } else {
+    if (lbl) lbl.textContent = 'Gist Sync';
+    if (ico) ico.textContent = '☁';
+    btn.style.cssText = 'font-size:11px;padding:4px 12px;border-radius:6px;border:1px solid #a78bfa;background:#f5f3ff;color:#6d28d9;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:5px';
+  }
+}
+
+function setGistTokenStatus(msg, color) {
+  const el = document.getElementById('gist-token-status');
+  if (el) { el.textContent = msg; el.style.color = color; }
+}
+
+function setGistActionStatus(msg, color) {
+  const el = document.getElementById('gist-action-status');
+  if (el) { el.textContent = msg; el.style.color = color || '#555'; }
+}
+
+function getGistPayload() {
+  return JSON.stringify({
+    trades:   S.trades,
+    accounts: S.accounts,
+    models:   S.models,
+    customConfs: JSON.parse(localStorage.getItem('tj_custom_confs') || '[]'),
+    exportedAt: new Date().toISOString(),
+    version: 2
+  });
+}
+
+async function gistPush() {
+  const tok = localStorage.getItem(GIST_TOKEN_KEY);
+  if (!tok) { setGistActionStatus('⚠ กรุณาบันทึก GitHub Token ก่อน', '#E24B4A'); return; }
+  const gidInput = document.getElementById('gist-id-input').value.trim();
+  if (gidInput) localStorage.setItem(GIST_ID_KEY, gidInput);
+  const gid = localStorage.getItem(GIST_ID_KEY) || '';
+  const payload = getGistPayload();
+  const body = { description: 'Trading Journal Pro — Auto Sync', public: false, files: { [GIST_FILENAME]: { content: payload } } };
+  setGistActionStatus('⏳ กำลัง push...', '#185FA5');
+  try {
+    let res, data;
+    if (gid) {
+      res = await fetch('https://api.github.com/gists/' + gid, { method: 'PATCH', headers: { Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json', 'X-GitHub-Api-Version': '2022-11-28' }, body: JSON.stringify(body) });
+    } else {
+      res = await fetch('https://api.github.com/gists', { method: 'POST', headers: { Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json', 'X-GitHub-Api-Version': '2022-11-28' }, body: JSON.stringify(body) });
+    }
+    data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'API error ' + res.status);
+    localStorage.setItem(GIST_ID_KEY, data.id);
+    document.getElementById('gist-id-input').value = data.id;
+    document.getElementById('gist-id-status').textContent = '✓ Gist ID: ' + data.id.slice(0,12) + '...';
+    const now = new Date().toLocaleString('th-TH');
+    localStorage.setItem('tj_gist_last_sync', now);
+    document.getElementById('gist-last-sync').textContent = 'Last sync: ' + now;
+    setGistActionStatus('✓ Push สำเร็จ! ' + S.trades.length + ' trades → ' + data.html_url, '#1D9E75');
+    updateGistTopbarBtn();
+  } catch(e) {
+    setGistActionStatus('✗ Push ล้มเหลว: ' + e.message, '#E24B4A');
+  }
+}
+
+async function gistPull() {
+  const tok = localStorage.getItem(GIST_TOKEN_KEY);
+  if (!tok) { setGistActionStatus('⚠ กรุณาบันทึก GitHub Token ก่อน', '#E24B4A'); return; }
+  const gidInput = document.getElementById('gist-id-input').value.trim();
+  if (gidInput) localStorage.setItem(GIST_ID_KEY, gidInput);
+  const gid = localStorage.getItem(GIST_ID_KEY) || '';
+  if (!gid) { setGistActionStatus('⚠ ใส่ Gist ID ก่อน pull', '#E24B4A'); return; }
+  setGistActionStatus('⏳ กำลัง pull...', '#185FA5');
+  try {
+    const res  = await fetch('https://api.github.com/gists/' + gid, { headers: { Authorization: 'Bearer ' + tok, 'X-GitHub-Api-Version': '2022-11-28' } });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'API error ' + res.status);
+    const fileContent = data.files && data.files[GIST_FILENAME] && data.files[GIST_FILENAME].content;
+    if (!fileContent) throw new Error('ไม่พบไฟล์ "' + GIST_FILENAME + '" ใน Gist นี้');
+    const parsed = JSON.parse(fileContent);
+    if (!parsed.trades) throw new Error('รูปแบบข้อมูลไม่ถูกต้อง');
+    const conf = confirm('Pull จาก Gist สำเร็จ!\n\nพบ ' + parsed.trades.length + ' trades\nExported: ' + (parsed.exportedAt||'unknown') + '\n\nต้องการแทนที่ข้อมูลในเครื่องนี้?');
+    if (!conf) { setGistActionStatus('ยกเลิก pull', '#888'); return; }
+    S.trades   = parsed.trades   || [];
+    S.accounts = parsed.accounts || S.accounts;
+    S.models   = parsed.models   || S.models;
+    if (parsed.customConfs) localStorage.setItem('tj_custom_confs', JSON.stringify(parsed.customConfs));
+    S.trades = S.trades.map(t => ({ ...t, date: (t.date||'').replace(/-/g,'/') }));
+    saveTrades(); saveAccounts(); saveModels();
+    if (!S.currentAcc && S.accounts.length) S.currentAcc = S.accounts[0].id;
+    renderAccSelector(); renderDash();
+    if (document.getElementById('pg-history') && document.getElementById('pg-history').classList.contains('on')) renderHistory();
+    const now = new Date().toLocaleString('th-TH');
+    localStorage.setItem('tj_gist_last_sync', now);
+    document.getElementById('gist-last-sync').textContent = 'Last sync: ' + now;
+    setGistActionStatus('✓ Pull สำเร็จ! โหลด ' + S.trades.length + ' trades แล้ว', '#1D9E75');
+    updateGistTopbarBtn();
+  } catch(e) {
+    setGistActionStatus('✗ Pull ล้มเหลว: ' + e.message, '#E24B4A');
+  }
+}
+
+// Hook into openModal to init UI
+const _origOpenModal2 = typeof openModal === 'function' ? openModal : null;
+if (_origOpenModal2) {
+  openModal = function(id) {
+    _origOpenModal2(id);
+    if (id === 'modal-gist') loadGistUI();
+  };
+}
+
+
+// Silent background push to Gist after every save
+async function gistAutoPush() {
+  const tok = localStorage.getItem(GIST_TOKEN_KEY);
+  const gid = localStorage.getItem(GIST_ID_KEY) || GIST_ID_DEFAULT;
+  if (!tok || !gid) return;
+  try {
+    const payload = getGistPayload();
+    const body = { description: 'Trading Journal Pro — Auto Sync', public: false, files: { [GIST_FILENAME]: { content: payload } } };
+    const res = await fetch('https://api.github.com/gists/' + gid, {
+      method: 'PATCH',
+      headers: { Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json', 'X-GitHub-Api-Version': '2022-11-28' },
+      body: JSON.stringify(body)
+    });
+    if (res.ok) {
+      const now = new Date().toLocaleString('th-TH');
+      localStorage.setItem('tj_gist_last_sync', now);
+      localStorage.setItem(GIST_ID_KEY, gid);
+      updateGistTopbarBtn();
+      console.log('[Gist] Auto-pushed', S.trades.length, 'trades');
+    }
+  } catch(e) {
+    console.warn('[Gist] Auto-push failed:', e.message);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Set default gist id if not set
+  if (!localStorage.getItem(GIST_ID_KEY)) {
+    localStorage.setItem(GIST_ID_KEY, GIST_ID_DEFAULT);
+  }
+  setTimeout(updateGistTopbarBtn, 300);
+  // Auto-pull on load if token + gist id exist
+  setTimeout(async function() {
+    const tok = localStorage.getItem(GIST_TOKEN_KEY);
+    const gid = localStorage.getItem(GIST_ID_KEY) || GIST_ID_DEFAULT;
+    if (!tok || !gid) return;
+    // Silent pull - no confirm dialog, just update data
+    try {
+      const res  = await fetch('https://api.github.com/gists/' + gid, {
+        headers: { Authorization: 'Bearer ' + tok, 'X-GitHub-Api-Version': '2022-11-28' }
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      const fileContent = data.files && data.files[GIST_FILENAME] && data.files[GIST_FILENAME].content;
+      if (!fileContent) return;
+      const parsed = JSON.parse(fileContent);
+      if (!parsed.trades) return;
+      // Only update if remote has more/newer data
+      const remoteDate = new Date(parsed.exportedAt || 0);
+      const localSync  = new Date(localStorage.getItem('tj_gist_last_sync') || 0);
+      if (remoteDate <= localSync && parsed.trades.length <= S.trades.length) return;
+      S.trades   = parsed.trades   || [];
+      S.accounts = parsed.accounts || S.accounts;
+      S.models   = parsed.models   || S.models;
+      if (parsed.customConfs) localStorage.setItem('tj_custom_confs', JSON.stringify(parsed.customConfs));
+      S.trades = S.trades.map(t => ({ ...t, date: (t.date||'').replace(/-/g,'/') }));
+      saveTrades(); saveAccounts(); saveModels();
+      if (!S.currentAcc && S.accounts.length) S.currentAcc = S.accounts[0].id;
+      renderAccSelector(); renderDash();
+      const now = new Date().toLocaleString('th-TH');
+      localStorage.setItem('tj_gist_last_sync', now);
+      updateGistTopbarBtn();
+      // Show subtle sync indicator
+      const btn = document.getElementById('gist-sync-btn');
+      if (btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<span>✓</span> <span>Synced</span>';
+        btn.style.background = '#ecfdf5';
+        btn.style.color = '#065f46';
+        btn.style.borderColor = '#10b981';
+      }
+      console.log('[Gist] Auto-pulled', S.trades.length, 'trades');
+    } catch(e) {
+      console.warn('[Gist] Auto-pull failed:', e.message);
+    }
+  }, 800);
+});
+</script>
 </body></html>
