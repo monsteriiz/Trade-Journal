@@ -674,7 +674,7 @@ function loadNotionData() {
 function load(){
   // Try current key first
   try{S.accounts=JSON.parse(localStorage.getItem(DB.accounts)||'[]')}catch(e){S.accounts=[]}
-  try{S.trades=JSON.parse(localStorage.getItem(DB.trades)||'[]')}catch(e){S.trades=[]}
+  try{S.trades=JSON.parse(localStorage.getItem(DB.trades)||'[]').map(t=>({...t,id:+t.id||t.id}))}catch(e){S.trades=[]}
   try{S.models=JSON.parse(localStorage.getItem(DB.models)||'[]')}catch(e){S.models=[]}
 
   // If no trades, try migrating from older keys
@@ -1655,7 +1655,7 @@ function clearForm(){
 
 function deleteTrade(id){
   if(!confirm('ลบ trade นี้?'))return;
-  S.trades=S.trades.filter(x=>x.id!==id);saveTrades();renderHistory();renderAccSelector();
+  S.trades=S.trades.filter(x=>String(x.id)!==String(id));saveTrades();renderHistory();renderAccSelector();
 }
 
 function exportCSV(){
@@ -1736,8 +1736,10 @@ let _editEntryEmo = '';
 let _editExitEmo = '';
 
 function openEditModal(id) {
-  const t = S.trades.find(x => x.id === id);
+  // Coerce both sides — localStorage parses numbers as strings
+  const t = S.trades.find(x => String(x.id) === String(id));
   if (!t) return;
+  id = t.id; // use the canonical id from the trade object
   _editId = id;
   _editEntryEmo = t.entryEmo || '';
   _editExitEmo = t.exitEmo || '';
@@ -1806,7 +1808,7 @@ function selEditEmo(type, btn, val) {
 }
 
 function saveEdit() {
-  const idx = S.trades.findIndex(x => x.id === _editId);
+  const idx = S.trades.findIndex(x => String(x.id) === String(_editId));
   if (idx === -1) return;
 
   const gross = parseFloat(document.getElementById('e-gross').value) || 0;
@@ -2736,7 +2738,7 @@ async function gistPull() {
     if (!parsed.trades) throw new Error('รูปแบบข้อมูลไม่ถูกต้อง');
     const conf = confirm('Pull จาก Gist สำเร็จ!\n\nพบ ' + parsed.trades.length + ' trades\nExported: ' + (parsed.exportedAt||'unknown') + '\n\nต้องการแทนที่ข้อมูลในเครื่องนี้?');
     if (!conf) { setGistActionStatus('ยกเลิก pull', '#888'); return; }
-    S.trades   = parsed.trades   || [];
+    S.trades   = (parsed.trades || []).map(t=>({...t,id:+t.id||t.id}));
     S.accounts = parsed.accounts || S.accounts;
     S.models   = parsed.models   || S.models;
     if (parsed.customConfs) localStorage.setItem('tj_custom_confs', JSON.stringify(parsed.customConfs));
@@ -2816,7 +2818,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const remoteDate = new Date(parsed.exportedAt || 0);
       const localSync  = new Date(localStorage.getItem('tj_gist_last_sync') || 0);
       if (remoteDate <= localSync && parsed.trades.length <= S.trades.length) return;
-      S.trades   = parsed.trades   || [];
+      S.trades   = (parsed.trades || []).map(t=>({...t,id:+t.id||t.id}));
       S.accounts = parsed.accounts || S.accounts;
       S.models   = parsed.models   || S.models;
       if (parsed.customConfs) localStorage.setItem('tj_custom_confs', JSON.stringify(parsed.customConfs));
