@@ -47,9 +47,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .badge{display:inline-flex;align-items:center;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600;white-space:nowrap}
 .b-buy{background:#EAF3DE;color:#27500A}
 .b-sell{background:#FCEBEB;color:#791F1F}
-.b-a{background:#EAF3DE;color:#27500A}
-.b-b{background:#FAEEDA;color:#633806}
-.b-c{background:#FCEBEB;color:#791F1F}
 .b-model{background:#EEEDFE;color:#3C3489}
 .b-ge{background:#EAF3DE;color:#27500A}
 .b-pt{background:#E6F1FB;color:#0C447C}
@@ -113,11 +110,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .stars-display .s.off{color:#e0e0e0}
 
 @media(max-width:600px){.g4{grid-template-columns:repeat(2,1fr)}.chart-zone{grid-template-columns:1fr}.fr{grid-template-columns:1fr}}
-
-
-
-
-
 
 .dhl{font-size:11px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
 .dhv{font-size:26px;font-weight:500;color:var(--color-text-primary);line-height:1}
@@ -200,12 +192,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .tv-model-pnl{font-size:11px;font-weight:500;min-width:58px;text-align:right;flex-shrink:0}
 .tv-recent-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f0f0ec;font-size:12px}
 .tv-recent-row:last-child{border-bottom:none}
-
 </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
 <div class="topbar">
   <span class="app-title">Trading Journal Pro</span>
   <select id="acc-select" class="acc-sel" onchange="switchAccount(this.value)"></select>
@@ -227,22 +217,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
-<!-- NAV -->
 <div class="nav-row">
   <button class="nb on" onclick="nav('dashboard',this)">Dashboard</button>
   <button class="nb" onclick="nav('log',this)">+ Log Trade</button>
   <button class="nb" onclick="nav('history',this)">Trade History</button>
-  
   <button class="nb" onclick="nav('calendar',this)">Calendar</button>
   <button class="nb" onclick="nav('weekly',this)">Weekly Report</button>
 </div>
 
 <div class="container">
 
-<!-- ===== DASHBOARD ===== -->
 <div id="pg-dashboard" class="pg on">
 
-  <!-- Period selector -->
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
     <div style="display:flex;gap:6px">
       <button class="period-btn on" onclick="setPeriod('all',this)">All Time</button>
@@ -252,10 +238,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div style="font-size:12px;color:#666" id="dash-period-label"></div>
   </div>
 
-  <!-- Core stats bar -->
   <div class="tv-stats-bar" id="tv-stats-bar"></div>
 
-  <!-- Equity + Returns row -->
   <div class="tv-2col" style="margin-bottom:14px">
     <div class="tv-card">
       <div class="tv-card-head">
@@ -277,7 +261,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
   </div>
 
-  <!-- Monthly calendar -->
   <div class="tv-card" style="margin-bottom:14px">
     <div class="tv-card-head">
       <span>Monthly Breakdown</span>
@@ -290,7 +273,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div id="tv-calendar"></div>
   </div>
 
-  <!-- Bottom row: Model WR + Session + Outcome -->
   <div class="tv-3col" style="margin-bottom:14px">
     <div class="tv-card">
       <div class="tv-card-head"><span>Win Rate by Setup</span></div>
@@ -306,7 +288,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
   </div>
 
-  <!-- Recent trades -->
   <div class="tv-card">
     <div class="tv-card-head"><span>Recent Trades</span><a href="#" onclick="nav('history',document.querySelectorAll('.nb')[2]);return false" style="font-size:12px;color:#a78bfa;text-decoration:none">View all</a></div>
     <div id="tv-recent-trades"></div>
@@ -536,7 +517,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="save-msg" id="save-msg">บันทึกสำเร็จ!</div>
 </div>
 
-<!-- ===== HISTORY ===== -->
 <div id="pg-history" class="pg">
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
     <input type="text" id="hs-q" placeholder="ค้นหา symbol, model..." oninput="renderHistory()" style="font-size:12px;padding:7px 11px;border:1px solid #2a2a2a;border-radius:8px;background:#fff;color:#1a1a1a;width:180px">
@@ -560,10 +540,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
-  <div id="model-db-list"></div>
+<div id="model-db-list"></div>
 </div>
 
-<!-- ===== CALENDAR ===== -->
 <div id="pg-calendar" class="pg">
   <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
@@ -579,7 +558,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
-<!-- ===== WEEKLY REPORT ===== -->
 <div id="pg-weekly" class="pg">
   <div class="card">
     <div class="ct">Weekly Report — Export PDF</div>
@@ -592,10 +570,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
-</div><!-- end container -->
-
-<!-- MODAL: ACCOUNT -->
-<div class="modal-overlay" id="modal-acc" onclick="overlayClose(event,'modal-acc')">
+</div><div class="modal-overlay" id="modal-acc" onclick="overlayClose(event,'modal-acc')">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('modal-acc')">x</button>
     <div class="ct" style="margin-bottom:14px">จัดการ Accounts</div>
@@ -608,7 +583,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
-<!-- MODAL: MODEL -->
 <div class="modal-overlay" id="modal-model" onclick="overlayClose(event,'modal-model')">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('modal-model')">x</button>
@@ -629,24 +603,296 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
+<div class="modal-overlay" id="modal-edit" onclick="overlayClose(event,'modal-edit')">
+  <div class="modal" style="max-width:700px;max-height:90vh;overflow-y:auto">
+    <button class="modal-close" onclick="closeModal('modal-edit')">x</button>
+    <div class="ct" style="margin-bottom:14px">แก้ไข Trade <span id="edit-trade-id" style="color:#aaa;font-weight:400"></span></div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div class="ct">Trade Details</div>
+      <div class="fr">
+        <div class="fg"><label>Account</label><select id="e-accId" style="font-size:12px;padding:6px 8px;border:1px solid #e0e0e0;border-radius:7px;background:#fff;color:#1a1a1a;width:100%;font-family:inherit"></select></div>
+        <div class="fg"><label>Date</label><input type="date" id="e-date"></div>
+        <div class="fg"><label>Symbol</label>
+          <select id="e-sym">
+            <option value="">— เลือก —</option>
+            <optgroup label="Favorite">
+              <option value="XAUUSD">Gold (XAUUSD)</option>
+              <option value="NQ">NQ</option>
+              <option value="ES">ES</option>
+              <option value="XAGUSD">Silver (XAGUSD)</option>
+            </optgroup>
+            <optgroup label="Forex">
+              <option value="EURUSD">EURUSD</option>
+              <option value="USDJPY">USDJPY</option>
+              <option value="EURGBP">EURGBP</option>
+            </optgroup>
+            <optgroup label="Crypto">
+              <option value="BTCUSD">BTC</option>
+              <option value="ETHUSD">ETH</option>
+              <option value="BNBUSD">BNB</option>
+            </optgroup>
+            <optgroup label="ETC"><option value="OTHER">Other</option></optgroup>
+          </select>
+        </div>
+        <div class="fg"><label>Direction</label><select id="e-pos"><option>Buy</option><option>Sell</option></select></div>
+        <div class="fg"><label>Session</label><select id="e-ses"><option>Asia</option><option>London Open</option><option>London Close</option><option>New York</option><option>Out of Session</option></select></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>Duration</label><input type="text" id="e-dur" placeholder="23m, 2h..."></div>
+        <div class="fg"><label>Type of Trade</label><select id="e-ttype"><option>Intraday</option><option>Swing</option><option>Scalp</option></select></div>
+        <div class="fg"><label>Bias</label><select id="e-bias"><option>Bullish</option><option>Bearish</option><option>Neutral</option></select></div>
+        <div class="fg"><label>Market Conditions</label><select id="e-mkt"><option>Strong uptrend (HT)</option><option>Strong downtrend (HT)</option><option>15m Strong Uptrend</option><option>15m Strong Downtrend</option><option>Ranging</option><option>Volatile</option><option>Trending</option></select></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div class="ct">Setup / Confluences</div>
+      <div class="fr">
+        <div class="fg"><label>Setup Type</label>
+          <select id="e-model">
+            <option value="">— เลือก Setup —</option>
+            <optgroup label="ICT Concepts">
+              <option value="fvg">FVG (Fair Value Gap)</option>
+              <option value="ifvg">iFVG (Inverse FVG)</option>
+              <option value="ob">Order Block</option>
+              <option value="bb">Breaker Block</option>
+              <option value="ob_5m">5m Order Block</option>
+              <option value="ob_15m">15m Order Block</option>
+              <option value="ifvg_1m">1m iFVG</option>
+              <option value="ifvg_5m">5m iFVG</option>
+              <option value="ifvg_15m">15m iFVG</option>
+              <option value="fvg_5m">5m FVG</option>
+              <option value="fvg_15m">15m FVG</option>
+              <option value="bb_5m">5m Breaker Block</option>
+              <option value="bb_15m">15m Breaker Block</option>
+            </optgroup>
+            <optgroup label="SMC / Price Action">
+              <option value="supply_zone">Supply Zone</option>
+              <option value="demand_zone">Demand Zone</option>
+              <option value="pullback">Pullback</option>
+              <option value="ms_break">Market Structure Break</option>
+              <option value="liq_sweep">Liquidity Sweep</option>
+            </optgroup>
+            <optgroup label="Other">
+              <option value="custom">Custom / Other</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="fg"><label>Entry Timeframe</label><select id="e-etf"><option>1m</option><option>5m</option><option>15m</option><option>1h</option><option>4h</option></select></div>
+        <div class="fg"><label>Key Levels</label><input type="text" id="e-kl"></div>
+        <div class="fg"><label>Order Type</label><select id="e-ot"><option>Limit</option><option>Market</option><option>Stop Limit</option></select></div>
+      </div>
+      <div style="margin-top:6px">
+        <label style="font-size:11px;color:#666;font-weight:500;display:block;margin-bottom:6px">Entry Confluences</label>
+        <div class="tags-row" id="e-conf-tags"></div>
+        <div style="display:flex;gap:6px;margin-top:8px;align-items:center">
+          <input type="text" id="e-conf-custom-input" placeholder="เพิ่ม confluence ใหม่..." style="font-size:12px;padding:5px 10px;border:1px solid #e0e0e0;border-radius:20px;background:#fff;color:#1a1a1a;flex:1;max-width:240px" onkeydown="if(event.key==='Enter'){addEditCustomConf();event.preventDefault()}">
+          <button class="btn btn-sm" onclick="addEditCustomConf()" style="border-radius:20px;white-space:nowrap">+ เพิ่ม</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div class="ct">P&L & Risk</div>
+      <div class="fr">
+        <div class="fg"><label>Actual RR</label><input type="number" id="e-arr" step="0.01"></div>
+        <div class="fg"><label>Max RR</label><input type="number" id="e-maxrr" step="0.01" placeholder="0.00"></div>
+        <div class="fg"><label>Gross P&L ($)</label><input type="number" id="e-gross" step="0.01"></div>
+        <div class="fg"><label>Fees ($)</label><input type="number" id="e-fees" step="0.01"></div>
+        <div class="fg"><label>Swap ($)</label><input type="number" id="e-swap" step="0.01"></div>
+        <div class="fg"><label>Net P&L ($)</label><input type="number" id="e-net" step="0.01"></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>SL Management</label><select id="e-slm"><option value="">—</option><option>Hit Initial SL</option><option>Locked Profit</option><option>Moved to BE</option><option>Manual Close</option></select></div>
+        <div class="fg"><label>TP Management</label><select id="e-tpm"><option>Set and Forget</option><option>Manual Close</option><option>Partial TP</option><option>Move to BE</option><option>Final TP Hit</option><option>Locked Profit</option></select></div>
+        <div class="fg"><label>Outcome</label><select id="e-outcome"><option>Profit Taken</option><option>Great Exit!</option><option>Loss, Review Setup</option><option>Capital Protected</option><option>Breakeven</option></select></div>
+        <div class="fg">
+          <label>Setup Rating</label>
+          <div style="padding:6px 0">
+            <div class="star-rating" id="e-grade-stars">
+              <span class="star" data-val="1" onclick="setStarRating('e-grade-stars','e-grade',1)">&#9733;</span>
+              <span class="star" data-val="2" onclick="setStarRating('e-grade-stars','e-grade',2)">&#9733;</span>
+              <span class="star" data-val="3" onclick="setStarRating('e-grade-stars','e-grade',3)">&#9733;</span>
+              <span class="star" data-val="4" onclick="setStarRating('e-grade-stars','e-grade',4)">&#9733;</span>
+              <span class="star" data-val="5" onclick="setStarRating('e-grade-stars','e-grade',5)">&#9733;</span>
+            </div>
+            <input type="hidden" id="e-grade" value="3">
+            <div style="font-size:10px;color:#aaa;margin-top:3px" id="e-grade-label">3 stars</div>
+          </div>
+        </div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>Mistakes</label><select id="e-mistake"><option value="">None</option><option>Position Sizing</option><option>Wrong Exit Point</option><option>Wrong Entry Point</option><option>FOMO</option><option>Early Exit</option><option>Late Entry</option><option>No Stop Loss</option></select></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:10px">
+      <div class="ct">Review & Reflection</div>
+      <label class="review-check"><input type="checkbox" id="e-followed"><span>I followed my trade plan</span></label>
+      <div style="margin-bottom:8px">
+        <label style="font-size:11px;color:#666;font-weight:500;display:block;margin-bottom:5px">Entry Emotion</label>
+        <div style="display:flex;gap:5px;flex-wrap:wrap" id="e-entry-emo">
+          <button class="emo-btn" onclick="selEditEmo('entry',this,'Calm')">Calm</button>
+          <button class="emo-btn" onclick="selEditEmo('entry',this,'Fomo')">Fomo</button>
+          <button class="emo-btn" onclick="selEditEmo('entry',this,'Revenge')">Revenge</button>
+          <button class="emo-btn" onclick="selEditEmo('entry',this,'Boredom')">Boredom</button>
+          <button class="emo-btn" onclick="selEditEmo('entry',this,'Overconfident')">Overconfident</button>
+          <button class="emo-btn" onclick="selEditEmo('entry',this,'Fear')">Fear</button>
+          <button class="emo-btn" onclick="selEditEmo('entry',this,'Greed')">Greed</button>
+        </div>
+      </div>
+      <div style="margin-bottom:10px">
+        <label style="font-size:11px;color:#666;font-weight:500;display:block;margin-bottom:5px">Exit Emotion</label>
+        <div style="display:flex;gap:5px;flex-wrap:wrap" id="e-exit-emo">
+          <button class="emo-btn" onclick="selEditEmo('exit',this,'Calm')">Calm</button>
+          <button class="emo-btn" onclick="selEditEmo('exit',this,'Fomo')">Fomo</button>
+          <button class="emo-btn" onclick="selEditEmo('exit',this,'Fear')">Fear</button>
+          <button class="emo-btn" onclick="selEditEmo('exit',this,'Satisfied')">Satisfied</button>
+          <button class="emo-btn" onclick="selEditEmo('exit',this,'Regret')">Regret</button>
+        </div>
+      </div>
+      <div class="fg"><label>Note / Reflection</label><textarea id="e-notes" rows="3"></textarea></div>
+    </div>
+
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
+      <button class="btn" onclick="closeModal('modal-edit')">ยกเลิก</button>
+      <button class="btn btn-p" onclick="saveEdit()">บันทึกการแก้ไข</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-import" onclick="overlayClose(event,'modal-import')">
+  <div class="modal" style="max-width:720px;max-height:90vh;overflow-y:auto">
+    <button class="modal-close" onclick="closeModal('modal-import')">x</button>
+    <div class="ct" style="margin-bottom:4px">Import Orders</div>
+    <div style="font-size:12px;color:#888;margin-bottom:10px">
+      รองรับ format จาก TopStep / Broker — copy ตารางจากหน้าเว็บแล้ว paste ที่นี่ได้เลย<br>
+      <span style="color:#185FA5">หรือวาง CSV ที่มี column: Open time, Close time, Symbol, Size, Side, Entry price, Exit price, Net P&L, Charges</span>
+    </div>
+    <div style="background:#f0f6ff;border:1px solid #dce8f8;border-radius:8px;padding:10px 12px;margin-bottom:12px">
+      <label style="font-size:11px;color:#0C447C;font-weight:600;display:block;margin-bottom:5px">🔑 Anthropic API Key (สำหรับ Import จากรูปภาพ)</label>
+      <div style="display:flex;gap:6px;align-items:center">
+        <input type="password" id="api-key-input" placeholder="sk-ant-..." style="flex:1;font-size:12px;padding:6px 10px;border:1px solid #dce8f8;border-radius:6px;background:#fff;color:#1a1a1a;font-family:monospace">
+        <button onclick="saveApiKey()" style="font-size:12px;padding:6px 12px;background:#185FA5;color:#fff;border:none;border-radius:6px;cursor:pointer;white-space:nowrap">บันทึก Key</button>
+      </div>
+      <div style="font-size:10px;color:#888;margin-top:4px">Key เก็บใน localStorage — ไปสร้างได้ที่ <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:#185FA5">console.anthropic.com/settings/keys</a></div>
+      <div id="api-key-status" style="font-size:11px;margin-top:4px;color:#888"></div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center">
+      <div class="fg" style="flex:1;min-width:150px">
+        <label>Account ปลายทาง</label>
+        <select id="import-acc-sel" style="font-size:12px;padding:6px 9px;border:1px solid #e0e0e0;border-radius:7px;background:#fff;color:#1a1a1a;width:100%"></select>
+      </div>
+      <div class="fg" style="min-width:120px">
+        <label>Default Rating</label>
+        <select id="import-grade" style="font-size:12px;padding:6px 9px;border:1px solid #e0e0e0;border-radius:7px;background:#fff;color:#1a1a1a">
+          <option value="3">★★★ (3)</option>
+          <option value="4">★★★★ (4)</option>
+          <option value="5">★★★★★ (5)</option>
+          <option value="2">★★ (2)</option>
+          <option value="1">★ (1)</option>
+        </select>
+      </div>
+      <div class="fg" style="min-width:120px">
+        <label>Default Model</label>
+        <select id="import-model" style="font-size:12px;padding:6px 9px;border:1px solid #e0e0e0;border-radius:7px;background:#fff;color:#1a1a1a"></select>
+      </div>
+    </div>
+
+    <div style="margin-bottom:10px">
+      <label style="font-size:11px;color:#666;font-weight:600;display:block;margin-bottom:6px">📷 Import จากรูปภาพ (ใช้ AI วิเคราะห์)</label>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="file" id="import-img-input" accept="image/*" style="font-size:12px;flex:1" onchange="importFromImage(this)">
+        <div id="import-img-status" style="font-size:11px;color:#888"></div>
+      </div>
+    </div>
+    <div style="text-align:center;font-size:11px;color:#aaa;margin-bottom:8px">— หรือ วาง text จากเว็บ Broker —</div>
+    <textarea id="import-input" placeholder="Paste ตารางจากเว็บ Broker ที่นี่...&#10;&#10;ตัวอย่าง:&#10;23/4/2569 12 นาฬิกา 56 นาที&#9;23/4/2569 12 นาฬิกา 59 นาที&#9;COMEX:MGC&#9;1&#9;Long&#9;$4,729.3&#9;$4,729.6&#9;$1.40&#9;$1.60" style="width:100%;min-height:180px;font-size:11px;padding:10px;border:1px solid #e0e0e0;border-radius:8px;background:#fafaf8;color:#1a1a1a;font-family:monospace;resize:vertical;margin-bottom:10px"></textarea>
+
+    <div id="import-preview" style="display:none;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Preview — <span id="import-count"></span></div>
+      <div style="border:1px solid #e0e0e0;border-radius:8px;overflow:hidden;overflow-x:auto;max-height:220px;overflow-y:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:11px">
+          <thead><tr style="background:#fafaf8">
+            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:left;white-space:nowrap">Date</th>
+            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:left">Symbol</th>
+            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:left">Side</th>
+            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:left">Size</th>
+            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right">Entry</th>
+            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right">Exit</th>
+            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right">Net P&L</th>
+            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right">Fees</th>
+          </tr></thead>
+          <tbody id="import-preview-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-sm" onclick="closeModal('modal-import')">ยกเลิก</button>
+      <button class="btn btn-sm" onclick="parseImport()" style="background:#f0f0f0">Preview</button>
+      <button class="btn btn-p btn-sm" id="import-confirm-btn" style="display:none" onclick="confirmImport()">Import ทั้งหมด</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-gist" onclick="overlayClose(event,'modal-gist')">
+  <div class="modal" style="max-width:500px">
+    <button class="modal-close" onclick="closeModal('modal-gist')">x</button>
+    <div class="ct" style="margin-bottom:4px">&#9729; GitHub Gist Sync</div>
+    <p style="font-size:12px;color:#888;margin-bottom:14px;line-height:1.6">บันทึก/โหลดข้อมูลผ่าน GitHub Gist — ใช้ได้ทุกเครื่อง ทุก browser</p>
+    <div style="background:#f0f6ff;border:1px solid #dce8f8;border-radius:8px;padding:12px 14px;margin-bottom:14px">
+      <label style="font-size:11px;color:#0C447C;font-weight:600;display:block;margin-bottom:6px">&#128273; GitHub Personal Access Token</label>
+      <div style="display:flex;gap:6px;align-items:center">
+        <input type="password" id="gist-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+          style="flex:1;font-size:12px;padding:6px 10px;border:1px solid #dce8f8;border-radius:6px;background:#fff;color:#1a1a1a;font-family:monospace">
+        <button onclick="saveGistToken()" style="font-size:12px;padding:6px 12px;background:#185FA5;color:#fff;border:none;border-radius:6px;cursor:pointer;white-space:nowrap">บันทึก</button>
+      </div>
+      <div style="font-size:10px;color:#888;margin-top:5px;line-height:1.5">
+        สร้าง token ที่ <a href="https://github.com/settings/tokens/new" target="_blank" style="color:#185FA5">github.com/settings/tokens/new</a><br>
+        &#10003; เลือก scope: <strong>gist</strong> เท่านั้น &nbsp;&#183;&nbsp; Token เก็บใน localStorage ของ browser นี้
+      </div>
+      <div id="gist-token-status" style="font-size:11px;margin-top:5px;font-weight:600"></div>
+    </div>
+    <div style="background:#fafaf8;border:1px solid #e8e8e4;border-radius:8px;padding:12px 14px;margin-bottom:14px">
+      <label style="font-size:11px;color:#555;font-weight:600;display:block;margin-bottom:6px">&#128206; Gist ID <span style="font-weight:400;color:#aaa">(เว้นว่างถ้าต้องการสร้างใหม่)</span></label>
+      <input type="text" id="gist-id-input" placeholder="e.g. a1b2c3d4e5f6... (ทิ้งว่างเพื่อสร้าง Gist ใหม่)"
+        style="width:100%;font-size:12px;padding:6px 10px;border:1px solid #e0e0e0;border-radius:6px;background:#fff;color:#1a1a1a;font-family:monospace">
+      <div id="gist-id-status" style="font-size:11px;color:#888;margin-top:4px"></div>
+    </div>
+    <div id="gist-last-sync" style="font-size:11px;color:#aaa;margin-bottom:14px;text-align:center"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+      <button onclick="gistPush()" style="padding:10px;border-radius:8px;border:1px solid #a78bfa;background:#f5f3ff;color:#6d28d9;font-size:13px;font-weight:600;cursor:pointer">
+        &#8679; Push
+      </button>
+      <button onclick="gistPull()" style="padding:10px;border-radius:8px;border:1px solid #10b981;background:#ecfdf5;color:#065f46;font-size:13px;font-weight:600;cursor:pointer">
+        &#8681; Pull
+      </button>
+    </div>
+    <div id="gist-action-status" style="font-size:12px;text-align:center;min-height:20px;font-weight:600;padding:6px"></div>
+    <div style="border-top:1px solid #eee;margin-top:10px;padding-top:8px;font-size:10px;color:#bbb;line-height:1.6;text-align:center">
+      Gist จะเป็น Secret (ไม่ public) &#183; Push จะทับข้อมูลเก่าใน Gist &#183; Pull จะทับข้อมูลในเครื่องนี้
+    </div>
+  </div>
+</div>
+
 <script>
 const DB={accounts:'tj_accounts_v5',trades:'tj_trades_v5',models:'tj_models_v5'};
 const PRIMARY_ACC_KEY = 'tj_primary_acc';
 let S={accounts:[],trades:[],models:[],currentAcc:null,entryEmo:'',exitEmo:'',_htf:'',_mtf:'',_ltf:'',calY:new Date().getFullYear(),calM:new Date().getMonth()};
 let chartObjs={};
 
-
 // ===== NOTION DATA PRE-LOADED =====
 const NOTION_DATA = {"accounts": [{"id": "acc_hardcore", "name": "HardCORE", "balance": 1074.43, "type": "Live"}, {"id": "acc_ftmo", "name": "FTMO PA$$", "balance": 279.29, "type": "Challenge"}, {"id": "acc_topstep", "name": "TopStep 50k", "balance": 2323.1, "type": "Challenge"}], "trades": [{"id": 1776690081049, "accId": "acc_hardcore", "date": "2026/01/05", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "OBs In OBs", "ses": "Out of Session", "etf": "5 minutes", "ttype": "Swing Trade", "mkt": "", "bias": "Bearish", "news": "Medium", "kl": "Liquidity Vload", "confs": ["Liq Sweep"], "esig": "CSD", "ot": "Limit Order", "grade": "F", "arr": 2.5, "maxRR": 0, "riskR": 2.0, "gross": -18.05, "fees": 0.0, "swap": 0, "net": -18.05, "slm": "Widened SL", "tpm": "", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "https://www.tradingview.com/x/TyMPy4dy/", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081050, "accId": "acc_hardcore", "date": "2025/12/23", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "OBs In OBs", "ses": "Out of Session", "etf": "5 minutes", "ttype": "Swing Trade", "mkt": "", "bias": "Bullish", "news": "Low", "kl": "Order Block (H1)", "confs": ["OBs", "CISD"], "esig": "MSS + Return to OB", "ot": "Limit Order", "grade": "F", "arr": 2.5, "maxRR": 0, "riskR": 1.0, "gross": -5.61, "fees": 0.0, "swap": 0, "net": -5.61, "slm": "Hit Initial SL", "tpm": "", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081051, "accId": "acc_hardcore", "date": "2026/01/06", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "Model #2", "ses": "Out of Session", "etf": "15 minutes", "ttype": "", "mkt": "", "bias": "Bullish", "news": "Low", "kl": "Liquidity Sweep", "confs": [], "esig": "", "ot": "", "grade": "B", "arr": 2.5, "maxRR": 0, "riskR": 1.0, "gross": 28.71, "fees": 0, "swap": 0, "net": 28.71, "slm": "Locked Profit", "tpm": "", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081052, "accId": "acc_hardcore", "date": "2026/01/07", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "Liq sweep", "ses": "Out of Session", "etf": "15 minutes", "ttype": "", "mkt": "", "bias": "Bearish", "news": "Low", "kl": "Liquidity Sweep", "confs": ["Liq Sweep", "Displacement"], "esig": "CSD", "ot": "", "grade": "A", "arr": 2.8, "maxRR": 0, "riskR": 1.0, "gross": 21.65, "fees": 0, "swap": 0, "net": 21.65, "slm": "Locked Profit", "tpm": "", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "https://www.tradingview.com/x/wt9knrO6/", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081053, "accId": "acc_hardcore", "date": "2026/01/07", "sym": "XAUUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "", "ses": "", "etf": "", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": [], "esig": "", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -10.49, "fees": 0, "swap": 0, "net": -10.49, "slm": "", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081054, "accId": "acc_hardcore", "date": "2026/01/09", "sym": "XAUUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "Liq sweep", "ses": "", "etf": "", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": [], "esig": "", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": 38.45, "fees": 0, "swap": 0, "net": 38.45, "slm": "", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "https://www.tradingview.com/x/23zffxby/", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081055, "accId": "acc_hardcore", "date": "2026/01/13", "sym": "XAUUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "", "ses": "", "etf": "15 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": [], "esig": "", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": 19.77, "fees": 0, "swap": 0, "net": 19.77, "slm": "", "tpm": "Final TP Hit", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081057, "accId": "acc_ftmo", "date": "2026/03/04", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "CISD + FVG", "ses": "Out of Session", "etf": "5 minutes", "ttype": "", "mkt": "Strong uptrend (LTF)", "bias": "Bullish", "news": "", "kl": "FVG", "confs": ["FVG", "CISD"], "esig": "CSD", "ot": "Limit Order", "grade": "B", "arr": 2.5, "maxRR": 2.5, "riskR": 0, "gross": 35.0, "fees": 0, "swap": 0, "net": 35.0, "slm": "", "tpm": "Final TP Hit, Partial 1 Taken", "outcome": "Maximum Profit!", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "Screen_Shot_2569-03-04_at_18.02.46.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081058, "accId": "acc_ftmo", "date": "2026/03/04", "sym": "XAUUSD", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "CISD + FVG", "ses": "Out of Session", "etf": "", "ttype": "Scalping", "mkt": "Strong uptrend (LTF), Pullback in uptrend", "bias": "Bullish", "news": "", "kl": "Liquidity Sweep, FVG, 61.8", "confs": ["FVG", "CISD"], "esig": "CSD", "ot": "Limit Order", "grade": "B", "arr": 2.2, "maxRR": 2.5, "riskR": 0, "gross": 40.0, "fees": 0, "swap": 0, "net": 40.0, "slm": "", "tpm": "", "outcome": "Great Exit!", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%2016.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081059, "accId": "acc_ftmo", "date": "2026/03/02", "sym": "XAUUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "Breaker Block", "ses": "", "etf": "", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "Breaker Block", "confs": ["Breaker Block"], "esig": "", "ot": "Limit Order", "grade": "B", "arr": 2.0, "maxRR": 2.5, "riskR": 0, "gross": 69.0, "fees": 0, "swap": 0, "net": 69.0, "slm": "", "tpm": "Final TP Hit", "outcome": "Great Exit!", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081060, "accId": "acc_ftmo", "date": "2026/03/20", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "Out of Session", "etf": "5 minutes", "ttype": "", "mkt": "Pullback in downtrend", "bias": "Bearish", "news": "", "kl": "61.8, pullback", "confs": ["iFVG"], "esig": "Inversion-FVG", "ot": "Market Order", "grade": "A", "arr": 2.2, "maxRR": 0, "riskR": 0, "gross": 65.61, "fees": 0, "swap": 0, "net": 65.61, "slm": "", "tpm": "", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%2015.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081061, "accId": "acc_ftmo", "date": "2026/03/23", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "CISD + FVG", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": [], "esig": "CSD", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -41.7, "fees": 0, "swap": 0, "net": -41.7, "slm": "", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%2014.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081062, "accId": "acc_ftmo", "date": "2026/03/23", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "Order Blocks", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "Strong downtrend (HTF)", "bias": "Bearish", "news": "", "kl": "pullback", "confs": [], "esig": "Inversion-FVG", "ot": "", "grade": "B", "arr": 2.2, "maxRR": 3.5, "riskR": 0, "gross": 109.22, "fees": 0, "swap": 0, "net": 109.22, "slm": "", "tpm": "Partial 1 Taken", "outcome": "Great Exit!", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%2013.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081064, "accId": "acc_ftmo", "date": "2026/03/24", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "MR", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "Strong downtrend (LTF)", "bias": "Bearish", "news": "", "kl": "FVG", "confs": ["MR"], "esig": "MR", "ot": "Limit Order", "grade": "B", "arr": 1.5, "maxRR": 2.0, "riskR": 0, "gross": 74.1, "fees": 0, "swap": 0, "net": 74.1, "slm": "", "tpm": "Partial 1 Taken, Final TP Hit", "outcome": "Great Exit!", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%2011.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081065, "accId": "acc_ftmo", "date": "2026/03/23", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "Strong downtrend (HTF)", "bias": "Bearish", "news": "", "kl": "", "confs": ["iFVG"], "esig": "Inversion-FVG", "ot": "", "grade": "A", "arr": 0.5, "maxRR": 5.0, "riskR": 0, "gross": 20.21, "fees": 0, "swap": 0, "net": 20.21, "slm": "", "tpm": "Manual Close (Profit)", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%2012.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081066, "accId": "acc_ftmo", "date": "2026/03/24", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "London Open", "etf": "", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": [], "esig": "", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": 26.52, "fees": 0, "swap": 0, "net": 26.52, "slm": "", "tpm": "Partial 1 Taken, Manual Close (BE)", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%2010.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081067, "accId": "acc_ftmo", "date": "2026/03/24", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "MR", "ses": "London Open", "etf": "5 minutes", "ttype": "", "mkt": "Strong downtrend (LTF)", "bias": "Bearish", "news": "", "kl": "FVG", "confs": ["MR"], "esig": "MR, Inversion-FVG", "ot": "", "grade": "B", "arr": 1.0, "maxRR": 1.8, "riskR": 0, "gross": 18.9, "fees": 0, "swap": 0, "net": 18.9, "slm": "", "tpm": "Manual Close (Loss)", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%209.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081068, "accId": "acc_ftmo", "date": "2026/03/24", "sym": "XAUUSD", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "Breaker Block", "ses": "London Open", "etf": "5 minutes", "ttype": "", "mkt": "Strong downtrend (HTF)", "bias": "Bullish", "news": "", "kl": "", "confs": ["Breaker Block"], "esig": "", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -32.0, "fees": 0, "swap": 0, "net": -32.0, "slm": "", "tpm": "Manual Close (Loss)", "outcome": "Capital Protected", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%208.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081069, "accId": "acc_ftmo", "date": "2026/03/24", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "Breaker Block", "ses": "London Open", "etf": "5 minutes", "ttype": "", "mkt": "Strong uptrend (LTF)", "bias": "Bullish", "news": "", "kl": "", "confs": ["Breaker Block"], "esig": "", "ot": "", "grade": "A", "arr": 1.8, "maxRR": 2.5, "riskR": 0, "gross": 62.2, "fees": 0, "swap": 0, "net": 62.2, "slm": "", "tpm": "Partial 1 Taken, Final TP Hit", "outcome": "Great Exit!", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%207.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081070, "accId": "acc_ftmo", "date": "2026/03/24", "sym": "EURUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "poNooK", "ses": "", "etf": "1 minute", "ttype": "", "mkt": "", "bias": "Bearish", "news": "", "kl": "FVG", "confs": [], "esig": "", "ot": "", "grade": "B", "arr": 1.0, "maxRR": 4.0, "riskR": 0, "gross": 17.4, "fees": 0, "swap": 0, "net": 17.4, "slm": "", "tpm": "", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%206.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081071, "accId": "acc_ftmo", "date": "2026/03/24", "sym": "XAUUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "London Close", "etf": "5 minutes", "ttype": "", "mkt": "Strong downtrend (HTF), Strong downtrend (LTF)", "bias": "", "news": "", "kl": "", "confs": [], "esig": "Inversion-FVG", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -34.13, "fees": 0, "swap": 0, "net": -34.13, "slm": "", "tpm": "Manual Close (Loss)", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%205.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081072, "accId": "acc_ftmo", "date": "2026/03/24", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "London Close", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "Liquidity Sweep", "confs": [], "esig": "Inversion-FVG, MR", "ot": "", "grade": "B", "arr": 1.5, "maxRR": 0, "riskR": 0, "gross": 20.51, "fees": 0, "swap": 0, "net": 20.51, "slm": "", "tpm": "", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%204.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081073, "accId": "acc_ftmo", "date": "2026/03/24", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "Out of Session", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "pullback", "confs": ["iFVG"], "esig": "Inversion-FVG", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -16.9, "fees": 0, "swap": 0, "net": -16.9, "slm": "", "tpm": "Manual Close (Loss)", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%203.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081074, "accId": "acc_ftmo", "date": "2026/03/24", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "Out of Session", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "FVG", "confs": [], "esig": "Inversion-FVG", "ot": "", "grade": "C", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -18.87, "fees": 0, "swap": 0, "net": -18.87, "slm": "", "tpm": "Manual Close (Loss)", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081075, "accId": "acc_ftmo", "date": "2026/03/25", "sym": "US100", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "PA", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": [], "esig": "PA", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -50.0, "fees": 0, "swap": 0, "net": -50.0, "slm": "", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%202.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081076, "accId": "acc_ftmo", "date": "2026/03/25", "sym": "XAUUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "Order Block 15m", "confs": [], "esig": "", "ot": "", "grade": "B", "arr": 1.1, "maxRR": 2.5, "riskR": 0, "gross": 33.85, "fees": 0, "swap": 0, "net": 33.85, "slm": "", "tpm": "Partial 1 Taken", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image%201.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081078, "accId": "acc_ftmo", "date": "2026/03/25", "sym": "US100", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "CISD + FVG", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": [], "esig": "", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -50.82, "fees": 0, "swap": 0, "net": -50.82, "slm": "", "tpm": "Manual Close (Loss)", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "image.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081079, "accId": "acc_topstep", "date": "2026/03/30", "sym": "XAUUSD", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "Order Blocks", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "Strong uptrend (LTF)", "bias": "Bullish", "news": "", "kl": "Order Block 15m", "confs": [], "esig": "CSD", "ot": "", "grade": "A", "arr": 0, "maxRR": 0, "riskR": 0, "gross": 392.0, "fees": 1.24, "swap": 0, "net": 390.76, "slm": "Locked Profit", "tpm": "Manual Close (Profit)", "outcome": "Capital Protected", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-03-30_13-59-32.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081081, "accId": "acc_topstep", "date": "2026/03/30", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "Bearish", "news": "", "kl": "FVG", "confs": [], "esig": "Inversion-FVG", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -185.5, "fees": 1.0, "swap": 0, "net": -186.5, "slm": "Hit Initial SL", "tpm": "", "outcome": "Capital Protected", "mistake": "Wrong Entry Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-03-30_13-50-10.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081082, "accId": "acc_topstep", "date": "2026/03/30", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "Trend Line", "ses": "Out of Session", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "FVG", "confs": ["Trend Line"], "esig": "CSD", "ot": "", "grade": "C", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -110.5, "fees": 0.74, "swap": 0, "net": -111.24, "slm": "Hit Initial SL", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-03-30_18-18-38.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081083, "accId": "acc_topstep", "date": "2026/03/30", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "iBos", "ses": "Out of Session", "etf": "", "ttype": "", "mkt": "Strong downtrend (HTF)", "bias": "Bearish", "news": "", "kl": "", "confs": ["iBos"], "esig": "", "ot": "", "grade": "F", "arr": 0, "maxRR": 0, "riskR": 0, "gross": 95.5, "fees": 2.22, "swap": 0, "net": 93.28, "slm": "Hit Initial SL", "tpm": "", "outcome": "Capital Protected", "mistake": "Wrong Entry Point, No FVG", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-03-31_11-02-41.png, MNQ1!_2026-03-31_11-16-09.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081084, "accId": "acc_topstep", "date": "2026/03/30", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "FVG", "ses": "New York", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": ["FVG", "CISD"], "esig": "FVG", "ot": "", "grade": "C", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -47.5, "fees": 0.74, "swap": 0, "net": -48.24, "slm": "", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-03-31_11-19-44.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081085, "accId": "acc_topstep", "date": "2026/03/31", "sym": "XAUUSD", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "Pull Back", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "Strong uptrend (LTF)", "bias": "Bullish", "news": "", "kl": "61.8", "confs": ["iFVG"], "esig": "Inversion-FVG", "ot": "", "grade": "A", "arr": 1.44, "maxRR": 2.7, "riskR": 0, "gross": 420.0, "fees": 1.24, "swap": 0, "net": 418.76, "slm": "Locked Profit", "tpm": "Final TP Hit", "outcome": "Profit Taken", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-03-31_11-21-50.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081086, "accId": "acc_topstep", "date": "2026/03/31", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "Strong downtrend (HTF)", "bias": "Bearish", "news": "", "kl": "Liquidity Sweep", "confs": ["iFVG"], "esig": "", "ot": "", "grade": "A", "arr": 1.3, "maxRR": 2.5, "riskR": 0, "gross": 235.0, "fees": 0.74, "swap": 0, "net": 234.26, "slm": "", "tpm": "Manual Close (Profit)", "outcome": "Profit Taken", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-03-31_11-28-05.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081087, "accId": "acc_topstep", "date": "2026/03/31", "sym": "XAUUSD", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "Pull Back", "ses": "London Open", "etf": "5 minutes", "ttype": "", "mkt": "Strong uptrend (LTF)", "bias": "Bullish", "news": "", "kl": "0.5", "confs": ["iFVG"], "esig": "Inversion-FVG", "ot": "", "grade": "B", "arr": 1.5, "maxRR": 3.0, "riskR": 0, "gross": 51.0, "fees": 2.48, "swap": 0, "net": 48.52, "slm": "Hit Trailed SL", "tpm": "Manual Close (Profit)", "outcome": "Profit Taken", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-03-31_13-21-42.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081088, "accId": "acc_topstep", "date": "2026/03/31", "sym": "XAUUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "Pull Back", "ses": "London Open", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "Bullish", "news": "", "kl": "0.5", "confs": [], "esig": "OB", "ot": "", "grade": "C", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -135.0, "fees": 1.24, "swap": 0, "net": -136.24, "slm": "Hit Trailed SL", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-03-31_14-20-56.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081089, "accId": "acc_topstep", "date": "2026/03/31", "sym": "XAUUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "iBos", "ses": "London Close", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "Bullish", "news": "", "kl": "0.5", "confs": ["CISD"], "esig": "CSD", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -165.0, "fees": 1.98, "swap": 0, "net": -166.98, "slm": "Hit Trailed SL", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-03-31_16-39-43.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081090, "accId": "acc_topstep", "date": "2026/03/31", "sym": "XAUUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "", "ses": "London Close", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "Bullish", "news": "", "kl": "", "confs": ["iBos"], "esig": "CSD", "ot": "", "grade": "C", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -153.0, "fees": 1.24, "swap": 0, "net": -154.24, "slm": "Hit Initial SL", "tpm": "", "outcome": "Capital Protected", "mistake": "No FVG, Wrong Entry Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-03-31_19-52-19.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081091, "accId": "acc_topstep", "date": "2026/03/31", "sym": "US100", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "London Close", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": [], "esig": "Inversion-FVG", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -170.5, "fees": 0.74, "swap": 0, "net": -171.24, "slm": "", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081092, "accId": "acc_topstep", "date": "2026/03/31", "sym": "US100", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "Order Blocks", "ses": "London Close", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": [], "esig": "", "ot": "", "grade": "C", "arr": 0, "maxRR": 0, "riskR": 0, "gross": 440.0, "fees": 0, "swap": 0, "net": 440.0, "slm": "", "tpm": "Manual Close (Profit)", "outcome": "Capital Protected", "mistake": "Regret Trading", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-03-31_19-57-18.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081093, "accId": "acc_topstep", "date": "2026/04/01", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "FVG", "ses": "", "etf": "1 minute", "ttype": "", "mkt": "", "bias": "Bullish", "news": "", "kl": "Liquidity Sweep", "confs": ["FVG"], "esig": "FVG", "ot": "", "grade": "B", "arr": 1.95, "maxRR": 0, "riskR": 0, "gross": 190.0, "fees": 1.24, "swap": 0, "net": 188.76, "slm": "Locked Profit", "tpm": "Manual Close (Profit)", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-01_08-42-17.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081094, "accId": "acc_topstep", "date": "2026/04/01", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "FVG", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": ["FVG"], "esig": "", "ot": "", "grade": "C", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -162.0, "fees": 3.72, "swap": 0, "net": -165.72, "slm": "", "tpm": "", "outcome": "Capital Protected", "mistake": "Wrong Entry Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-02_08-52-11.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081095, "accId": "acc_topstep", "date": "2026/04/01", "sym": "XAUUSD", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "London Open", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "pullback", "confs": ["iFVG", "OBs"], "esig": "Inversion-FVG", "ot": "", "grade": "B", "arr": 0.5, "maxRR": 4.0, "riskR": 0, "gross": 60.0, "fees": 1.24, "swap": 0, "net": 58.76, "slm": "", "tpm": "Manual Close (Profit)", "outcome": "Profit Taken", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-02_08-54-50.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081096, "accId": "acc_topstep", "date": "2026/04/01", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iBos", "ses": "", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": ["FVG"], "esig": "FVG, CSD", "ot": "", "grade": "C", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -131.0, "fees": 2.22, "swap": 0, "net": -133.22, "slm": "Hit Initial SL", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-02_08-58-21.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081097, "accId": "acc_topstep", "date": "2026/04/01", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "London Close", "etf": "5 minutes", "ttype": "", "mkt": "Strong uptrend (HTF)", "bias": "", "news": "", "kl": "", "confs": ["iFVG"], "esig": "Inversion-FVG", "ot": "", "grade": "B", "arr": 1.1, "maxRR": 1.15, "riskR": 0, "gross": 130.5, "fees": 1.48, "swap": 0, "net": 129.02, "slm": "", "tpm": "Manual Close (Profit)", "outcome": "Maximum Profit!", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-02_09-03-49.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081098, "accId": "acc_topstep", "date": "2026/04/01", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "FVG", "ses": "New York", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "Bullish", "news": "", "kl": "", "confs": ["FVG"], "esig": "FVG", "ot": "", "grade": "C", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -703.0, "fees": 1.24, "swap": 0, "net": -704.24, "slm": "Hit Initial SL", "tpm": "", "outcome": "Capital Protected", "mistake": "Wrong Entry Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-02_09-10-37.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081099, "accId": "acc_topstep", "date": "2026/04/02", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "iBos", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": ["iFVG"], "esig": "", "ot": "", "grade": "C", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -13.0, "fees": 2.48, "swap": 0, "net": -15.48, "slm": "", "tpm": "", "outcome": "Capital Protected", "mistake": "Wrong Entry Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-02_09-16-52.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081100, "accId": "acc_topstep", "date": "2026/04/02", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "Breaker Block", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "Breaker Block", "confs": ["BBs"], "esig": "BBs", "ot": "", "grade": "A", "arr": 1.9, "maxRR": 6.0, "riskR": 0, "gross": 288.0, "fees": 1.24, "swap": 0, "net": 286.76, "slm": "", "tpm": "", "outcome": "Profit Taken", "mistake": "Wrong Entry Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-02_09-18-56.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081101, "accId": "acc_topstep", "date": "2026/04/02", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "Breaker Block", "ses": "Asia", "etf": "1 minute", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "Breaker Block", "confs": ["BBs"], "esig": "", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -120.5, "fees": 0.74, "swap": 0, "net": -121.24, "slm": "", "tpm": "", "outcome": "Capital Protected", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-02_09-22-12.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081102, "accId": "acc_topstep", "date": "2026/04/02", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "Breaker Block", "ses": "Asia", "etf": "1 minute", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "Breaker Block", "confs": ["BBs"], "esig": "BBs", "ot": "", "grade": "A", "arr": 0.5, "maxRR": 1.73, "riskR": 0, "gross": 170.0, "fees": 1.24, "swap": 0, "net": 168.76, "slm": "", "tpm": "Manual Close (Profit)", "outcome": "Profit Taken", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-02_09-24-32.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081103, "accId": "acc_topstep", "date": "2026/04/01", "sym": "XAUUSD", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "ETC", "ses": "", "etf": "", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "ETC", "confs": ["ETC"], "esig": "", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": 145.58, "fees": 0, "swap": 0, "net": 145.58, "slm": "", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081104, "accId": "acc_topstep", "date": "2026/04/02", "sym": "US100", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "London Open", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "FVG", "confs": ["iFVG"], "esig": "", "ot": "", "grade": "B", "arr": 0, "maxRR": 0, "riskR": 0, "gross": -120.0, "fees": 1.48, "swap": 0, "net": -121.48, "slm": "Hit Initial SL", "tpm": "", "outcome": "Capital Protected", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-02_13-27-55.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081105, "accId": "acc_topstep", "date": "2026/04/02", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "London Close", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "Bearish", "news": "", "kl": "", "confs": ["iFVG"], "esig": "Inversion-FVG", "ot": "", "grade": "A", "arr": 1.8, "maxRR": 0, "riskR": 0, "gross": 137.0, "fees": 0.74, "swap": 0, "net": 136.26, "slm": "Locked Profit", "tpm": "Final TP Hit", "outcome": "Profit Taken", "mistake": "Position Sizing Error", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "Screen_Shot_2569-03-05_at_16.33.00.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081106, "accId": "acc_topstep", "date": "2026/04/03", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFVG 15m", "ses": "London Open", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "Low", "kl": "Liquidity Sweep", "confs": [], "esig": "Inversion-FVG", "ot": "", "grade": "A", "arr": 1.0, "maxRR": 1.8, "riskR": 0, "gross": 119.54, "fees": 0, "swap": 0, "net": 119.54, "slm": "", "tpm": "Manual Close (Profit)", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-03_16-00-11.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081107, "accId": "acc_topstep", "date": "2026/04/02", "sym": "US100", "pos": "", "lot": 0, "dur": "", "entry": 0, "modelId": "By Alex", "ses": "New York", "etf": "", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": ["Alex"], "esig": "", "ot": "", "grade": "B", "arr": -1.0, "maxRR": 0.0, "riskR": 0, "gross": -57.74, "fees": 0, "swap": 0, "net": -57.74, "slm": "Hit Initial SL", "tpm": "", "outcome": "Loss, Review Setup", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081108, "accId": "acc_topstep", "date": "2026/04/02", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "iFVG 15m", "ses": "New York", "etf": "1 minute", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": ["iFVG"], "esig": "Inversion-FVG", "ot": "", "grade": "B", "arr": 1.0, "maxRR": 0, "riskR": 0, "gross": 351.5, "fees": 4.44, "swap": 0, "net": 347.06, "slm": "", "tpm": "Manual Close (Profit)", "outcome": "Profit Taken", "mistake": "Position Sizing Error", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-03_16-08-46.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081109, "accId": "acc_topstep", "date": "2026/04/02", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "iFVG 15m", "ses": "New York", "etf": "1 minute", "ttype": "", "mkt": "", "bias": "Bullish", "news": "", "kl": "iFVG", "confs": ["iFVG"], "esig": "Inversion-FVG", "ot": "", "grade": "A", "arr": 1.3, "maxRR": 7.0, "riskR": 0, "gross": 165.5, "fees": 0.74, "swap": 0, "net": 164.76, "slm": "", "tpm": "Final TP Hit", "outcome": "Profit Taken", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-03_16-11-58.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081110, "accId": "acc_topstep", "date": "2026/04/06", "sym": "XAUUSD", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "Pull Back", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "FVG", "confs": ["iFVG 15m"], "esig": "Inversion-FVG", "ot": "", "grade": "A", "arr": 0.84, "maxRR": 1.59, "riskR": 0, "gross": 184.76, "fees": 0, "swap": 0, "net": 184.76, "slm": "Locked Profit", "tpm": "Final TP Hit", "outcome": "Profit Taken", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-06_09-29-30.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081111, "accId": "acc_topstep", "date": "2026/04/06", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "Pull Back", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "Bullish", "news": "", "kl": "FVG", "confs": [], "esig": "FVG", "ot": "", "grade": "C", "arr": 0.0, "maxRR": 0, "riskR": 0, "gross": -33.74, "fees": 0, "swap": 0, "net": -33.74, "slm": "Hit Initial SL", "tpm": "Manual Close (Loss)", "outcome": "Capital Protected", "mistake": "Wrong Entry Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-06_10-01-27.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081112, "accId": "acc_topstep", "date": "2026/04/06", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "Order Blocks", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "Order Block 15m", "confs": ["iFVG 15m"], "esig": "Inversion-FVG", "ot": "", "grade": "A", "arr": 1.43, "maxRR": 2.0, "riskR": 0, "gross": 135.5, "fees": 0.74, "swap": 0, "net": 134.76, "slm": "Locked Profit", "tpm": "Final TP Hit", "outcome": "Great Exit!", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-06_10-20-43.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081113, "accId": "acc_topstep", "date": "2026/04/06", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "Breaker Block", "ses": "Out of Session", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "Breaker Block", "confs": [], "esig": "BBs", "ot": "", "grade": "B", "arr": 0, "maxRR": 1.0, "riskR": 0, "gross": -148.98, "fees": 0, "swap": 0, "net": -148.98, "slm": "Hit Initial SL", "tpm": "", "outcome": "Capital Protected", "mistake": "Wrong Entry Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-07_07-54-47.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081114, "accId": "acc_topstep", "date": "2026/04/07", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFvg", "ses": "Asia", "etf": "", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "Supply Zone 15m", "confs": [], "esig": "Inversion-FVG", "ot": "", "grade": "B", "arr": 0.8, "maxRR": 1.5, "riskR": 0, "gross": 212.0, "fees": 4.96, "swap": 0, "net": 207.04, "slm": "", "tpm": "", "outcome": "Profit Taken", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-07_10-01-19.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081115, "accId": "acc_topstep", "date": "2026/04/07", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFVG 15m", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "Strong downtrend (HTF)", "bias": "", "news": "", "kl": "Supply Zone 5m", "confs": ["iFVG 15m"], "esig": "Inversion-FVG", "ot": "", "grade": "A", "arr": 1.49, "maxRR": 1.93, "riskR": 0, "gross": 175.0, "fees": 4.96, "swap": 0, "net": 170.04, "slm": "", "tpm": "Manual Close (Profit)", "outcome": "Great Exit!", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-07_12-48-44.png, MGCM2026_2026-04-07_12-48-39.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081116, "accId": "acc_topstep", "date": "2026/04/08", "sym": "US100", "pos": "Buy", "lot": 0, "dur": "", "entry": 0, "modelId": "5m FVG", "ses": "New York", "etf": "", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "FVG", "confs": ["5m FVG"], "esig": "5m FVG", "ot": "", "grade": "C", "arr": -0.1, "maxRR": 0.0, "riskR": 0, "gross": -20.0, "fees": 0.74, "swap": 0, "net": -20.74, "slm": "Hit Initial SL", "tpm": "Manual Close (Loss)", "outcome": "Loss, Review Setup", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-08_01-51-47.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081117, "accId": "acc_topstep", "date": "2026/04/08", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFVG 5m", "ses": "New York", "etf": "5 minutes", "ttype": "", "mkt": "Strong downtrend (HTF)", "bias": "", "news": "", "kl": "5m iFVG", "confs": ["5m iFVG"], "esig": "5m iFVG", "ot": "", "grade": "B", "arr": 1.0, "maxRR": 2.0, "riskR": 0, "gross": 91.5, "fees": 0.74, "swap": 0, "net": 90.76, "slm": "Locked Profit", "tpm": "Manual Close (Profit)", "outcome": "Profit Taken", "mistake": "Wrong Exit Point", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-08_01-49-33.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081118, "accId": "acc_topstep", "date": "2026/04/08", "sym": "XAUUSD", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFVG 15m", "ses": "Asia", "etf": "5 minutes", "ttype": "", "mkt": "Strong uptrend (HTF)", "bias": "", "news": "", "kl": "Order Block (H4)", "confs": ["iFVG 15m"], "esig": "", "ot": "", "grade": "A", "arr": 1.4, "maxRR": 2.3, "riskR": 0, "gross": 189.0, "fees": 1.24, "swap": 0, "net": 187.76, "slm": "", "tpm": "Final TP Hit", "outcome": "Great Exit!", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MGCM2026_2026-04-09_07-41-17.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081119, "accId": "acc_topstep", "date": "2026/04/08", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFVG 15m", "ses": "Out of Session", "etf": "5 minutes", "ttype": "", "mkt": "", "bias": "", "news": "", "kl": "", "confs": ["iFVG 15m"], "esig": "15m iFVG", "ot": "", "grade": "C", "arr": -0.5, "maxRR": 0, "riskR": 0, "gross": 58.5, "fees": 0.74, "swap": 0, "net": 57.76, "slm": "", "tpm": "", "outcome": "Loss, Review Setup", "mistake": "", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-09_07-46-35.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}, {"id": 1776690081120, "accId": "acc_topstep", "date": "2026/04/08", "sym": "US100", "pos": "Sell", "lot": 0, "dur": "", "entry": 0, "modelId": "iFVG 5m", "ses": "New York", "etf": "5 minutes", "ttype": "", "mkt": "Strong uptrend (HTF)", "bias": "", "news": "", "kl": "", "confs": ["5m iFVG"], "esig": "5m iFVG", "ot": "", "grade": "B", "arr": 0.5, "maxRR": 0, "riskR": 0.5, "gross": 416.64, "fees": 0, "swap": 0, "net": 416.64, "slm": "", "tpm": "", "outcome": "Profit Taken", "mistake": "Position Sizing Error, Thin SL", "followed": true, "plan": "Daily Bias", "entryEmo": "", "exitEmo": "", "notes": "MNQ1!_2026-04-09_07-53-18.png", "htf": "", "mtf": "", "ltf": "", "yt": ""}], "models": [{"id": "OBs In OBs", "name": "OBs In OBs", "cat": "ICT", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "Model #2", "name": "Model #2", "cat": "Price Action", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "Liq sweep", "name": "Liq sweep", "cat": "SMC", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "CISD + FVG", "name": "CISD + FVG", "cat": "ICT", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "Breaker Block", "name": "Breaker Block", "cat": "ICT", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "iFvg", "name": "iFvg", "cat": "ICT", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "Order Blocks", "name": "Order Blocks", "cat": "ICT", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "MR", "name": "MR", "cat": "Price Action", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "poNooK", "name": "poNooK", "cat": "Price Action", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "PA", "name": "PA", "cat": "Price Action", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "Trend Line", "name": "Trend Line", "cat": "Price Action", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "iBos", "name": "iBos", "cat": "ICT", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "FVG", "name": "FVG", "cat": "ICT", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "Pull Back", "name": "Pull Back", "cat": "Price Action", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "ETC", "name": "ETC", "cat": "Price Action", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "iFVG 15m", "name": "iFVG 15m", "cat": "ICT", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "By Alex", "name": "By Alex", "cat": "Price Action", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "5m FVG", "name": "5m FVG", "cat": "ICT", "desc": "", "ses": "Any", "tf": "5m"}, {"id": "iFVG 5m", "name": "iFVG 5m", "cat": "ICT", "desc": "", "ses": "Any", "tf": "5m"}]};
 
 function loadNotionData() {
-  // Load accounts
   const existingAccs = JSON.parse(localStorage.getItem(DB.accounts)||'[]');
   if(!existingAccs.length || existingAccs[0].id === 'acc1') {
     localStorage.setItem(DB.accounts, JSON.stringify(NOTION_DATA.accounts));
     S.accounts = NOTION_DATA.accounts;
   }
-  // Load models — always use fixed list
   const fixedModels = [
     {id:'m_pb',name:'Pullback',cat:'Price Action',desc:'Pullback in trend',ses:'Any',tf:'Any'},
     {id:'m_ob15',name:'15m Order Block',cat:'ICT',desc:'15m OB mitigation',ses:'Any',tf:'15m'},
@@ -662,7 +908,6 @@ function loadNotionData() {
   ];
   localStorage.setItem(DB.models, JSON.stringify(fixedModels));
   S.models = fixedModels;
-  // Load trades
   const existingTrades = JSON.parse(localStorage.getItem(DB.trades)||'[]');
   const hasNotionData = existingTrades.some(t => t.accId === 'acc_topstep' || t.accId === 'acc_ftmo' || t.accId === 'acc_hardcore');
   if(!hasNotionData) {
@@ -672,12 +917,10 @@ function loadNotionData() {
 }
 
 function load(){
-  // Try current key first
   try{S.accounts=JSON.parse(localStorage.getItem(DB.accounts)||'[]')}catch(e){S.accounts=[]}
   try{S.trades=JSON.parse(localStorage.getItem(DB.trades)||'[]').map(t=>({...t,id:+t.id||t.id}))}catch(e){S.trades=[]}
   try{S.models=JSON.parse(localStorage.getItem(DB.models)||'[]')}catch(e){S.models=[]}
 
-  // If no trades, try migrating from older keys
   if(!S.trades.length){
     const oldKeys=['tj_trades_v4','tj_tz_v3','tj_tz_v2','tj_trades_v3','tj_trades_v2'];
     for(const k of oldKeys){
@@ -686,7 +929,6 @@ function load(){
         if(old.length){
           S.trades=old;
           localStorage.setItem(DB.trades,JSON.stringify(old));
-          console.log('Migrated',old.length,'trades from',k);
           break;
         }
       }catch(e){}
@@ -716,19 +958,6 @@ function saveTrades(){
   catch(e){alert('Storage เต็ม: ลองลบ trade เก่าหรือ export CSV ก่อนครับ')}
 }
 
-function loadSampleTrades(){
-  S.trades=[
-    {id:1,accId:'acc1',date:'2026/04/08',sym:'US100',pos:'Sell',lot:100,dur:'23m',entry:4815.5,modelId:'m1',ses:'New York',etf:'5m',ttype:'Intraday',mkt:'Strong downtrend (HT)',bias:'Bearish',news:'',kl:'Supply Zone',confs:['iFVG','LTF sweep'],ot:'Limit',grade:'B',arr:0.5,riskR:500,gross:416.64,fees:0,swap:0,net:416.64,slm:'',tpm:'Set and Forget',outcome:'Profit Taken',mistake:'Position Sizing',followed:true,plan:'Daily Bias',entryEmo:'Calm',exitEmo:'Satisfied',notes:'Clean setup. Sized too small.',htf:'',mtf:'',ltf:'',yt:''},
-    {id:2,accId:'acc1',date:'2026/04/08',sym:'XAUUSD',pos:'Sell',lot:100,dur:'1h 12m',entry:3180.5,modelId:'m2',ses:'Asia',etf:'15m',ttype:'Intraday',mkt:'Strong uptrend (HT)',bias:'Bullish',news:'',kl:'Order Block',confs:['iFVG','Order Block'],ot:'Limit',grade:'A',arr:1.4,riskR:500,gross:189.00,fees:1.24,swap:0,net:187.76,slm:'Locked Profit',tpm:'Final TP Hit',outcome:'Great Exit!',mistake:'',followed:true,plan:'Daily Bias',entryEmo:'Calm',exitEmo:'Satisfied',notes:'Perfect. Held through pullback.',htf:'',mtf:'',ltf:'',yt:''},
-    {id:3,accId:'acc1',date:'2026/04/07',sym:'XAUUSD',pos:'Sell',lot:100,dur:'45m',entry:3165.0,modelId:'m2',ses:'Asia',etf:'5m',ttype:'Scalp',mkt:'Strong downtrend (HT)',bias:'Bearish',news:'',kl:'Supply Zone',confs:['Supply Zone','Inversion FVG'],ot:'Limit',grade:'B',arr:0.8,riskR:500,gross:212.00,fees:4.96,swap:0,net:207.04,slm:'',tpm:'',outcome:'Profit Taken',mistake:'',followed:true,plan:'Daily Bias',entryEmo:'Calm',exitEmo:'Calm',notes:'',htf:'',mtf:'',ltf:'',yt:''},
-    {id:4,accId:'acc1',date:'2026/04/07',sym:'XAUUSD',pos:'Sell',lot:100,dur:'8m',entry:3158.0,modelId:'m1',ses:'Asia',etf:'5m',ttype:'Scalp',mkt:'',bias:'Bearish',news:'',kl:'',confs:['FVG'],ot:'Market',grade:'C',arr:-0.1,riskR:500,gross:-20.00,fees:0.74,swap:0,net:-20.74,slm:'Hit Initial SL',tpm:'Manual Close',outcome:'Loss, Review Setup',mistake:'Wrong Entry Point',followed:false,plan:'',entryEmo:'Fomo',exitEmo:'Fear',notes:'FOMO entry. Did not wait.',htf:'',mtf:'',ltf:'',yt:''},
-    {id:5,accId:'acc1',date:'2026/04/06',sym:'US100',pos:'Buy',lot:100,dur:'2h',entry:4790.0,modelId:'m5',ses:'New York',etf:'5m',ttype:'Intraday',mkt:'Trending',bias:'Bullish',news:'',kl:'FVG',confs:['FVG','LG sweep'],ot:'Limit',grade:'A',arr:1.49,riskR:500,gross:175.00,fees:4.96,swap:0,net:170.04,slm:'',tpm:'Manual Close',outcome:'Great Exit!',mistake:'',followed:true,plan:'Daily Bias',entryEmo:'Calm',exitEmo:'Satisfied',notes:'',htf:'',mtf:'',ltf:'',yt:''},
-    {id:6,accId:'acc1',date:'2026/04/06',sym:'US100',pos:'Sell',lot:100,dur:'35m',entry:4810.0,modelId:'m3',ses:'Asia',etf:'15m',ttype:'Intraday',mkt:'',bias:'Bearish',news:'',kl:'Order Block',confs:['Order Block'],ot:'Limit',grade:'B',arr:0,riskR:500,gross:-148.98,fees:0,swap:0,net:-148.98,slm:'Hit Initial SL',tpm:'',outcome:'Capital Protected',mistake:'Wrong Entry Point',followed:false,plan:'',entryEmo:'Overconfident',exitEmo:'Regret',notes:'Overconfident. No confirmation.',htf:'',mtf:'',ltf:'',yt:''},
-    {id:7,accId:'acc1',date:'2026/04/06',sym:'US100',pos:'Buy',lot:100,dur:'1h 20m',entry:4795.0,modelId:'m6',ses:'Asia',etf:'5m',ttype:'Intraday',mkt:'',bias:'Bullish',news:'',kl:'FVG',confs:['FVG'],ot:'Limit',grade:'A',arr:1.43,riskR:500,gross:135.50,fees:0.74,swap:0,net:134.76,slm:'Locked Profit',tpm:'Final TP Hit',outcome:'Great Exit!',mistake:'',followed:true,plan:'Daily Bias',entryEmo:'Calm',exitEmo:'Satisfied',notes:'Clean trade. Followed plan.',htf:'',mtf:'',ltf:'',yt:''},
-  ];
-  saveTrades();
-}
-
 function accTrades(){return S.trades.filter(x=>x.accId===S.currentAcc)}
 function modelName(mid){
   const setupLabels = {
@@ -740,7 +969,6 @@ function modelName(mid){
     'pullback':'Pullback','ms_break':'MS Break','liq_sweep':'Liq Sweep','custom':'Custom'
   };
   if(setupLabels[mid]) return setupLabels[mid];
-  // Fallback to old model DB for backward compatibility
   return S.models.find(x=>x.id===mid)?.name||mid||'—';
 }
 
@@ -756,14 +984,11 @@ function renderAccSelector(){
   const sel=document.getElementById('acc-select');
   sel.innerHTML=S.accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
   sel.value=S.currentAcc;
-  const primaryId2 = localStorage.getItem(PRIMARY_ACC_KEY);
-  // Bold primary account in dropdown label
   const acc=S.accounts.find(a=>a.id===S.currentAcc);
   const t=accTrades();
   const net=t.reduce((a,x)=>a+(+x.net||0),0);
   if(acc)document.getElementById('acc-info').textContent=`${t.length} trades | Net: ${net>=0?'+':''}$${net.toFixed(2)}`;
   document.getElementById('log-acc-name').textContent=acc?.name||'—';
-  updateModelDropdown();
 }
 
 function switchAccount(id){S.currentAcc=id;renderAccSelector();renderDash()}
@@ -807,7 +1032,6 @@ function addAccount(){
   renderAccList();renderAccSelector();
 }
 
-
 function setPrimaryAccount(id) {
   localStorage.setItem(PRIMARY_ACC_KEY, id);
   S.currentAcc = id;
@@ -815,7 +1039,6 @@ function setPrimaryAccount(id) {
   renderAccList();
   renderAccSelector();
   renderDash();
-  // Flash topbar
   const info = document.getElementById('acc-info');
   if (info) { info.style.color = '#1D9E75'; setTimeout(() => info.style.color = '', 1500); }
 }
@@ -829,23 +1052,18 @@ function deleteAccount(id){
   renderAccList();renderAccSelector();renderDash();
 }
 
-function updateModelDropdown(){
-  // models DB no longer used - setup dropdown has fixed options
-  // kept for backward compat
-}
-
 function saveModel(){
   const name=document.getElementById('m-name').value.trim();
   if(!name){alert('กรุณาใส่ชื่อ Model');return}
   S.models.push({id:'m'+Date.now(),name,cat:document.getElementById('m-cat').value,desc:document.getElementById('m-desc').value,ses:document.getElementById('m-ses').value,tf:document.getElementById('m-tf').value});
-  saveModels();updateModelDropdown();closeModal('modal-model');
+  saveModels();closeModal('modal-model');
   document.getElementById('m-name').value='';document.getElementById('m-desc').value='';
   renderModelDB();
 }
 
 function deleteModel(id){
   if(!confirm('ลบ Model นี้?'))return;
-  S.models=S.models.filter(m=>m.id!==id);saveModels();updateModelDropdown();renderModelDB();
+  S.models=S.models.filter(m=>m.id!==id);saveModels();renderModelDB();
 }
 
 function outBadge(o){
@@ -898,7 +1116,6 @@ function renderDash(){
   const acc=S.accounts.find(a=>a.id===S.currentAcc);
   const totalBal=(acc?.balance||0)+all.reduce((a,x)=>a+(+x.net||0),0);
 
-  // Stats bar
   const initBal=acc?.balance||0;
   const totalBal2=initBal+all.reduce((a,x)=>a+(+x.net||0),0);
   const balChange=all.reduce((a,x)=>a+(+x.net||0),0);
@@ -911,26 +1128,21 @@ function renderDash(){
     ['Score',sc,sc>=70?'gv':sc>=50?'av':'rv','/ 100'],
   ].map(([l,v,c,s])=>`<div class="tv-stat"><div class="tv-stat-l">${l}</div><div class="tv-stat-v ${c}">${v}</div><div class="tv-stat-sub">${s}</div></div>`).join('');
 
-  // Equity curve
   document.getElementById('tv-equity-total').textContent=`$${totalBal.toFixed(2)}`;
   const sorted=[...all].sort((a,b)=>a.date.localeCompare(b.date));
   let cum=acc?.balance||0;const el=[],ed=[];
   sorted.forEach(x=>{cum+=(+x.net||0);el.push(x.date.slice(5));ed.push(+cum.toFixed(2))});
   buildChart('eqChart','line',{labels:el,datasets:[{data:ed,borderColor:'#185FA5',backgroundColor:'rgba(24,95,165,.06)',tension:.4,fill:true,pointRadius:0,borderWidth:2,pointHoverRadius:4}]},{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'$'+ctx.parsed.y.toLocaleString('en-US',{minimumFractionDigits:2})}}},scales:{x:{ticks:{font:{size:9},maxRotation:0,autoSkip:true,maxTicksLimit:8},grid:{display:false},border:{display:false}},y:{ticks:{font:{size:9},callback:v=>'$'+v.toLocaleString()},grid:{color:'rgba(0,0,0,.04)'},border:{display:false}}}});
 
-  // Returns chart
   buildReturnsChart(all,'day');
 
-  // Session chart
   const sess=['Asia','London Open','London Close','New York','Out of Session'];
   const sd=sess.map(s=>+t.filter(x=>x.ses===s).reduce((a,x)=>a+(+x.net||0),0).toFixed(2));
   buildChart('sesChart','bar',{labels:['Asia','Lon O','Lon C','NY','OOS'],datasets:[{data:sd,backgroundColor:sd.map(v=>v>=0?'rgba(29,158,117,.8)':'rgba(226,75,74,.8)'),borderRadius:4,borderSkipped:false}]},{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'$'+ctx.parsed.y.toFixed(2)}}},scales:{x:{ticks:{font:{size:10}},grid:{display:false},border:{display:false}},y:{ticks:{font:{size:9},callback:v=>'$'+v},grid:{color:'rgba(0,0,0,.04)'},border:{display:false}}}});
 
-  // Outcomes donut
   const outs=['Profit Taken','Great Exit!','Loss, Review Setup','Capital Protected','Breakeven'];
   buildChart('outChart','doughnut',{labels:['Profit','Great Exit','Loss','Cap.Prot','BE'],datasets:[{data:outs.map(o=>t.filter(x=>x.outcome===o).length),backgroundColor:['#378ADD','#1D9E75','#E24B4A','#85B7EB','#EF9F27'],borderWidth:3,borderColor:'#ffffff'}]},{responsive:true,maintainAspectRatio:false,cutout:'48%',plugins:{legend:{position:'right',align:'center',labels:{font:{size:12},boxWidth:13,boxHeight:13,padding:14,color:'#555'}},tooltip:{callbacks:{label:ctx=>ctx.label+': '+ctx.parsed+' trades'}}}});
 
-  // Model WR
   const mids=[...new Set(t.map(x=>x.modelId).filter(Boolean))];
   const mRows=mids.map(mid=>{
     const mt=t.filter(x=>x.modelId===mid);
@@ -947,10 +1159,8 @@ function renderDash(){
       <div class="tv-model-pnl" style="color:${r.pnl>=0?'#1D9E75':'#E24B4A'}">${r.pnl>=0?'+':''}$${r.pnl.toFixed(0)}</div>
     </div>`).join(''):'<div style="color:#666;font-size:12px;padding:8px 0">ยังไม่มีข้อมูล</div>';
 
-  // Calendar
   renderDashCal();
 
-  // Recent trades
   const recent=[...all].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);
   const eCol={'Calm':'#1D9E75','Fomo':'#E24B4A','Revenge':'#E24B4A','Overconfident':'#BA7517','Fear':'#E24B4A','Greed':'#BA7517','Satisfied':'#1D9E75','Regret':'#E24B4A'};
   document.getElementById('tv-recent-trades').innerHTML=recent.length?recent.map(x=>{
@@ -1007,7 +1217,6 @@ function calPrevDash(){_dashCalM--;if(_dashCalM<0){_dashCalM=11;_dashCalY--}rend
 function calNextDash(){_dashCalM++;if(_dashCalM>11){_dashCalM=0;_dashCalY++}renderDashCal()}
 
 function renderDashCal(){
-  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const thMonths=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
   document.getElementById('tv-cal-title').textContent=`${thMonths[_dashCalM]} ${_dashCalY+543}`;
   const t=accTrades();
@@ -1015,18 +1224,14 @@ function renderDashCal(){
   const daysInMonth=new Date(_dashCalY,_dashCalM+1,0).getDate();
   const adjFirst=first===0?6:first-1;
 
-  // Build day->trades map
   const dayMap={};
   t.forEach(x=>{dayMap[x.date]=(dayMap[x.date]||[]);dayMap[x.date].push(x)});
 
-  // Build week summaries (Mon-Sun)
-  // Grid: 8 columns (Mon-Sun + Week summary)
   let html='<div style="display:grid;grid-template-columns:repeat(7,1fr) 80px;gap:3px">';
   ['Mon','Tue','Wed','Thu','Fri','Sat','Sun','Week'].forEach(d=>{
     html+=`<div class="tv-cal-head">${d}</div>`;
   });
 
-  // Weeks
   let day=1;
   const totalWeeks=Math.ceil((adjFirst+daysInMonth)/7);
   for(let w=0;w<totalWeeks;w++){
@@ -1052,7 +1257,6 @@ function renderDashCal(){
       }
     }
     html+=weekCells.join('');
-    // Week summary
     html+=`<div class="tv-week-row">
       <div class="tv-week-label">Week ${w+1}</div>
       ${weekTrades?`<div class="tv-week-pnl" style="color:${weekNet>=0?'#1D9E75':'#E24B4A'}">${weekNet>=0?'+':''}$${Math.abs(weekNet).toFixed(0)}</div>
@@ -1062,7 +1266,6 @@ function renderDashCal(){
   html+='</div>';
   document.getElementById('tv-calendar').innerHTML=html;
 }
-
 
 function renderModelDB(){
   const el=document.getElementById('model-db-list');
@@ -1109,7 +1312,7 @@ function renderHistory(){
   const eCol={'Calm':'#1D9E75','Fomo':'#E24B4A','Revenge':'#E24B4A','Overconfident':'#854F0B','Fear':'#E24B4A','Greed':'#854F0B','Satisfied':'#1D9E75','Regret':'#E24B4A'};
   b.innerHTML=f.map(x=>{
     const net=+x.net||0;
-      const charts=[x.htf?'HTF':'',x.mtf?'MTF':'',x.ltf?'LTF':''].filter(Boolean);
+    const charts=[x.htf?'HTF':'',x.mtf?'MTF':'',x.ltf?'LTF':''].filter(Boolean);
     return`<tr>
       <td style="white-space:nowrap;font-size:11px;color:#666">${x.date}</td>
       <td><strong>${x.sym}</strong></td>
@@ -1118,7 +1321,7 @@ function renderHistory(){
       <td style="font-size:11px;color:#888">${x.ses||'—'}</td>
       <td>${renderStars(x.grade)}</td>
       <td style="font-weight:700;color:${net>=0?'#1D9E75':'#E24B4A'}">${net>=0?'+':''}$${net.toFixed(2)}</td>
-      <td style="font-size:12px">${x.arr||'—'}</td>
+      <td style="font-size:12px">${x.arr||'—'}</td><td style="font-size:12px;color:#a78bfa">${x.maxrr||'—'}</td>
       <td>${outBadge(x.outcome)}</td>
       <td style="font-size:11px;font-weight:600;color:${eCol[x.entryEmo]||'#aaa'}">${x.entryEmo||'—'}</td>
       <td style="font-size:11px;color:#aaa">${charts.join(' ')||'—'}</td>
@@ -1307,254 +1510,8 @@ ${tradesHtml}
 <div style="margin-top:24px;text-align:center;font-size:10px;color:#ccc;padding-top:12px;border-top:1px solid #f0f0ec">
   Trading Journal Pro &nbsp;·&nbsp; ${acc?.name||''} &nbsp;·&nbsp; Week ${weekLabel}
 </div>
+</body></html>`;
 
-<!-- MODAL: EDIT TRADE -->
-<div class="modal-overlay" id="modal-edit" onclick="overlayClose(event,'modal-edit')">
-  <div class="modal" style="max-width:700px;max-height:90vh;overflow-y:auto">
-    <button class="modal-close" onclick="closeModal('modal-edit')">x</button>
-    <div class="ct" style="margin-bottom:14px">แก้ไข Trade <span id="edit-trade-id" style="color:#aaa;font-weight:400"></span></div>
-
-    <div class="card" style="margin-bottom:10px">
-      <div class="ct">Trade Details</div>
-      <div class="fr">
-        <div class="fg"><label>Account</label><select id="e-accId" style="font-size:12px;padding:6px 8px;border:1px solid #e0e0e0;border-radius:7px;background:#fff;color:#1a1a1a;width:100%;font-family:inherit"></select></div>
-        <div class="fg"><label>Date</label><input type="date" id="e-date"></div>
-        <div class="fg"><label>Symbol</label>
-          <select id="e-sym">
-            <option value="">— เลือก —</option>
-            <optgroup label="Favorite">
-              <option value="XAUUSD">Gold (XAUUSD)</option>
-              <option value="NQ">NQ</option>
-              <option value="ES">ES</option>
-              <option value="XAGUSD">Silver (XAGUSD)</option>
-            </optgroup>
-            <optgroup label="Forex">
-              <option value="EURUSD">EURUSD</option>
-              <option value="USDJPY">USDJPY</option>
-              <option value="EURGBP">EURGBP</option>
-            </optgroup>
-            <optgroup label="Crypto">
-              <option value="BTCUSD">BTC</option>
-              <option value="ETHUSD">ETH</option>
-              <option value="BNBUSD">BNB</option>
-            </optgroup>
-            <optgroup label="ETC"><option value="OTHER">Other</option></optgroup>
-          </select>
-        </div>
-        <div class="fg"><label>Direction</label><select id="e-pos"><option>Buy</option><option>Sell</option></select></div>
-        <div class="fg"><label>Session</label><select id="e-ses"><option>Asia</option><option>London Open</option><option>London Close</option><option>New York</option><option>Out of Session</option></select></div>
-      </div>
-      <div class="fr">
-        <div class="fg"><label>Duration</label><input type="text" id="e-dur" placeholder="23m, 2h..."></div>
-        <div class="fg"><label>Type of Trade</label><select id="e-ttype"><option>Intraday</option><option>Swing</option><option>Scalp</option></select></div>
-        <div class="fg"><label>Bias</label><select id="e-bias"><option>Bullish</option><option>Bearish</option><option>Neutral</option></select></div>
-        <div class="fg"><label>Market Conditions</label><select id="e-mkt"><option>Strong uptrend (HT)</option><option>Strong downtrend (HT)</option><option>15m Strong Uptrend</option><option>15m Strong Downtrend</option><option>Ranging</option><option>Volatile</option><option>Trending</option></select></div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-bottom:10px">
-      <div class="ct">Setup / Confluences</div>
-      <div class="fr">
-        <div class="fg"><label>Setup Type</label>
-          <select id="e-model">
-            <option value="">— เลือก Setup —</option>
-            <optgroup label="ICT Concepts">
-              <option value="fvg">FVG (Fair Value Gap)</option>
-              <option value="ifvg">iFVG (Inverse FVG)</option>
-              <option value="ob">Order Block</option>
-              <option value="bb">Breaker Block</option>
-              <option value="ob_5m">5m Order Block</option>
-              <option value="ob_15m">15m Order Block</option>
-              <option value="ifvg_1m">1m iFVG</option>
-              <option value="ifvg_5m">5m iFVG</option>
-              <option value="ifvg_15m">15m iFVG</option>
-              <option value="fvg_5m">5m FVG</option>
-              <option value="fvg_15m">15m FVG</option>
-              <option value="bb_5m">5m Breaker Block</option>
-              <option value="bb_15m">15m Breaker Block</option>
-            </optgroup>
-            <optgroup label="SMC / Price Action">
-              <option value="supply_zone">Supply Zone</option>
-              <option value="demand_zone">Demand Zone</option>
-              <option value="pullback">Pullback</option>
-              <option value="ms_break">Market Structure Break</option>
-              <option value="liq_sweep">Liquidity Sweep</option>
-            </optgroup>
-            <optgroup label="Other">
-              <option value="custom">Custom / Other</option>
-            </optgroup>
-          </select>
-        </div>
-        <div class="fg"><label>Entry Timeframe</label><select id="e-etf"><option>1m</option><option>5m</option><option>15m</option><option>1h</option><option>4h</option></select></div>
-        <div class="fg"><label>Key Levels</label><input type="text" id="e-kl"></div>
-        <div class="fg"><label>Order Type</label><select id="e-ot"><option>Limit</option><option>Market</option><option>Stop Limit</option></select></div>
-      </div>
-      <div style="margin-top:6px">
-        <label style="font-size:11px;color:#666;font-weight:500;display:block;margin-bottom:6px">Entry Confluences</label>
-        <div class="tags-row" id="e-conf-tags"></div>
-        <div style="display:flex;gap:6px;margin-top:8px;align-items:center">
-          <input type="text" id="e-conf-custom-input" placeholder="เพิ่ม confluence ใหม่..." style="font-size:12px;padding:5px 10px;border:1px solid #e0e0e0;border-radius:20px;background:#fff;color:#1a1a1a;flex:1;max-width:240px" onkeydown="if(event.key==='Enter'){addEditCustomConf();event.preventDefault()}">
-          <button class="btn btn-sm" onclick="addEditCustomConf()" style="border-radius:20px;white-space:nowrap">+ เพิ่ม</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-bottom:10px">
-      <div class="ct">P&L & Risk</div>
-      <div class="fr">
-        <div class="fg"><label>Actual RR</label><input type="number" id="e-arr" step="0.01"></div>
-        <div class="fg"><label>Max RR</label><input type="number" id="e-maxrr" step="0.01" placeholder="0.00"></div>
-        <div class="fg"><label>Gross P&L ($)</label><input type="number" id="e-gross" step="0.01"></div>
-        <div class="fg"><label>Fees ($)</label><input type="number" id="e-fees" step="0.01"></div>
-        <div class="fg"><label>Swap ($)</label><input type="number" id="e-swap" step="0.01"></div>
-        <div class="fg"><label>Net P&L ($)</label><input type="number" id="e-net" step="0.01"></div>
-      </div>
-      <div class="fr">
-        <div class="fg"><label>SL Management</label><select id="e-slm"><option value="">—</option><option>Hit Initial SL</option><option>Locked Profit</option><option>Moved to BE</option><option>Manual Close</option></select></div>
-        <div class="fg"><label>TP Management</label><select id="e-tpm"><option>Set and Forget</option><option>Manual Close</option><option>Partial TP</option><option>Move to BE</option><option>Final TP Hit</option><option>Locked Profit</option></select></div>
-        <div class="fg"><label>Outcome</label><select id="e-outcome"><option>Profit Taken</option><option>Great Exit!</option><option>Loss, Review Setup</option><option>Capital Protected</option><option>Breakeven</option></select></div>
-        <div class="fg">
-          <label>Setup Rating</label>
-          <div style="padding:6px 0">
-            <div class="star-rating" id="e-grade-stars">
-              <span class="star" data-val="1" onclick="setStarRating('e-grade-stars','e-grade',1)">&#9733;</span>
-              <span class="star" data-val="2" onclick="setStarRating('e-grade-stars','e-grade',2)">&#9733;</span>
-              <span class="star" data-val="3" onclick="setStarRating('e-grade-stars','e-grade',3)">&#9733;</span>
-              <span class="star" data-val="4" onclick="setStarRating('e-grade-stars','e-grade',4)">&#9733;</span>
-              <span class="star" data-val="5" onclick="setStarRating('e-grade-stars','e-grade',5)">&#9733;</span>
-            </div>
-            <input type="hidden" id="e-grade" value="3">
-            <div style="font-size:10px;color:#aaa;margin-top:3px" id="e-grade-label">3 stars</div>
-          </div>
-        </div>
-      </div>
-      <div class="fr">
-        <div class="fg"><label>Mistakes</label><select id="e-mistake"><option value="">None</option><option>Position Sizing</option><option>Wrong Exit Point</option><option>Wrong Entry Point</option><option>FOMO</option><option>Early Exit</option><option>Late Entry</option><option>No Stop Loss</option></select></div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-bottom:10px">
-      <div class="ct">Review & Reflection</div>
-      <label class="review-check"><input type="checkbox" id="e-followed"><span>I followed my trade plan</span></label>
-      <div style="margin-bottom:8px">
-        <label style="font-size:11px;color:#666;font-weight:500;display:block;margin-bottom:5px">Entry Emotion</label>
-        <div style="display:flex;gap:5px;flex-wrap:wrap" id="e-entry-emo">
-          <button class="emo-btn" onclick="selEditEmo('entry',this,'Calm')">Calm</button>
-          <button class="emo-btn" onclick="selEditEmo('entry',this,'Fomo')">Fomo</button>
-          <button class="emo-btn" onclick="selEditEmo('entry',this,'Revenge')">Revenge</button>
-          <button class="emo-btn" onclick="selEditEmo('entry',this,'Boredom')">Boredom</button>
-          <button class="emo-btn" onclick="selEditEmo('entry',this,'Overconfident')">Overconfident</button>
-          <button class="emo-btn" onclick="selEditEmo('entry',this,'Fear')">Fear</button>
-          <button class="emo-btn" onclick="selEditEmo('entry',this,'Greed')">Greed</button>
-        </div>
-      </div>
-      <div style="margin-bottom:10px">
-        <label style="font-size:11px;color:#666;font-weight:500;display:block;margin-bottom:5px">Exit Emotion</label>
-        <div style="display:flex;gap:5px;flex-wrap:wrap" id="e-exit-emo">
-          <button class="emo-btn" onclick="selEditEmo('exit',this,'Calm')">Calm</button>
-          <button class="emo-btn" onclick="selEditEmo('exit',this,'Fomo')">Fomo</button>
-          <button class="emo-btn" onclick="selEditEmo('exit',this,'Fear')">Fear</button>
-          <button class="emo-btn" onclick="selEditEmo('exit',this,'Satisfied')">Satisfied</button>
-          <button class="emo-btn" onclick="selEditEmo('exit',this,'Regret')">Regret</button>
-        </div>
-      </div>
-      <div class="fg"><label>Note / Reflection</label><textarea id="e-notes" rows="3"></textarea></div>
-    </div>
-
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
-      <button class="btn" onclick="closeModal('modal-edit')">ยกเลิก</button>
-      <button class="btn btn-p" onclick="saveEdit()">บันทึกการแก้ไข</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: IMPORT ORDERS -->
-<div class="modal-overlay" id="modal-import" onclick="overlayClose(event,'modal-import')">
-  <div class="modal" style="max-width:720px;max-height:90vh;overflow-y:auto">
-    <button class="modal-close" onclick="closeModal('modal-import')">x</button>
-    <div class="ct" style="margin-bottom:4px">Import Orders</div>
-    <div style="font-size:12px;color:#888;margin-bottom:10px">
-      รองรับ format จาก TopStep / Broker — copy ตารางจากหน้าเว็บแล้ว paste ที่นี่ได้เลย<br>
-      <span style="color:#185FA5">หรือวาง CSV ที่มี column: Open time, Close time, Symbol, Size, Side, Entry price, Exit price, Net P&L, Charges</span>
-    </div>
-    <div style="background:#f0f6ff;border:1px solid #dce8f8;border-radius:8px;padding:10px 12px;margin-bottom:12px">
-      <label style="font-size:11px;color:#0C447C;font-weight:600;display:block;margin-bottom:5px">🔑 Anthropic API Key (สำหรับ Import จากรูปภาพ)</label>
-      <div style="display:flex;gap:6px;align-items:center">
-        <input type="password" id="api-key-input" placeholder="sk-ant-..." style="flex:1;font-size:12px;padding:6px 10px;border:1px solid #dce8f8;border-radius:6px;background:#fff;color:#1a1a1a;font-family:monospace">
-        <button onclick="saveApiKey()" style="font-size:12px;padding:6px 12px;background:#185FA5;color:#fff;border:none;border-radius:6px;cursor:pointer;white-space:nowrap">บันทึก Key</button>
-      </div>
-      <div style="font-size:10px;color:#888;margin-top:4px">Key เก็บใน localStorage — ไปสร้างได้ที่ <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:#185FA5">console.anthropic.com/settings/keys</a></div>
-      <div id="api-key-status" style="font-size:11px;margin-top:4px;color:#888"></div>
-    </div>
-    <div style="background:#f0f6ff;border:1px solid #dce8f8;border-radius:8px;padding:10px 12px;margin-bottom:12px">
-      <label style="font-size:11px;color:#0C447C;font-weight:600;display:block;margin-bottom:5px">🔑 Anthropic API Key (สำหรับ Import จากรูป)</label>
-      <div style="display:flex;gap:6px">
-        <input type="password" id="api-key-input" placeholder="sk-ant-..." style="flex:1;font-size:12px;padding:6px 10px;border:1px solid #dce8f8;border-radius:6px;background:#fff;color:#1a1a1a;font-family:monospace">
-        <button class="btn btn-sm" onclick="saveApiKey()" style="background:#185FA5;color:#fff;border-color:#185FA5;white-space:nowrap">บันทึก Key</button>
-      </div>
-      <div style="font-size:10px;color:#aaa;margin-top:4px">Key เก็บใน localStorage ของ browser นี้เท่านั้น — ได้จาก <a href="https://console.anthropic.com/keys" target="_blank" style="color:#185FA5">console.anthropic.com/keys</a></div>
-      <div id="api-key-status" style="font-size:11px;margin-top:4px"></div>
-    </div>
-
-    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center">
-      <div class="fg" style="flex:1;min-width:150px">
-        <label>Account ปลายทาง</label>
-        <select id="import-acc-sel" style="font-size:12px;padding:6px 9px;border:1px solid #e0e0e0;border-radius:7px;background:#fff;color:#1a1a1a;width:100%"></select>
-      </div>
-      <div class="fg" style="min-width:120px">
-        <label>Default Rating</label>
-        <select id="import-grade" style="font-size:12px;padding:6px 9px;border:1px solid #e0e0e0;border-radius:7px;background:#fff;color:#1a1a1a">
-          <option value="3">★★★ (3)</option>
-          <option value="4">★★★★ (4)</option>
-          <option value="5">★★★★★ (5)</option>
-          <option value="2">★★ (2)</option>
-          <option value="1">★ (1)</option>
-        </select>
-      </div>
-      <div class="fg" style="min-width:120px">
-        <label>Default Model</label>
-        <select id="import-model" style="font-size:12px;padding:6px 9px;border:1px solid #e0e0e0;border-radius:7px;background:#fff;color:#1a1a1a"></select>
-      </div>
-    </div>
-
-        <div style="margin-bottom:10px">
-      <label style="font-size:11px;color:#666;font-weight:600;display:block;margin-bottom:6px">📷 Import จากรูปภาพ (ใช้ AI วิเคราะห์)</label>
-      <div style="display:flex;gap:8px;align-items:center">
-        <input type="file" id="import-img-input" accept="image/*" style="font-size:12px;flex:1" onchange="importFromImage(this)">
-        <div id="import-img-status" style="font-size:11px;color:#888"></div>
-      </div>
-    </div>
-    <div style="text-align:center;font-size:11px;color:#aaa;margin-bottom:8px">— หรือ วาง text จากเว็บ Broker —</div>
-    <textarea id="import-input" placeholder="Paste ตารางจากเว็บ Broker ที่นี่...&#10;&#10;ตัวอย่าง:&#10;23/4/2569 12 นาฬิกา 56 นาที&#9;23/4/2569 12 นาฬิกา 59 นาที&#9;COMEX:MGC&#9;1&#9;Long&#9;$4,729.3&#9;$4,729.6&#9;$1.40&#9;$1.60" style="width:100%;min-height:180px;font-size:11px;padding:10px;border:1px solid #e0e0e0;border-radius:8px;background:#fafaf8;color:#1a1a1a;font-family:monospace;resize:vertical;margin-bottom:10px"></textarea>
-
-    <div id="import-preview" style="display:none;margin-bottom:10px">
-      <div style="font-size:11px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Preview — <span id="import-count"></span></div>
-      <div style="border:1px solid #e0e0e0;border-radius:8px;overflow:hidden;overflow-x:auto;max-height:220px;overflow-y:auto">
-        <table style="width:100%;border-collapse:collapse;font-size:11px">
-          <thead><tr style="background:#fafaf8">
-            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:left;white-space:nowrap">Date</th>
-            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:left">Symbol</th>
-            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:left">Side</th>
-            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:left">Size</th>
-            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right">Entry</th>
-            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right">Exit</th>
-            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right">Net P&L</th>
-            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right">Fees</th>
-          </tr></thead>
-          <tbody id="import-preview-body"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div style="display:flex;gap:8px;justify-content:flex-end">
-      <button class="btn btn-sm" onclick="closeModal('modal-import')">ยกเลิก</button>
-      <button class="btn btn-sm" onclick="parseImport()" style="background:#f0f0f0">Preview</button>
-      <button class="btn btn-p btn-sm" id="import-confirm-btn" style="display:none" onclick="confirmImport()">Import ทั้งหมด</button>
-    </div>
-  </div>
-</div>
-
-</body></html>`
   const blob=new Blob([html],{type:'text/html;charset=utf-8'});
   const url=URL.createObjectURL(blob);
   const win=window.open(url,'_blank');
@@ -1562,14 +1519,10 @@ ${tradesHtml}
   else{alert('กรุณาอนุญาต popup ใน browser แล้วลองใหม่ครับ')}
 }
 
-
 function calcMaxRR() {
-  // Auto-fill Max RR hint only if not already set
   const arr = parseFloat(document.getElementById('f-arr').value) || 0;
   const maxEl = document.getElementById('f-maxrr');
-  if (maxEl && !maxEl.value && arr > 0) {
-    // leave blank - user fills manually
-  }
+  if (maxEl && !maxEl.value && arr > 0) {}
 }
 
 function toggleTag(btn){btn.classList.toggle('on')}
@@ -1579,14 +1532,35 @@ function selEmo(type,btn,val){
   if(type==='entry')S.entryEmo=val;else S.exitEmo=val;
 }
 function triggerUpload(id){document.getElementById(id).click()}
+
+// ==========================================
+// NEW: IMAGE COMPRESSION (FIX LOCALSTORAGE LIMIT)
+// ==========================================
 function loadChart(inp,slotId,field){
   const f=inp.files[0];if(!f)return;
   const r=new FileReader();
   r.onload=e=>{
-    const sl=document.getElementById(slotId);
-    let img=sl.querySelector('img');if(!img){img=document.createElement('img');sl.appendChild(img)}
-    img.src=e.target.result;sl.querySelectorAll('span').forEach(s=>s.style.display='none');
-    S['_'+field]=e.target.result;
+    const img = new Image();
+    img.onload = () => {
+      // Resize to Max 1000px width to save space
+      const canvas = document.createElement('canvas');
+      const MAX_WIDTH = 1000;
+      const scale = img.width > MAX_WIDTH ? MAX_WIDTH / img.width : 1;
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      
+      // Compress to JPEG 60% quality (Reduces 2MB to ~50KB)
+      const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
+      
+      const sl=document.getElementById(slotId);
+      let dImg=sl.querySelector('img');if(!dImg){dImg=document.createElement('img');sl.appendChild(dImg)}
+      dImg.src=compressedBase64;
+      sl.querySelectorAll('span').forEach(s=>s.style.display='none');
+      S['_'+field]=compressedBase64;
+    };
+    img.src = e.target.result;
   };
   r.readAsDataURL(f);
 }
@@ -1603,7 +1577,6 @@ function saveTrade(){
     date:document.getElementById('f-date').value.replace(/-/g,'/'),
     sym:document.getElementById('f-sym').value,
     pos:document.getElementById('f-pos').value,
-    
     dur:document.getElementById('f-dur').value,
     entry:parseFloat(document.getElementById('f-entry').value)||0,
     modelId:document.getElementById('f-model').value,
@@ -1630,7 +1603,6 @@ function saveTrade(){
     entryEmo:S.entryEmo,exitEmo:S.exitEmo,
     notes:document.getElementById('f-notes').value,
     htf:S._htf||'',mtf:S._mtf||'',ltf:S._ltf||'',
-    
   };
   if(!t.date||!t.sym){alert('กรุณากรอก Date และ Symbol');return}
   S.trades.unshift(t);saveTrades();
@@ -1646,7 +1618,7 @@ function clearForm(){
   document.getElementById('f-followed').checked=false;
   document.querySelectorAll('#conf-tags .conf-tag.on').forEach(b=>b.classList.remove('on'));
   document.querySelectorAll('.emo-btn.on').forEach(b=>b.classList.remove('on'));
-    S._htf=S._mtf=S._ltf='';S.entryEmo='';S.exitEmo='';
+  S._htf=S._mtf=S._ltf='';S.entryEmo='';S.exitEmo='';
   ['slot-htf','slot-mtf','slot-ltf'].forEach(id=>{
     const sl=document.getElementById(id);const img=sl.querySelector('img');
     if(img)img.remove();sl.querySelectorAll('span').forEach(s=>s.style.display='');
@@ -1676,8 +1648,6 @@ function autoNet(){
   document.getElementById('f-net').value=(g-f-sw).toFixed(2);
 }
 
-
-// ===== STAR RATING =====
 function renderStars(val) {
   const n = Math.min(5, Math.max(1, parseInt(val) || 3));
   let html = '<span class="stars-display">';
@@ -1706,7 +1676,6 @@ function initStarWidget(wrapperId, hiddenId, val) {
   if(lbl) lbl.textContent = labels[n] || n+' stars';
 }
 
-// Hover effect for star rating
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.star-rating').forEach(wrapper => {
     const stars = wrapper.querySelectorAll('.star');
@@ -1721,36 +1690,70 @@ document.addEventListener('DOMContentLoaded', function() {
       stars.forEach((s,i) => s.classList.toggle('on', i < val));
     });
   });
-  // Init log form stars at 3
   initStarWidget('f-grade-stars','f-grade',3);
 });
 
 document.getElementById('f-date').valueAsDate=new Date();
 load();
-// Normalize dates after load
 S.trades = S.trades.map(t=>({...t, date:(t.date||'').replace(/-/g,'/')}));
 renderAccSelector();renderDash();loadCustomConfsIntoForm();
+// ===== AUTO-PULL FROM GIST ON PAGE LOAD =====
+setTimeout(async function() {
+  const token = localStorage.getItem('tj_gist_token');
+  const gistId = localStorage.getItem('tj_gist_id') || GIST_ID_DEFAULT;
+  if (!token || !gistId) return;
+  try {
+    const res = await fetch('https://api.github.com/gists/' + gistId, {
+      headers: { Authorization: 'Bearer ' + token, 'X-GitHub-Api-Version': '2022-11-28' }
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    const fileContent = data.files && data.files['trading_journal_data.json'] && data.files['trading_journal_data.json'].content;
+    if (!fileContent) return;
+    const parsed = JSON.parse(fileContent);
+    if (!parsed.trades) return;
+    // Only update if remote is newer or has more trades
+    const remoteDate = new Date(parsed.exportedAt || 0);
+    const localSync  = new Date(localStorage.getItem('tj_gist_last_sync') || 0);
+    if (remoteDate <= localSync && parsed.trades.length <= S.trades.length) return;
+    S.trades   = (parsed.trades || []).map(t => ({...t, id: +t.id || t.id, date: (t.date||'').replace(/-/g,'/')}));
+    S.accounts = parsed.accounts || S.accounts;
+    S.models   = parsed.models   || S.models;
+    if (parsed.customConfs) localStorage.setItem('tj_custom_confs', JSON.stringify(parsed.customConfs));
+    saveTrades(); saveAccounts(); saveModels();
+    if (!S.currentAcc && S.accounts.length) S.currentAcc = S.accounts[0].id;
+    renderAccSelector(); renderDash();
+    const now = new Date().toLocaleString('th-TH');
+    localStorage.setItem('tj_gist_last_sync', now);
+    localStorage.setItem('tj_gist_id', gistId);
+    // Update sync button
+    const btn = document.getElementById('gist-sync-btn');
+    const lbl = document.getElementById('gist-sync-label');
+    if (btn) { btn.style.borderColor='#10b981'; btn.style.background='#ecfdf5'; btn.style.color='#065f46'; }
+    if (lbl) lbl.textContent = 'Synced ✓';
+    console.log('[Gist] Auto-pulled', S.trades.length, 'trades');
+  } catch(e) {
+    console.warn('[Gist] Auto-pull failed:', e.message);
+  }
+}, 900);
+
 
 let _editId = null;
 let _editEntryEmo = '';
 let _editExitEmo = '';
 
 function openEditModal(id) {
-  // Coerce both sides — localStorage parses numbers as strings
   const t = S.trades.find(x => String(x.id) === String(id));
   if (!t) return;
-  id = t.id; // use the canonical id from the trade object
+  id = t.id; 
   _editId = id;
   _editEntryEmo = t.entryEmo || '';
   _editExitEmo = t.exitEmo || '';
 
-  // Populate model dropdown
   const msel = document.getElementById('e-model');
   msel.innerHTML = '<option value="">— เลือก Model —</option>' + S.models.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
 
-  // Fill all fields
   document.getElementById('edit-trade-id').textContent = `#${id}`;
-  // Populate account dropdown
   const eAccSel = document.getElementById('e-accId');
   if (eAccSel) {
     eAccSel.innerHTML = S.accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
@@ -1768,7 +1771,6 @@ function openEditModal(id) {
   document.getElementById('e-notes').value = t.notes || '';
   document.getElementById('e-followed').checked = t.followed || false;
 
-  // Set selects
   const setSelect = (id, val) => { const el = document.getElementById(id); if(el) [...el.options].forEach(o => { o.selected = o.value === val || o.text === val; }); };
   setSelect('e-sym', t.sym);
   setSelect('e-pos', t.pos);
@@ -1782,10 +1784,8 @@ function openEditModal(id) {
   setSelect('e-slm', t.slm);
   setSelect('e-tpm', t.tpm);
   setSelect('e-outcome', t.outcome);
-  // grade handled by initStarWidget above
   setSelect('e-mistake', t.mistake);
 
-  // Set emotions
   document.querySelectorAll('#e-entry-emo .emo-btn').forEach(b => {
     b.classList.toggle('on', b.textContent === t.entryEmo);
   });
@@ -1794,7 +1794,6 @@ function openEditModal(id) {
   });
 
   buildEditConfTags(t.confs || []);
-  // Init star rating
   const gradeVal = parseInt(t.grade) || 3;
   setTimeout(() => initStarWidget('e-grade-stars','e-grade', gradeVal), 50);
   openModal('modal-edit');
@@ -1803,1046 +1802,526 @@ function openEditModal(id) {
 function selEditEmo(type, btn, val) {
   document.getElementById(`e-${type}-emo`).querySelectorAll('.emo-btn').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
-  if (type === 'entry') _editEntryEmo = val;
-  else _editExitEmo = val;
+  if (type === 'entry') _editEntryEmo = val; else _editExitEmo = val;
 }
 
 function saveEdit() {
-  const idx = S.trades.findIndex(x => String(x.id) === String(_editId));
-  if (idx === -1) return;
-
-  const gross = parseFloat(document.getElementById('e-gross').value) || 0;
-  const fees  = parseFloat(document.getElementById('e-fees').value)  || 0;
-  const swap  = parseFloat(document.getElementById('e-swap').value)  || 0;
-  const netIn = parseFloat(document.getElementById('e-net').value);
-  const net   = isNaN(netIn) ? (gross - fees - swap) : netIn;
-
-  const newAccId = document.getElementById('e-accId')?.value || S.trades[idx].accId;
-  S.trades[idx] = {
-    ...S.trades[idx],
-    accId:    newAccId,
-    date:     document.getElementById('e-date').value.replace(/-/g,'/'),
-    sym:      document.getElementById('e-sym').value,
-    pos:      document.getElementById('e-pos').value,
-    dur:      document.getElementById('e-dur').value,
-    ses:      document.getElementById('e-ses').value,
-    ttype:    document.getElementById('e-ttype').value,
-    bias:     document.getElementById('e-bias').value,
-    mkt:      document.getElementById('e-mkt').value,
-    modelId:  document.getElementById('e-model').value,
-    etf:      document.getElementById('e-etf').value,
-    kl:       document.getElementById('e-kl').value,
-    ot:       document.getElementById('e-ot').value,
-    arr:      parseFloat(document.getElementById('e-arr').value) || 0,
-    maxrr:    parseFloat(document.getElementById('e-maxrr').value) || 0,
-    gross, fees, swap, net,
-    slm:      document.getElementById('e-slm').value,
-    tpm:      document.getElementById('e-tpm').value,
-    outcome:  document.getElementById('e-outcome').value,
-    grade:    document.getElementById('e-grade').value,
-    mistake:  document.getElementById('e-mistake').value,
-    followed: document.getElementById('e-followed').checked,
-    entryEmo: _editEntryEmo,
-    exitEmo:  _editExitEmo,
-    notes:    document.getElementById('e-notes').value,
-    confs:    getEditSelectedConfs(),
-  };
-
+  const t = S.trades.find(x => String(x.id) === String(_editId));
+  if (!t) return;
+  t.accId = document.getElementById('e-accId').value || t.accId;
+  t.date = document.getElementById('e-date').value.replace(/-/g, '/');
+  t.sym = document.getElementById('e-sym').value;
+  t.pos = document.getElementById('e-pos').value;
+  t.ses = document.getElementById('e-ses').value;
+  t.dur = document.getElementById('e-dur').value;
+  t.ttype = document.getElementById('e-ttype').value;
+  t.bias = document.getElementById('e-bias').value;
+  t.mkt = document.getElementById('e-mkt').value;
+  t.modelId = document.getElementById('e-model').value;
+  t.etf = document.getElementById('e-etf').value;
+  t.kl = document.getElementById('e-kl').value;
+  t.ot = document.getElementById('e-ot').value;
+  
+  t.arr = parseFloat(document.getElementById('e-arr').value) || 0;
+  t.maxrr = parseFloat(document.getElementById('e-maxrr').value) || 0;
+  t.gross = parseFloat(document.getElementById('e-gross').value) || 0;
+  t.fees = parseFloat(document.getElementById('e-fees').value) || 0;
+  t.swap = parseFloat(document.getElementById('e-swap').value) || 0;
+  t.net = parseFloat(document.getElementById('e-net').value) || 0;
+  
+  t.slm = document.getElementById('e-slm').value;
+  t.tpm = document.getElementById('e-tpm').value;
+  t.outcome = document.getElementById('e-outcome').value;
+  t.mistake = document.getElementById('e-mistake').value;
+  t.grade = document.getElementById('e-grade').value;
+  
+  t.followed = document.getElementById('e-followed').checked;
+  t.entryEmo = _editEntryEmo;
+  t.exitEmo = _editExitEmo;
+  t.notes = document.getElementById('e-notes').value;
+  
+  t.confs = [...document.querySelectorAll('#e-conf-tags .conf-tag.on')].map(b => b.dataset.label || b.textContent.replace(' ×','').trim());
+  
   saveTrades();
   closeModal('modal-edit');
   renderHistory();
+  renderDash();
   renderAccSelector();
   gistAutoPush();
-
-  // Show success flash
-  const msg = document.getElementById('save-msg');
-  if (msg) { msg.textContent = 'แก้ไขสำเร็จ!'; msg.style.display = 'block'; setTimeout(() => msg.style.display = 'none', 2000); }
 }
 
-// Auto-calc net in edit modal
-['e-gross','e-fees','e-swap'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) el.addEventListener('input', () => {
-    const g = parseFloat(document.getElementById('e-gross').value) || 0;
-    const f = parseFloat(document.getElementById('e-fees').value)  || 0;
-    const s = parseFloat(document.getElementById('e-swap').value)  || 0;
-    document.getElementById('e-net').value = (g - f - s).toFixed(2);
-  });
-});
-
-
-// ===== CONFLUENCE MANAGEMENT =====
-const DEFAULT_CONFS = ['FVG (Fair Value Gap)','iFVG (Inverse FVG)','Order Block','Breaker Block','5m Order Block','15m Order Block','1m iFVG','5m iFVG','15m iFVG','5m FVG','15m FVG','5m Breaker Block','15m Breaker Block','LG sweep','LTF POI Mitigation','MS Break','Supply Zone','Demand Zone','Inversion FVG','PDH/PDL','LTF sweep','MR-','MR+'];
-const CUSTOM_CONF_KEY = 'tj_custom_confs';
-
+// Custom Confluence Logic
 function getCustomConfs() {
-  try { return JSON.parse(localStorage.getItem(CUSTOM_CONF_KEY)||'[]'); } catch(e) { return []; }
+  try { return JSON.parse(localStorage.getItem('tj_custom_confs') || '[]'); } 
+  catch (e) { return []; }
 }
 function saveCustomConfs(arr) {
-  localStorage.setItem(CUSTOM_CONF_KEY, JSON.stringify(arr));
+  localStorage.setItem('tj_custom_confs', JSON.stringify(arr));
 }
-
+function loadCustomConfsIntoForm() {
+  const arr = getCustomConfs();
+  const parent = document.getElementById('conf-tags');
+  if(!parent) return;
+  parent.querySelectorAll('.custom-added').forEach(el => el.remove());
+  arr.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'conf-tag custom-added';
+    btn.dataset.label = c;
+    btn.innerHTML = `${c} <span style="font-size:10px;color:#999" onclick="removeCustomConf(event, '${c}')">×</span>`;
+    btn.onclick = function(e) { if(e.target.tagName !== 'SPAN') toggleTag(this); };
+    parent.appendChild(btn);
+  });
+}
 function addCustomConf() {
   const inp = document.getElementById('conf-custom-input');
   const val = inp.value.trim();
   if (!val) return;
-  // Check not duplicate
-  const existing = [...document.querySelectorAll('#conf-tags .conf-tag')].map(b=>b.dataset.label||b.textContent);
-  if (existing.includes(val)) { inp.value=''; return; }
-  // Save to persistent list
-  const customs = getCustomConfs();
-  if (!customs.includes(val)) { customs.push(val); saveCustomConfs(customs); }
-  // Add button and auto-select
-  const btn = document.createElement('button');
-  btn.className = 'conf-tag on';
-  btn.textContent = val;
-  btn.dataset.label = val;
-  btn.onclick = function(){ toggleTag(this); };
-  // Add remove x
-  const x = document.createElement('span');
-  x.textContent = ' ×';
-  x.style.cssText = 'margin-left:3px;opacity:.5;cursor:pointer;font-size:12px';
-  x.onclick = function(e){ e.stopPropagation(); removeCustomConf(val, btn); };
-  btn.appendChild(x);
-  document.getElementById('conf-tags').appendChild(btn);
+  const arr = getCustomConfs();
+  if (!arr.includes(val)) { arr.push(val); saveCustomConfs(arr); loadCustomConfsIntoForm(); }
   inp.value = '';
 }
-
-function removeCustomConf(val, btn) {
-  const customs = getCustomConfs().filter(c => c !== val);
-  saveCustomConfs(customs);
-  btn.remove();
+function removeCustomConf(e, val) {
+  e.stopPropagation();
+  let arr = getCustomConfs();
+  arr = arr.filter(x => x !== val);
+  saveCustomConfs(arr);
+  loadCustomConfsIntoForm();
 }
 
-function loadCustomConfsIntoForm() {
-  const customs = getCustomConfs();
-  const existing = [...document.querySelectorAll('#conf-tags .conf-tag')].map(b=>b.dataset.label||b.textContent.replace(' ×','').trim());
-  customs.forEach(val => {
-    if (existing.includes(val)) return;
-    const btn = document.createElement('button');
-    btn.className = 'conf-tag';
-    btn.textContent = val;
-    btn.dataset.label = val;
-    btn.onclick = function(){ toggleTag(this); };
-    const x = document.createElement('span');
-    x.textContent = ' ×';
-    x.style.cssText = 'margin-left:3px;opacity:.5;cursor:pointer;font-size:12px';
-    x.onclick = function(e){ e.stopPropagation(); removeCustomConf(val, btn); };
-    btn.appendChild(x);
-    document.getElementById('conf-tags').appendChild(btn);
-  });
+function buildEditConfTags(activeConfs) {
+  const wrap = document.getElementById('e-conf-tags');
+  const baseTags = ['FVG','iFVG','Order Block','Breaker Block','5m Order Block','15m Order Block','1m iFVG','5m iFVG','15m iFVG','5m FVG','15m FVG','5m Breaker Block','15m Breaker Block','LG sweep','LTF POI Mitigation','MS Break','Supply Zone','Demand Zone','Inversion FVG','PDH/PDL','LTF sweep','MR-','MR+'];
+  const customTags = getCustomConfs();
+  const allTags = [...new Set([...baseTags, ...customTags])];
+  
+  wrap.innerHTML = allTags.map(c => {
+    const isOn = activeConfs.includes(c) ? 'on' : '';
+    const isCustom = customTags.includes(c);
+    const delBtn = isCustom ? `<span style="font-size:10px;color:#999;margin-left:4px" onclick="removeEditCustomConf(event, '${c}')">×</span>` : '';
+    return `<button class="conf-tag ${isOn}" data-label="${c}" onclick="if(event.target.tagName!=='SPAN') toggleTag(this)">${c} ${delBtn}</button>`;
+  }).join('');
 }
-
-// EDIT MODAL CONFLUENCES
-function buildEditConfTags(selectedConfs) {
-  const container = document.getElementById('e-conf-tags');
-  if (!container) return;
-  const allConfs = [...DEFAULT_CONFS, ...getCustomConfs()];
-  container.innerHTML = '';
-  allConfs.forEach(val => {
-    const btn = document.createElement('button');
-    btn.className = 'conf-tag' + (selectedConfs.includes(val) ? ' on' : '');
-    btn.textContent = val;
-    btn.dataset.label = val;
-    btn.onclick = function(){ this.classList.toggle('on'); };
-    container.appendChild(btn);
-  });
-}
-
 function addEditCustomConf() {
   const inp = document.getElementById('e-conf-custom-input');
   const val = inp.value.trim();
   if (!val) return;
-  const container = document.getElementById('e-conf-tags');
-  const existing = [...container.querySelectorAll('.conf-tag')].map(b=>b.dataset.label||b.textContent);
-  if (existing.includes(val)) { inp.value=''; return; }
-  // Save to persistent list
-  const customs = getCustomConfs();
-  if (!customs.includes(val)) { customs.push(val); saveCustomConfs(customs); }
-  // Add to edit modal and select it
-  const btn = document.createElement('button');
-  btn.className = 'conf-tag on';
-  btn.textContent = val;
-  btn.dataset.label = val;
-  btn.onclick = function(){ this.classList.toggle('on'); };
-  container.appendChild(btn);
-  // Also add to log form if not there
-  loadCustomConfsIntoForm();
+  const arr = getCustomConfs();
+  if (!arr.includes(val)) { arr.push(val); saveCustomConfs(arr); }
   inp.value = '';
+  const currentActive = [...document.querySelectorAll('#e-conf-tags .conf-tag.on')].map(b => b.dataset.label);
+  currentActive.push(val);
+  buildEditConfTags(currentActive);
+  loadCustomConfsIntoForm();
+}
+function removeEditCustomConf(e, val) {
+  e.stopPropagation();
+  let arr = getCustomConfs();
+  arr = arr.filter(x => x !== val);
+  saveCustomConfs(arr);
+  const currentActive = [...document.querySelectorAll('#e-conf-tags .conf-tag.on')].map(b => b.dataset.label).filter(x => x !== val);
+  buildEditConfTags(currentActive);
+  loadCustomConfsIntoForm();
 }
 
-function getEditSelectedConfs() {
-  return [...document.querySelectorAll('#e-conf-tags .conf-tag.on')].map(b => b.dataset.label || b.textContent);
-}
-
-
-
-
-function showRestorePanel(){
-  const p=document.getElementById('restore-panel');
-  p.style.display=p.style.display==='none'?'block':'none';
-}
-
-function restoreFromPaste(){
-  const raw=document.getElementById('restore-input').value.trim();
-  if(!raw){alert('กรุณาวางข้อมูล JSON ก่อน');return}
-  try{
-    let data=JSON.parse(raw);
-    // Handle if it's a string (double-encoded)
-    if(typeof data==='string') data=JSON.parse(data);
-    if(!Array.isArray(data)){alert('ข้อมูลไม่ถูกต้อง ต้องเป็น array ของ trades');return}
-    // Normalize dates
-    data=data.map(t=>({...t,date:(t.date||'').replace(/-/g,'/')}));
-    S.trades=data;
-    saveTrades();
-    // Also restore accounts if needed
-    const accs=['acc_hardcore','acc_ftmo','acc_topstep'];
-    const accNames={'acc_hardcore':'HardCORE','acc_ftmo':'FTMO PA$$','acc_topstep':'TopStep 50k'};
-    const accBals={'acc_hardcore':1074.43,'acc_ftmo':279.29,'acc_topstep':2323.10};
-    if(!S.accounts.length||S.accounts[0].id==='acc1'){
-      S.accounts=accs.map(id=>({id,name:accNames[id],balance:accBals[id],type:'Challenge'}));
-      saveAccounts();
-    }
-    S.currentAcc='acc_topstep';
-    document.getElementById('restore-panel').style.display='none';
-    document.getElementById('restore-input').value='';
-    renderAccSelector();renderDash();renderHistory();
-    alert('กู้คืนสำเร็จ! '+data.length+' trades');
-  }catch(e){
-    alert('JSON ไม่ถูกต้อง: '+e.message);
-  }
-}
-
-
-
-// ===== IMPORT ORDERS =====
-let _importParsed = [];
-
+// ================= AI & IMPORT LOGIC =================
 function openImportModal() {
-  // Load API key status
-  setTimeout(loadApiKey, 50);
-  // Populate account select
-  const sel = document.getElementById('import-acc-sel');
-  sel.innerHTML = S.accounts.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
-  sel.value = S.currentAcc;
-  // Populate model select
-  const msel = document.getElementById('import-model');
-  msel.innerHTML = '<option value="">— ไม่ระบุ —</option>' + S.models.map(m=>`<option value="${m.id}">${m.name}</option>`).join('');
-  document.getElementById('import-preview').style.display = 'none';
-  document.getElementById('import-confirm-btn').style.display = 'none';
-  document.getElementById('import-input').value = '';
-  _importParsed = [];
+  const selAcc = document.getElementById('import-acc-sel');
+  selAcc.innerHTML = S.accounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+  selAcc.value = S.currentAcc;
+  
+  const selModel = document.getElementById('import-model');
+  selModel.innerHTML = '<option value="">— ไม่ระบุ —</option>' + S.models.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+  
+  const key = localStorage.getItem('tj_anthropic_key') || '';
+  document.getElementById('api-key-input').value = key;
+  document.getElementById('api-key-status').textContent = key ? '✓ มี API Key ในระบบแล้ว' : 'ยังไม่มี API Key (ใช้ AI สแกนรูปไม่ได้)';
 }
-
-function parseTHDate(str) {
-  // Parse Thai date format: "23/4/2569 12 นาฬิกา 56 นาที 32 วินาที GMT+7"
-  // or "23/4/2569 12:56:32" or "2026-04-23"
-  if (!str) return '';
-  str = str.trim();
-  
-  // Try Thai format: DD/MM/YYYY (Buddhist year)
-  const thMatch = str.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-  if (thMatch) {
-    const day = thMatch[1].padStart(2,'0');
-    const month = thMatch[2].padStart(2,'0');
-    const buddhistYear = parseInt(thMatch[3]);
-    // Convert Buddhist year to Gregorian (subtract 543)
-    const year = buddhistYear > 2500 ? buddhistYear - 543 : buddhistYear;
-    return `${year}/${month}/${day}`;
-  }
-  
-  // Try ISO format: YYYY-MM-DD
-  const isoMatch = str.match(/(\d{4})-(\d{2})-(\d{2})/);
-  if (isoMatch) return `${isoMatch[1]}/${isoMatch[2]}/${isoMatch[3]}`;
-  
-  return str.slice(0,10).replace(/-/g,'/');
-}
-
-function parsePrice(str) {
-  if (!str) return 0;
-  return parseFloat(str.toString().replace(/[$,\s]/g, '')) || 0;
-}
-
-function mapSymbol(raw) {
-  if (!raw) return raw;
-  // COMEX:MGC -> XAUUSD (Micro Gold)
-  // CME:MNQ -> NQ (Micro Nasdaq)
-  // CME:MES -> ES (Micro S&P)
-  const map = {
-    'COMEX:MGC': 'XAUUSD', 'MGC': 'XAUUSD',
-    'COMEX:GC': 'XAUUSD', 'GC': 'XAUUSD',
-    'CME:MNQ': 'NQ', 'MNQ': 'NQ',
-    'CME:NQ': 'NQ', 'NQ': 'NQ',
-    'CME:MES': 'ES', 'MES': 'ES',
-    'CME:ES': 'ES', 'ES': 'ES',
-    'CME:MCL': 'OIL', 'MCL': 'OIL',
-    'COMEX:SI': 'XAGUSD', 'SI': 'XAGUSD',
-  };
-  return map[raw.toUpperCase()] || map[raw.split(':').pop()?.toUpperCase()] || raw;
-}
-
-function parseImport() {
-  const raw = document.getElementById('import-input').value.trim();
-  if (!raw) { alert('กรุณาวางข้อมูลก่อน'); return; }
-  
-  _importParsed = [];
-  const lines = raw.split('\n').filter(l => l.trim());
-  
-  for (const line of lines) {
-    const cols = line.split('\t').map(c => c.trim());
-    if (cols.length < 7) continue;
-    
-    // Detect header row
-    const first = cols[0].toLowerCase();
-    if (first.includes('open') || first.includes('time') || first.includes('วัน')) continue;
-    
-    // Try to parse: Open time, Close time, Symbol, Size, Side, Entry, Exit, Net P&L, Charges
-    let openTime, closeTime, symbol, size, side, entry, exit, netPnl, charges;
-    
-    if (cols.length >= 9) {
-      // Full format with both times
-      [openTime, closeTime, symbol, size, side, entry, exit, netPnl, charges] = cols;
-    } else if (cols.length >= 7) {
-      // Shorter format
-      [openTime, symbol, size, side, entry, exit, netPnl] = cols;
-      closeTime = openTime;
-      charges = cols[7] || '0';
-    }
-    
-    const date = parseTHDate(openTime || closeTime || '');
-    if (!date) continue;
-    
-    const symMapped = mapSymbol(symbol || '');
-    const sideNorm = (side || '').toLowerCase().includes('long') || (side || '').toLowerCase().includes('buy') ? 'Buy' : 'Sell';
-    const net = parsePrice(netPnl);
-    const fees = parsePrice(charges);
-    const entryP = parsePrice(entry);
-    const exitP = parsePrice(exit);
-    const gross = net + fees;
-    
-    // Auto outcome
-    let outcome = 'Profit Taken';
-    if (net < 0) outcome = 'Loss, Review Setup';
-    else if (net === 0) outcome = 'Breakeven';
-    
-    _importParsed.push({
-      date, sym: symMapped, pos: sideNorm,
-      lot: parseFloat(size) || 1,
-      entry: entryP, exit: exitP,
-      gross, fees, net, outcome,
-      _raw: { openTime, closeTime, symbol, size, side }
-    });
-  }
-  
-  // Show preview
-  if (!_importParsed.length) {
-    alert('ไม่พบข้อมูลที่แปลงได้ — ลองตรวจสอบ format ใหม่ครับ\n\nTip: ควร copy ทั้งแถวจากตารางในเว็บ Broker');
-    return;
-  }
-  
-  document.getElementById('import-count').textContent = _importParsed.length + ' orders';
-  document.getElementById('import-preview-body').innerHTML = _importParsed.map((t,i) => `
-    <tr style="border-bottom:1px solid #f5f5f2">
-      <td style="padding:5px 8px;white-space:nowrap">${t.date}</td>
-      <td style="padding:5px 8px;font-weight:500">${t.sym}</td>
-      <td style="padding:5px 8px"><span style="font-size:10px;padding:2px 7px;border-radius:20px;background:${t.pos==='Buy'?'#EAF3DE':'#FCEBEB'};color:${t.pos==='Buy'?'#27500A':'#791F1F'};font-weight:600">${t.pos}</span></td>
-      <td style="padding:5px 8px">${t.lot}</td>
-      <td style="padding:5px 8px;text-align:right">${t.entry||'—'}</td>
-      <td style="padding:5px 8px;text-align:right">${t.exit||'—'}</td>
-      <td style="padding:5px 8px;text-align:right;font-weight:600;color:${t.net>=0?'#1D9E75':'#E24B4A'}">${t.net>=0?'+':''}$${t.net.toFixed(2)}</td>
-      <td style="padding:5px 8px;text-align:right;color:#aaa">$${t.fees.toFixed(2)}</td>
-    </tr>`).join('');
-  
-  document.getElementById('import-preview').style.display = 'block';
-  document.getElementById('import-confirm-btn').style.display = 'inline-flex';
-}
-
-function confirmImport() {
-  if (!_importParsed.length) return;
-  
-  const accId = document.getElementById('import-acc-sel').value;
-  const grade = document.getElementById('import-grade').value;
-  const modelId = document.getElementById('import-model').value;
-  
-  const newTrades = _importParsed.map((t, i) => ({
-    id: Date.now() + i,
-    accId,
-    date: t.date,
-    sym: t.sym,
-    pos: t.pos,
-    lot: t.lot,
-    dur: '',
-    entry: t.entry,
-    modelId,
-    ses: '',
-    etf: '5m',
-    ttype: 'Intraday',
-    mkt: '',
-    bias: t.pos === 'Buy' ? 'Bullish' : 'Bearish',
-    news: '',
-    kl: '',
-    confs: [],
-    esig: '',
-    ot: 'Market',
-    grade: parseInt(grade)||3,
-    arr: 0,
-    riskR: 0,
-    gross: t.gross,
-    fees: t.fees,
-    swap: 0,
-    net: t.net,
-    slm: '',
-    tpm: '',
-    outcome: t.outcome,
-    mistake: '',
-    followed: true,
-    plan: 'Daily Bias',
-    entryEmo: '',
-    exitEmo: '',
-    notes: '',
-    htf: '', mtf: '', ltf: '', yt: '',
-  }));
-  
-  S.trades = [...newTrades, ...S.trades];
-  saveTrades();
-  closeModal('modal-import');
-  renderAccSelector();
-  renderDash();
-  renderHistory();
-  
-  const msg = document.getElementById('save-msg');
-  if (msg) { msg.textContent = `Import สำเร็จ! ${newTrades.length} orders`; msg.style.display='block'; setTimeout(()=>msg.style.display='none',3000); }
-  _importParsed = [];
-}
-
-
 
 function saveApiKey() {
   const key = document.getElementById('api-key-input').value.trim();
-  if (!key || !key.startsWith('sk-ant-')) {
-    document.getElementById('api-key-status').innerHTML = '<span style="color:#E24B4A">Key ต้องขึ้นต้นด้วย sk-ant-</span>';
-    return;
+  if (key) {
+    localStorage.setItem('tj_anthropic_key', key);
+    document.getElementById('api-key-status').textContent = '✓ บันทึก API Key สำเร็จ';
+    document.getElementById('api-key-status').style.color = '#1D9E75';
+  } else {
+    localStorage.removeItem('tj_anthropic_key');
+    document.getElementById('api-key-status').textContent = 'ลบ API Key แล้ว';
   }
-  localStorage.setItem('tj_anthropic_key', key);
-  document.getElementById('api-key-status').innerHTML = '<span style="color:#1D9E75">✅ บันทึกแล้ว</span>';
-  document.getElementById('api-key-input').value = '';
 }
 
-function loadApiKey() {
-  const key = localStorage.getItem('tj_anthropic_key') || '';
-  const status = document.getElementById('api-key-status');
-  if (status) {
-    status.innerHTML = key 
-      ? '<span style="color:#1D9E75">✅ มี API Key แล้ว (sk-ant-...'+key.slice(-4)+')</span>'
-      : '<span style="color:#aaa">ยังไม่มี API Key — ใส่ key ด้านบนแล้วกด "บันทึก Key"</span>';
-  }
-  // Show masked key in input
-  const inp = document.getElementById('api-key-input');
-  if (inp && key) inp.placeholder = 'sk-ant-...'+key.slice(-4)+' (บันทึกแล้ว)';
-}
+let parsedImports = [];
 
 async function importFromImage(input) {
   const file = input.files[0];
   if (!file) return;
-  
-  const apiKey = localStorage.getItem('tj_anthropic_key') || '';
+  const apiKey = localStorage.getItem('tj_anthropic_key');
   if (!apiKey) {
-    document.getElementById('import-img-status').innerHTML = '<span style="color:#E24B4A">❌ กรุณาใส่ Anthropic API Key ก่อน</span>';
+    alert('กรุณาใส่ Anthropic API Key ก่อนใช้งานฟีเจอร์นี้');
+    input.value = '';
     return;
   }
   
-  const status = document.getElementById('import-img-status');
-  status.textContent = '⏳ กำลังวิเคราะห์รูปด้วย AI...';
-  status.style.color = '#185FA5';
-  
-  // Convert to base64
-  const base64 = await new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = e => res(e.target.result.split(',')[1]);
-    r.onerror = rej;
-    r.readAsDataURL(file);
-  });
-  
-  const mediaType = file.type || 'image/png';
+  const statusEl = document.getElementById('import-img-status');
+  statusEl.textContent = 'กำลังให้ AI อ่านรูปภาพ... (อาจใช้เวลา 5-10 วินาที)';
+  statusEl.style.color = '#185FA5';
   
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
-      body: JSON.stringify({
-        model: 'claude-opus-4-5',
-        max_tokens: 2000,
-        messages: [{
-          role: 'user',
-          content: [
-            {
-              type: 'image',
-              source: { type: 'base64', media_type: mediaType, data: base64 }
-            },
-            {
-              type: 'text',
-              text: `Extract ALL trade/order rows from this image into tab-separated format (TSV).
-Output ONLY the data rows, NO headers, NO explanation.
-Each row must have exactly these columns separated by TAB:
-OpenDate\tSymbol\tSize\tSide\tEntryPrice\tExitPrice\tNetPnL\tFees
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const base64Data = e.target.result.split(',')[1];
+      const mediaType = file.type;
+      
+      const prompt = `คุณคือผู้ช่วยดึงข้อมูลการเทรดจากรูปภาพ
+กรุณาอ่านตารางในรูปภาพนี้ และดึงข้อมูลการเทรดออกมาเป็น JSON array ตาม format ด้านล่างเท่านั้น ห้ามตอบอย่างอื่นนอกจาก JSON
+[{
+  "date": "YYYY/MM/DD", 
+  "sym": "ชื่อสินทรัพย์ เช่น XAUUSD, NQ, US100",
+  "pos": "Buy หรือ Sell",
+  "lot": 1.0,
+  "entry": 2000.5,
+  "exit": 2010.0,
+  "net": 95.0,
+  "fees": 5.0
+}]`;
 
-Rules:
-- OpenDate: use YYYY/MM/DD format (convert Buddhist year by -543 if needed)
-- Symbol: map COMEX:MGC->XAUUSD, CME:MNQ->NQ, CME:MES->ES, keep others as-is
-- Size: number only
-- Side: exactly "Buy" or "Sell" (Long=Buy, Short=Sell)
-- EntryPrice: number only, no $ or commas
-- ExitPrice: number only
-- NetPnL: number only (negative for loss)
-- Fees: number only (positive)
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-3-haiku-20240307',
+          max_tokens: 1024,
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64Data } },
+              { type: 'text', text: prompt }
+            ]
+          }]
+        })
+      });
 
-Output TSV only, one row per trade:`
-            }
-          ]
-        }]
-      })
+      if (!response.ok) throw new Error('API Error: ' + response.status);
+      const data = await response.json();
+      let txt = data.content[0].text;
+      
+      // clean json
+      txt = txt.replace(/```json/g, '').replace(/```/g, '').trim();
+      const startIndex = txt.indexOf('[');
+      const endIndex = txt.lastIndexOf(']');
+      if (startIndex === -1 || endIndex === -1) throw new Error('AI ไม่ได้ส่ง JSON กลับมา');
+      
+      const result = JSON.parse(txt.substring(startIndex, endIndex + 1));
+      
+      parsedImports = result;
+      renderImportPreview();
+      statusEl.textContent = '✓ AI อ่านข้อมูลสำเร็จ!';
+      statusEl.style.color = '#1D9E75';
+    };
+    reader.readAsDataURL(file);
+  } catch (err) {
+    statusEl.textContent = '❌ Error: ' + err.message;
+    statusEl.style.color = '#E24B4A';
+    console.error(err);
+  }
+}
+
+function parseImport() {
+  const txt = document.getElementById('import-input').value.trim();
+  if (!txt && parsedImports.length === 0) {
+    alert('กรุณาวางข้อมูล หรืออัปโหลดรูปภาพก่อน');
+    return;
+  }
+  
+  if (txt) {
+    const rows = txt.split('\n');
+    let results = [];
+    
+    for(let r of rows) {
+      const cols = r.split('\t');
+      if (cols.length < 5) continue;
+      
+      let dateStr = cols[0];
+      if (dateStr.includes('นาฬิกา')) {
+        const parts = dateStr.split(' ');
+        if (parts[0].includes('/')) {
+          let [d,m,y] = parts[0].split('/');
+          if (y > 2500) y = y - 543;
+          dateStr = `${y}/${m.padStart(2,'0')}/${d.padStart(2,'0')}`;
+        }
+      }
+      
+      results.push({
+        date: dateStr,
+        sym: cols[2] || 'UNKNOWN',
+        pos: (cols[4]||'').toLowerCase().includes('long') ? 'Buy' : 'Sell',
+        lot: parseFloat(cols[3]) || 0,
+        entry: parseFloat((cols[5]||'').replace(/[^0-9.-]+/g,'')) || 0,
+        exit: parseFloat((cols[6]||'').replace(/[^0-9.-]+/g,'')) || 0,
+        net: parseFloat((cols[7]||'').replace(/[^0-9.-]+/g,'')) || 0,
+        fees: parseFloat((cols[8]||'').replace(/[^0-9.-]+/g,'')) || 0
+      });
+    }
+    parsedImports = results;
+  }
+  
+  renderImportPreview();
+}
+
+function renderImportPreview() {
+  const tbody = document.getElementById('import-preview-body');
+  if (parsedImports.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:10px">ไม่พบข้อมูลที่สามารถ Import ได้</td></tr>';
+    document.getElementById('import-confirm-btn').style.display = 'none';
+    return;
+  }
+  
+  document.getElementById('import-preview').style.display = 'block';
+  document.getElementById('import-count').textContent = parsedImports.length + ' รายการ';
+  document.getElementById('import-confirm-btn').style.display = 'inline-block';
+  
+  tbody.innerHTML = parsedImports.map(x => {
+    const nc = x.net >= 0 ? '#1D9E75' : '#E24B4A';
+    return `<tr>
+      <td style="padding:6px 8px;border-bottom:1px solid #eee">${x.date}</td>
+      <td style="padding:6px 8px;border-bottom:1px solid #eee"><strong>${x.sym}</strong></td>
+      <td style="padding:6px 8px;border-bottom:1px solid #eee"><span class="badge ${x.pos==='Buy'?'b-buy':'b-sell'}">${x.pos}</span></td>
+      <td style="padding:6px 8px;border-bottom:1px solid #eee">${x.lot}</td>
+      <td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right">${x.entry}</td>
+      <td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right">${x.exit}</td>
+      <td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right;color:${nc};font-weight:600">${x.net >= 0 ? '+' : ''}${x.net.toFixed(2)}</td>
+      <td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right">${x.fees}</td>
+    </tr>`;
+  }).join('');
+}
+
+function confirmImport() {
+  const accId = document.getElementById('import-acc-sel').value;
+  const modelId = document.getElementById('import-model').value;
+  const grade = document.getElementById('import-grade').value;
+  
+  let count = 0;
+  parsedImports.forEach(x => {
+    let d = x.date.replace(/-/g, '/');
+    if (d.length < 8) d = new Date().toISOString().slice(0,10).replace(/-/g,'/');
+    
+    S.trades.push({
+      id: Date.now() + Math.random(),
+      accId: accId,
+      date: d,
+      sym: x.sym.replace('COMEX:', ''),
+      pos: x.pos,
+      lot: x.lot,
+      entry: x.entry,
+      modelId: modelId,
+      ses: 'Out of Session',
+      etf: '',
+      ttype: '',
+      mkt: '',
+      bias: '',
+      news: '',
+      kl: '',
+      confs: [],
+      ot: '',
+      grade: grade,
+      arr: 0,
+      maxrr: 0,
+      riskR: 0,
+      gross: x.net + x.fees, 
+      fees: x.fees,
+      swap: 0,
+      net: x.net,
+      slm: '',
+      tpm: '',
+      outcome: x.net > 0 ? 'Profit Taken' : 'Loss, Review Setup',
+      mistake: '',
+      followed: true,
+      plan: 'Daily Bias',
+      entryEmo: '',
+      exitEmo: '',
+      notes: 'Imported Entry',
+      htf: '', mtf: '', ltf: ''
     });
-    
-    const data = await response.json();
-    if (data.error) throw new Error(data.error.message);
-    
-    const tsv = data.content.map(c => c.text || '').join('').trim();
-    
-    if (!tsv) throw new Error('AI ไม่พบข้อมูล trade ในรูปนี้');
-    
-    // Put into textarea and auto-parse
-    document.getElementById('import-input').value = tsv;
-    status.textContent = '✅ AI อ่านสำเร็จ — กด Preview เพื่อตรวจสอบ';
-    status.style.color = '#1D9E75';
-    
-    // Auto trigger parse
-    parseImport();
-    
-  } catch(err) {
-    status.textContent = '❌ Error: ' + err.message;
-    status.style.color = '#E24B4A';
-    console.error('Import image error:', err);
-  }
-}
-
-
-
-</script>
-
-<!-- MODAL: EDIT TRADE -->
-<div class="modal-overlay" id="modal-edit" onclick="overlayClose(event,'modal-edit')">
-  <div class="modal" style="max-width:700px;max-height:90vh;overflow-y:auto">
-    <button class="modal-close" onclick="closeModal('modal-edit')">x</button>
-    <div class="ct" style="margin-bottom:14px">แก้ไข Trade <span id="edit-trade-id" style="color:#aaa;font-weight:400"></span></div>
-
-    <div class="card" style="margin-bottom:10px">
-      <div class="ct">Trade Details</div>
-      <div class="fr">
-        <div class="fg"><label>Account</label><select id="e-accId" style="font-size:12px;padding:6px 8px;border:1px solid #e0e0e0;border-radius:7px;background:#fff;color:#1a1a1a;width:100%;font-family:inherit"></select></div>
-        <div class="fg"><label>Date</label><input type="date" id="e-date"></div>
-        <div class="fg"><label>Symbol</label>
-          <select id="e-sym">
-            <option value="">— เลือก —</option>
-            <optgroup label="Favorite">
-              <option value="XAUUSD">Gold (XAUUSD)</option>
-              <option value="NQ">NQ</option>
-              <option value="ES">ES</option>
-              <option value="XAGUSD">Silver (XAGUSD)</option>
-            </optgroup>
-            <optgroup label="Forex">
-              <option value="EURUSD">EURUSD</option>
-              <option value="USDJPY">USDJPY</option>
-              <option value="EURGBP">EURGBP</option>
-            </optgroup>
-            <optgroup label="Crypto">
-              <option value="BTCUSD">BTC</option>
-              <option value="ETHUSD">ETH</option>
-              <option value="BNBUSD">BNB</option>
-            </optgroup>
-            <optgroup label="ETC"><option value="OTHER">Other</option></optgroup>
-          </select>
-        </div>
-        <div class="fg"><label>Direction</label><select id="e-pos"><option>Buy</option><option>Sell</option></select></div>
-        <div class="fg"><label>Session</label><select id="e-ses"><option>Asia</option><option>London Open</option><option>London Close</option><option>New York</option><option>Out of Session</option></select></div>
-      </div>
-      <div class="fr">
-        <div class="fg"><label>Duration</label><input type="text" id="e-dur" placeholder="23m, 2h..."></div>
-        <div class="fg"><label>Type of Trade</label><select id="e-ttype"><option>Intraday</option><option>Swing</option><option>Scalp</option></select></div>
-        <div class="fg"><label>Bias</label><select id="e-bias"><option>Bullish</option><option>Bearish</option><option>Neutral</option></select></div>
-        <div class="fg"><label>Market Conditions</label><select id="e-mkt"><option>Strong uptrend (HT)</option><option>Strong downtrend (HT)</option><option>15m Strong Uptrend</option><option>15m Strong Downtrend</option><option>Ranging</option><option>Volatile</option><option>Trending</option></select></div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-bottom:10px">
-      <div class="ct">Setup / Confluences</div>
-      <div class="fr">
-        <div class="fg"><label>Setup Type</label>
-          <select id="e-model">
-            <option value="">— เลือก Setup —</option>
-            <optgroup label="ICT Concepts">
-              <option value="fvg">FVG (Fair Value Gap)</option>
-              <option value="ifvg">iFVG (Inverse FVG)</option>
-              <option value="ob">Order Block</option>
-              <option value="bb">Breaker Block</option>
-              <option value="ob_5m">5m Order Block</option>
-              <option value="ob_15m">15m Order Block</option>
-              <option value="ifvg_1m">1m iFVG</option>
-              <option value="ifvg_5m">5m iFVG</option>
-              <option value="ifvg_15m">15m iFVG</option>
-              <option value="fvg_5m">5m FVG</option>
-              <option value="fvg_15m">15m FVG</option>
-              <option value="bb_5m">5m Breaker Block</option>
-              <option value="bb_15m">15m Breaker Block</option>
-            </optgroup>
-            <optgroup label="SMC / Price Action">
-              <option value="supply_zone">Supply Zone</option>
-              <option value="demand_zone">Demand Zone</option>
-              <option value="pullback">Pullback</option>
-              <option value="ms_break">Market Structure Break</option>
-              <option value="liq_sweep">Liquidity Sweep</option>
-            </optgroup>
-            <optgroup label="Other">
-              <option value="custom">Custom / Other</option>
-            </optgroup>
-          </select>
-        </div>
-        <div class="fg"><label>Entry Timeframe</label><select id="e-etf"><option>1m</option><option>5m</option><option>15m</option><option>1h</option><option>4h</option></select></div>
-        <div class="fg"><label>Key Levels</label><input type="text" id="e-kl"></div>
-        <div class="fg"><label>Order Type</label><select id="e-ot"><option>Limit</option><option>Market</option><option>Stop Limit</option></select></div>
-      </div>
-      <div style="margin-top:6px">
-        <label style="font-size:11px;color:#666;font-weight:500;display:block;margin-bottom:6px">Entry Confluences</label>
-        <div class="tags-row" id="e-conf-tags"></div>
-        <div style="display:flex;gap:6px;margin-top:8px;align-items:center">
-          <input type="text" id="e-conf-custom-input" placeholder="เพิ่ม confluence ใหม่..." style="font-size:12px;padding:5px 10px;border:1px solid #e0e0e0;border-radius:20px;background:#fff;color:#1a1a1a;flex:1;max-width:240px" onkeydown="if(event.key==='Enter'){addEditCustomConf();event.preventDefault()}">
-          <button class="btn btn-sm" onclick="addEditCustomConf()" style="border-radius:20px;white-space:nowrap">+ เพิ่ม</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-bottom:10px">
-      <div class="ct">P&L & Risk</div>
-      <div class="fr">
-        <div class="fg"><label>Actual RR</label><input type="number" id="e-arr" step="0.01"></div>
-        <div class="fg"><label>Gross P&L ($)</label><input type="number" id="e-gross" step="0.01"></div>
-        <div class="fg"><label>Fees ($)</label><input type="number" id="e-fees" step="0.01"></div>
-        <div class="fg"><label>Swap ($)</label><input type="number" id="e-swap" step="0.01"></div>
-        <div class="fg"><label>Net P&L ($)</label><input type="number" id="e-net" step="0.01"></div>
-      </div>
-      <div class="fr">
-        <div class="fg"><label>SL Management</label><select id="e-slm"><option value="">—</option><option>Hit Initial SL</option><option>Locked Profit</option><option>Moved to BE</option><option>Manual Close</option></select></div>
-        <div class="fg"><label>TP Management</label><select id="e-tpm"><option>Set and Forget</option><option>Manual Close</option><option>Partial TP</option><option>Move to BE</option><option>Final TP Hit</option><option>Locked Profit</option></select></div>
-        <div class="fg"><label>Outcome</label><select id="e-outcome"><option>Profit Taken</option><option>Great Exit!</option><option>Loss, Review Setup</option><option>Capital Protected</option><option>Breakeven</option></select></div>
-        <div class="fg">
-          <label>Setup Rating</label>
-          <div style="padding:6px 0">
-            <div class="star-rating" id="e-grade-stars">
-              <span class="star" data-val="1" onclick="setStarRating('e-grade-stars','e-grade',1)">&#9733;</span>
-              <span class="star" data-val="2" onclick="setStarRating('e-grade-stars','e-grade',2)">&#9733;</span>
-              <span class="star" data-val="3" onclick="setStarRating('e-grade-stars','e-grade',3)">&#9733;</span>
-              <span class="star" data-val="4" onclick="setStarRating('e-grade-stars','e-grade',4)">&#9733;</span>
-              <span class="star" data-val="5" onclick="setStarRating('e-grade-stars','e-grade',5)">&#9733;</span>
-            </div>
-            <input type="hidden" id="e-grade" value="3">
-            <div style="font-size:10px;color:#aaa;margin-top:3px" id="e-grade-label">3 stars</div>
-          </div>
-        </div>
-      </div>
-      <div class="fr">
-        <div class="fg"><label>Mistakes</label><select id="e-mistake"><option value="">None</option><option>Position Sizing</option><option>Wrong Exit Point</option><option>Wrong Entry Point</option><option>FOMO</option><option>Early Exit</option><option>Late Entry</option><option>No Stop Loss</option></select></div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-bottom:10px">
-      <div class="ct">Review & Reflection</div>
-      <label class="review-check"><input type="checkbox" id="e-followed"><span>I followed my trade plan</span></label>
-      <div style="margin-bottom:8px">
-        <label style="font-size:11px;color:#666;font-weight:500;display:block;margin-bottom:5px">Entry Emotion</label>
-        <div style="display:flex;gap:5px;flex-wrap:wrap" id="e-entry-emo">
-          <button class="emo-btn" onclick="selEditEmo('entry',this,'Calm')">Calm</button>
-          <button class="emo-btn" onclick="selEditEmo('entry',this,'Fomo')">Fomo</button>
-          <button class="emo-btn" onclick="selEditEmo('entry',this,'Revenge')">Revenge</button>
-          <button class="emo-btn" onclick="selEditEmo('entry',this,'Boredom')">Boredom</button>
-          <button class="emo-btn" onclick="selEditEmo('entry',this,'Overconfident')">Overconfident</button>
-          <button class="emo-btn" onclick="selEditEmo('entry',this,'Fear')">Fear</button>
-          <button class="emo-btn" onclick="selEditEmo('entry',this,'Greed')">Greed</button>
-        </div>
-      </div>
-      <div style="margin-bottom:10px">
-        <label style="font-size:11px;color:#666;font-weight:500;display:block;margin-bottom:5px">Exit Emotion</label>
-        <div style="display:flex;gap:5px;flex-wrap:wrap" id="e-exit-emo">
-          <button class="emo-btn" onclick="selEditEmo('exit',this,'Calm')">Calm</button>
-          <button class="emo-btn" onclick="selEditEmo('exit',this,'Fomo')">Fomo</button>
-          <button class="emo-btn" onclick="selEditEmo('exit',this,'Fear')">Fear</button>
-          <button class="emo-btn" onclick="selEditEmo('exit',this,'Satisfied')">Satisfied</button>
-          <button class="emo-btn" onclick="selEditEmo('exit',this,'Regret')">Regret</button>
-        </div>
-      </div>
-      <div class="fg"><label>Note / Reflection</label><textarea id="e-notes" rows="3"></textarea></div>
-    </div>
-
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
-      <button class="btn" onclick="closeModal('modal-edit')">ยกเลิก</button>
-      <button class="btn btn-p" onclick="saveEdit()">บันทึกการแก้ไข</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: IMPORT ORDERS -->
-<div class="modal-overlay" id="modal-import" onclick="overlayClose(event,'modal-import')">
-  <div class="modal" style="max-width:720px;max-height:90vh;overflow-y:auto">
-    <button class="modal-close" onclick="closeModal('modal-import')">x</button>
-    <div class="ct" style="margin-bottom:4px">Import Orders</div>
-    <div style="font-size:12px;color:#888;margin-bottom:10px">
-      รองรับ format จาก TopStep / Broker — copy ตารางจากหน้าเว็บแล้ว paste ที่นี่ได้เลย<br>
-      <span style="color:#185FA5">หรือวาง CSV ที่มี column: Open time, Close time, Symbol, Size, Side, Entry price, Exit price, Net P&L, Charges</span>
-    </div>
-    <div style="background:#f0f6ff;border:1px solid #dce8f8;border-radius:8px;padding:10px 12px;margin-bottom:12px">
-      <label style="font-size:11px;color:#0C447C;font-weight:600;display:block;margin-bottom:5px">🔑 Anthropic API Key (สำหรับ Import จากรูปภาพ)</label>
-      <div style="display:flex;gap:6px;align-items:center">
-        <input type="password" id="api-key-input" placeholder="sk-ant-..." style="flex:1;font-size:12px;padding:6px 10px;border:1px solid #dce8f8;border-radius:6px;background:#fff;color:#1a1a1a;font-family:monospace">
-        <button onclick="saveApiKey()" style="font-size:12px;padding:6px 12px;background:#185FA5;color:#fff;border:none;border-radius:6px;cursor:pointer;white-space:nowrap">บันทึก Key</button>
-      </div>
-      <div style="font-size:10px;color:#888;margin-top:4px">Key เก็บใน localStorage — ไปสร้างได้ที่ <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:#185FA5">console.anthropic.com/settings/keys</a></div>
-      <div id="api-key-status" style="font-size:11px;margin-top:4px;color:#888"></div>
-    </div>
-    <div style="background:#f0f6ff;border:1px solid #dce8f8;border-radius:8px;padding:10px 12px;margin-bottom:12px">
-      <label style="font-size:11px;color:#0C447C;font-weight:600;display:block;margin-bottom:5px">🔑 Anthropic API Key (สำหรับ Import จากรูป)</label>
-      <div style="display:flex;gap:6px">
-        <input type="password" id="api-key-input" placeholder="sk-ant-..." style="flex:1;font-size:12px;padding:6px 10px;border:1px solid #dce8f8;border-radius:6px;background:#fff;color:#1a1a1a;font-family:monospace">
-        <button class="btn btn-sm" onclick="saveApiKey()" style="background:#185FA5;color:#fff;border-color:#185FA5;white-space:nowrap">บันทึก Key</button>
-      </div>
-      <div style="font-size:10px;color:#aaa;margin-top:4px">Key เก็บใน localStorage ของ browser นี้เท่านั้น — ได้จาก <a href="https://console.anthropic.com/keys" target="_blank" style="color:#185FA5">console.anthropic.com/keys</a></div>
-      <div id="api-key-status" style="font-size:11px;margin-top:4px"></div>
-    </div>
-
-    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center">
-      <div class="fg" style="flex:1;min-width:150px">
-        <label>Account ปลายทาง</label>
-        <select id="import-acc-sel" style="font-size:12px;padding:6px 9px;border:1px solid #e0e0e0;border-radius:7px;background:#fff;color:#1a1a1a;width:100%"></select>
-      </div>
-      <div class="fg" style="min-width:120px">
-        <label>Default Rating</label>
-        <select id="import-grade" style="font-size:12px;padding:6px 9px;border:1px solid #e0e0e0;border-radius:7px;background:#fff;color:#1a1a1a">
-          <option value="3">★★★ (3)</option>
-          <option value="4">★★★★ (4)</option>
-          <option value="5">★★★★★ (5)</option>
-          <option value="2">★★ (2)</option>
-          <option value="1">★ (1)</option>
-        </select>
-      </div>
-      <div class="fg" style="min-width:120px">
-        <label>Default Model</label>
-        <select id="import-model" style="font-size:12px;padding:6px 9px;border:1px solid #e0e0e0;border-radius:7px;background:#fff;color:#1a1a1a"></select>
-      </div>
-    </div>
-
-        <div style="margin-bottom:10px">
-      <label style="font-size:11px;color:#666;font-weight:600;display:block;margin-bottom:6px">📷 Import จากรูปภาพ (ใช้ AI วิเคราะห์)</label>
-      <div style="display:flex;gap:8px;align-items:center">
-        <input type="file" id="import-img-input" accept="image/*" style="font-size:12px;flex:1" onchange="importFromImage(this)">
-        <div id="import-img-status" style="font-size:11px;color:#888"></div>
-      </div>
-    </div>
-    <div style="text-align:center;font-size:11px;color:#aaa;margin-bottom:8px">— หรือ วาง text จากเว็บ Broker —</div>
-    <textarea id="import-input" placeholder="Paste ตารางจากเว็บ Broker ที่นี่...&#10;&#10;ตัวอย่าง:&#10;23/4/2569 12 นาฬิกา 56 นาที&#9;23/4/2569 12 นาฬิกา 59 นาที&#9;COMEX:MGC&#9;1&#9;Long&#9;$4,729.3&#9;$4,729.6&#9;$1.40&#9;$1.60" style="width:100%;min-height:180px;font-size:11px;padding:10px;border:1px solid #e0e0e0;border-radius:8px;background:#fafaf8;color:#1a1a1a;font-family:monospace;resize:vertical;margin-bottom:10px"></textarea>
-
-    <div id="import-preview" style="display:none;margin-bottom:10px">
-      <div style="font-size:11px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Preview — <span id="import-count"></span></div>
-      <div style="border:1px solid #e0e0e0;border-radius:8px;overflow:hidden;overflow-x:auto;max-height:220px;overflow-y:auto">
-        <table style="width:100%;border-collapse:collapse;font-size:11px">
-          <thead><tr style="background:#fafaf8">
-            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:left;white-space:nowrap">Date</th>
-            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:left">Symbol</th>
-            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:left">Side</th>
-            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:left">Size</th>
-            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right">Entry</th>
-            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right">Exit</th>
-            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right">Net P&L</th>
-            <th style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right">Fees</th>
-          </tr></thead>
-          <tbody id="import-preview-body"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div style="display:flex;gap:8px;justify-content:flex-end">
-      <button class="btn btn-sm" onclick="closeModal('modal-import')">ยกเลิก</button>
-      <button class="btn btn-sm" onclick="parseImport()" style="background:#f0f0f0">Preview</button>
-      <button class="btn btn-p btn-sm" id="import-confirm-btn" style="display:none" onclick="confirmImport()">Import ทั้งหมด</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: GITHUB GIST SYNC -->
-<div class="modal-overlay" id="modal-gist" onclick="overlayClose(event,'modal-gist')">
-  <div class="modal" style="max-width:500px">
-    <button class="modal-close" onclick="closeModal('modal-gist')">x</button>
-    <div class="ct" style="margin-bottom:4px">&#9729; GitHub Gist Sync</div>
-    <p style="font-size:12px;color:#888;margin-bottom:14px;line-height:1.6">บันทึก/โหลดข้อมูลผ่าน GitHub Gist — ใช้ได้ทุกเครื่อง ทุก browser</p>
-    <div style="background:#f0f6ff;border:1px solid #dce8f8;border-radius:8px;padding:12px 14px;margin-bottom:14px">
-      <label style="font-size:11px;color:#0C447C;font-weight:600;display:block;margin-bottom:6px">&#128273; GitHub Personal Access Token</label>
-      <div style="display:flex;gap:6px;align-items:center">
-        <input type="password" id="gist-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
-          style="flex:1;font-size:12px;padding:6px 10px;border:1px solid #dce8f8;border-radius:6px;background:#fff;color:#1a1a1a;font-family:monospace">
-        <button onclick="saveGistToken()" style="font-size:12px;padding:6px 12px;background:#185FA5;color:#fff;border:none;border-radius:6px;cursor:pointer;white-space:nowrap">บันทึก</button>
-      </div>
-      <div style="font-size:10px;color:#888;margin-top:5px;line-height:1.5">
-        สร้าง token ที่ <a href="https://github.com/settings/tokens/new" target="_blank" style="color:#185FA5">github.com/settings/tokens/new</a><br>
-        &#10003; เลือก scope: <strong>gist</strong> เท่านั้น &nbsp;&#183;&nbsp; Token เก็บใน localStorage ของ browser นี้
-      </div>
-      <div id="gist-token-status" style="font-size:11px;margin-top:5px;font-weight:600"></div>
-    </div>
-    <div style="background:#fafaf8;border:1px solid #e8e8e4;border-radius:8px;padding:12px 14px;margin-bottom:14px">
-      <label style="font-size:11px;color:#555;font-weight:600;display:block;margin-bottom:6px">&#128206; Gist ID <span style="font-weight:400;color:#aaa">(เว้นว่างถ้าต้องการสร้างใหม่)</span></label>
-      <input type="text" id="gist-id-input" placeholder="e.g. a1b2c3d4e5f6... (ทิ้งว่างเพื่อสร้าง Gist ใหม่)"
-        style="width:100%;font-size:12px;padding:6px 10px;border:1px solid #e0e0e0;border-radius:6px;background:#fff;color:#1a1a1a;font-family:monospace">
-      <div id="gist-id-status" style="font-size:11px;color:#888;margin-top:4px"></div>
-    </div>
-    <div id="gist-last-sync" style="font-size:11px;color:#aaa;margin-bottom:14px;text-align:center"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-      <button onclick="gistPush()" style="padding:10px;border-radius:8px;border:1px solid #a78bfa;background:#f5f3ff;color:#6d28d9;font-size:13px;font-weight:600;cursor:pointer">
-        &#8679; Push
-      </button>
-      <button onclick="gistPull()" style="padding:10px;border-radius:8px;border:1px solid #10b981;background:#ecfdf5;color:#065f46;font-size:13px;font-weight:600;cursor:pointer">
-        &#8681; Pull
-      </button>
-    </div>
-    <div id="gist-action-status" style="font-size:12px;text-align:center;min-height:20px;font-weight:600;padding:6px"></div>
-    <div style="border-top:1px solid #eee;margin-top:10px;padding-top:8px;font-size:10px;color:#bbb;line-height:1.6;text-align:center">
-      Gist จะเป็น Secret (ไม่ public) &#183; Push จะทับข้อมูลเก่าใน Gist &#183; Pull จะทับข้อมูลในเครื่องนี้
-    </div>
-  </div>
-</div>
-
-<script>
-const GIST_TOKEN_KEY = 'tj_gist_token';
-const GIST_ID_KEY    = 'tj_gist_id';
-const GIST_ID_DEFAULT = 'f95bf306ff88133ff36ab93153df2532';
-const GIST_FILENAME  = 'trading_journal_data.json';
-
-function saveGistToken() {
-  const tok = document.getElementById('gist-token-input').value.trim();
-  if (!tok) { setGistTokenStatus('กรุณาใส่ token', '#E24B4A'); return; }
-  localStorage.setItem(GIST_TOKEN_KEY, tok);
-  setGistTokenStatus('✓ บันทึก token แล้ว', '#1D9E75');
-  document.getElementById('gist-token-input').value = '';
-  loadGistUI();
-}
-
-function loadGistUI() {
-  const tok  = localStorage.getItem(GIST_TOKEN_KEY) || '';
-  const gid  = localStorage.getItem(GIST_ID_KEY)    || '';
-  const last = localStorage.getItem('tj_gist_last_sync') || '';
-  const tsel = document.getElementById('gist-token-status');
-  const isel = document.getElementById('gist-id-status');
-  const lsel = document.getElementById('gist-last-sync');
-  if (tsel) { tsel.textContent = tok ? '✓ Token บันทึกแล้ว (' + tok.slice(0,8) + '...)' : '⚠ ยังไม่มี token'; tsel.style.color = tok ? '#1D9E75' : '#E24B4A'; }
-  const ginp = document.getElementById('gist-id-input');
-  if (ginp) ginp.value = gid || GIST_ID_DEFAULT;
-  if (isel) isel.textContent = gid ? '✓ Gist ID: ' + gid.slice(0,12) + '...' : 'ทิ้งว่างเพื่อสร้าง Gist ใหม่อัตโนมัติ';
-  if (lsel) lsel.textContent = last ? 'Last sync: ' + last : 'ยังไม่เคย sync';
-  updateGistTopbarBtn();
-}
-
-function updateGistTopbarBtn() {
-  const tok = localStorage.getItem(GIST_TOKEN_KEY) || '';
-  const gid = localStorage.getItem(GIST_ID_KEY) || '';
-  const btn = document.getElementById('gist-sync-btn');
-  const lbl = document.getElementById('gist-sync-label');
-  const ico = document.getElementById('gist-sync-icon');
-  if (!btn) return;
-  if (tok && gid) {
-    if (lbl) lbl.textContent = 'Synced';
-    if (ico) ico.textContent = '✓';
-    btn.style.cssText = 'font-size:11px;padding:4px 12px;border-radius:6px;border:1px solid #10b981;background:#ecfdf5;color:#065f46;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:5px';
-  } else {
-    if (lbl) lbl.textContent = 'Gist Sync';
-    if (ico) ico.textContent = '☁';
-    btn.style.cssText = 'font-size:11px;padding:4px 12px;border-radius:6px;border:1px solid #a78bfa;background:#f5f3ff;color:#6d28d9;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:5px';
-  }
-}
-
-function setGistTokenStatus(msg, color) {
-  const el = document.getElementById('gist-token-status');
-  if (el) { el.textContent = msg; el.style.color = color; }
-}
-
-function setGistActionStatus(msg, color) {
-  const el = document.getElementById('gist-action-status');
-  if (el) { el.textContent = msg; el.style.color = color || '#555'; }
-}
-
-function getGistPayload() {
-  return JSON.stringify({
-    trades:   S.trades,
-    accounts: S.accounts,
-    models:   S.models,
-    customConfs: JSON.parse(localStorage.getItem('tj_custom_confs') || '[]'),
-    exportedAt: new Date().toISOString(),
-    version: 2
+    count++;
   });
+  
+  saveTrades();
+  alert(`Import สำเร็จ ${count} trades`);
+  closeModal('modal-import');
+  parsedImports = [];
+  document.getElementById('import-input').value = '';
+  document.getElementById('import-preview').style.display = 'none';
+  renderHistory();
+  renderDash();
+  renderAccSelector();
+  gistAutoPush();
 }
+
+// ================= GITHUB GIST SYNC =================
+function saveGistToken() {
+  const t = document.getElementById('gist-token-input').value.trim();
+  const el = document.getElementById('gist-token-status');
+  if (t) {
+    localStorage.setItem('tj_gist_token', t);
+    el.textContent = '✓ บันทึก Token แล้ว'; el.style.color = '#10b981';
+  } else {
+    localStorage.removeItem('tj_gist_token');
+    el.textContent = 'ลบ Token แล้ว'; el.style.color = '#ef4444';
+  }
+}
+
+const GIST_ID_DEFAULT = 'f95bf306ff88133ff36ab93153df2532';
 
 async function gistPush() {
-  const tok = localStorage.getItem(GIST_TOKEN_KEY);
-  if (!tok) { setGistActionStatus('⚠ กรุณาบันทึก GitHub Token ก่อน', '#E24B4A'); return; }
-  const gidInput = document.getElementById('gist-id-input').value.trim();
-  if (gidInput) localStorage.setItem(GIST_ID_KEY, gidInput);
-  const gid = localStorage.getItem(GIST_ID_KEY) || '';
-  const payload = getGistPayload();
-  const body = { description: 'Trading Journal Pro — Auto Sync', public: false, files: { [GIST_FILENAME]: { content: payload } } };
-  setGistActionStatus('⏳ กำลัง push...', '#185FA5');
+  const token = localStorage.getItem('tj_gist_token');
+  const el = document.getElementById('gist-action-status');
+  if (!token) { el.textContent = '❌ ต้องใส่ Token ก่อน Push'; el.style.color = '#ef4444'; return; }
+  
+  let gistId = document.getElementById('gist-id-input').value.trim();
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    accounts: S.accounts,
+    trades: S.trades,
+    models: S.models,
+    customConfs: getCustomConfs()
+  };
+  const content = JSON.stringify(payload);
+  const files = { "trading_journal_data.json": { content } };
+
+  el.textContent = 'กำลัง Push...'; el.style.color = '#6d28d9';
   try {
-    let res, data;
-    if (gid) {
-      res = await fetch('https://api.github.com/gists/' + gid, { method: 'PATCH', headers: { Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json', 'X-GitHub-Api-Version': '2022-11-28' }, body: JSON.stringify(body) });
+    let res;
+    if (gistId) {
+      res = await fetch('https://api.github.com/gists/' + gistId, {
+        method: 'PATCH',
+        headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' },
+        body: JSON.stringify({ files })
+      });
     } else {
-      res = await fetch('https://api.github.com/gists', { method: 'POST', headers: { Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json', 'X-GitHub-Api-Version': '2022-11-28' }, body: JSON.stringify(body) });
+      res = await fetch('https://api.github.com/gists', {
+        method: 'POST',
+        headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' },
+        body: JSON.stringify({ description: "Trading Journal Sync Data", public: false, files })
+      });
     }
-    data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'API error ' + res.status);
-    localStorage.setItem(GIST_ID_KEY, data.id);
-    document.getElementById('gist-id-input').value = data.id;
-    document.getElementById('gist-id-status').textContent = '✓ Gist ID: ' + data.id.slice(0,12) + '...';
+    if (!res.ok) throw new Error('API Error ' + res.status);
+    const data = await res.json();
+    
+    if (!gistId) {
+      gistId = data.id;
+      document.getElementById('gist-id-input').value = gistId;
+      localStorage.setItem('tj_gist_id', gistId);
+    }
+    
     const now = new Date().toLocaleString('th-TH');
     localStorage.setItem('tj_gist_last_sync', now);
-    document.getElementById('gist-last-sync').textContent = 'Last sync: ' + now;
-    setGistActionStatus('✓ Push สำเร็จ! ' + S.trades.length + ' trades → ' + data.html_url, '#1D9E75');
+    
+    el.textContent = '✓ Push สำเร็จ (' + now + ')';
+    el.style.color = '#10b981';
     updateGistTopbarBtn();
-  } catch(e) {
-    setGistActionStatus('✗ Push ล้มเหลว: ' + e.message, '#E24B4A');
+  } catch (err) {
+    el.textContent = '❌ Push ล้มเหลว: ' + err.message;
+    el.style.color = '#ef4444';
   }
 }
 
 async function gistPull() {
-  const tok = localStorage.getItem(GIST_TOKEN_KEY);
-  if (!tok) { setGistActionStatus('⚠ กรุณาบันทึก GitHub Token ก่อน', '#E24B4A'); return; }
-  const gidInput = document.getElementById('gist-id-input').value.trim();
-  if (gidInput) localStorage.setItem(GIST_ID_KEY, gidInput);
-  const gid = localStorage.getItem(GIST_ID_KEY) || '';
-  if (!gid) { setGistActionStatus('⚠ ใส่ Gist ID ก่อน pull', '#E24B4A'); return; }
-  setGistActionStatus('⏳ กำลัง pull...', '#185FA5');
+  const token = localStorage.getItem('tj_gist_token');
+  const gistId = document.getElementById('gist-id-input').value.trim() || localStorage.getItem('tj_gist_id');
+  const el = document.getElementById('gist-action-status');
+  
+  if (!token || !gistId) { el.textContent = '❌ ต้องใส่ Token และ Gist ID ก่อน Pull'; el.style.color = '#ef4444'; return; }
+  
+  el.textContent = 'กำลัง Pull...'; el.style.color = '#065f46';
   try {
-    const res  = await fetch('https://api.github.com/gists/' + gid, { headers: { Authorization: 'Bearer ' + tok, 'X-GitHub-Api-Version': '2022-11-28' } });
+    const res = await fetch('https://api.github.com/gists/' + gistId, {
+      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (!res.ok) throw new Error('API Error ' + res.status);
     const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'API error ' + res.status);
-    const fileContent = data.files && data.files[GIST_FILENAME] && data.files[GIST_FILENAME].content;
-    if (!fileContent) throw new Error('ไม่พบไฟล์ "' + GIST_FILENAME + '" ใน Gist นี้');
+    const fileContent = data.files["trading_journal_data.json"]?.content;
+    if (!fileContent) throw new Error('ไม่พบไฟล์ trading_journal_data.json ใน Gist นี้');
+    
     const parsed = JSON.parse(fileContent);
-    if (!parsed.trades) throw new Error('รูปแบบข้อมูลไม่ถูกต้อง');
-    const conf = confirm('Pull จาก Gist สำเร็จ!\n\nพบ ' + parsed.trades.length + ' trades\nExported: ' + (parsed.exportedAt||'unknown') + '\n\nต้องการแทนที่ข้อมูลในเครื่องนี้?');
-    if (!conf) { setGistActionStatus('ยกเลิก pull', '#888'); return; }
-    S.trades   = (parsed.trades || []).map(t=>({...t,id:+t.id||t.id}));
+    if (!parsed.trades) throw new Error('ข้อมูลไม่ถูกต้อง');
+    
+    S.trades = (parsed.trades || []).map(t => ({...t, id: +t.id||t.id, date: (t.date||'').replace(/-/g,'/')}));
     S.accounts = parsed.accounts || S.accounts;
-    S.models   = parsed.models   || S.models;
-    if (parsed.customConfs) localStorage.setItem('tj_custom_confs', JSON.stringify(parsed.customConfs));
-    S.trades = S.trades.map(t => ({ ...t, date: (t.date||'').replace(/-/g,'/') }));
+    S.models = parsed.models || S.models;
+    if (parsed.customConfs) saveCustomConfs(parsed.customConfs);
+    
     saveTrades(); saveAccounts(); saveModels();
     if (!S.currentAcc && S.accounts.length) S.currentAcc = S.accounts[0].id;
-    renderAccSelector(); renderDash();
-    if (document.getElementById('pg-history') && document.getElementById('pg-history').classList.contains('on')) renderHistory();
+    
+    renderAccSelector(); renderDash(); loadCustomConfsIntoForm();
+    
     const now = new Date().toLocaleString('th-TH');
     localStorage.setItem('tj_gist_last_sync', now);
-    document.getElementById('gist-last-sync').textContent = 'Last sync: ' + now;
-    setGistActionStatus('✓ Pull สำเร็จ! โหลด ' + S.trades.length + ' trades แล้ว', '#1D9E75');
+    localStorage.setItem('tj_gist_id', gistId);
+    document.getElementById('gist-id-input').value = gistId;
+    
+    el.textContent = '✓ Pull สำเร็จ! (' + S.trades.length + ' trades)';
+    el.style.color = '#10b981';
     updateGistTopbarBtn();
-  } catch(e) {
-    setGistActionStatus('✗ Pull ล้มเหลว: ' + e.message, '#E24B4A');
+  } catch (err) {
+    el.textContent = '❌ Pull ล้มเหลว: ' + err.message;
+    el.style.color = '#ef4444';
   }
 }
 
-// Hook into openModal to init UI
-const _origOpenModal2 = typeof openModal === 'function' ? openModal : null;
-if (_origOpenModal2) {
-  openModal = function(id) {
-    _origOpenModal2(id);
-    if (id === 'modal-gist') loadGistUI();
-  };
-}
-
-
-// Silent background push to Gist after every save
-async function gistAutoPush() {
-  const tok = localStorage.getItem(GIST_TOKEN_KEY);
-  const gid = localStorage.getItem(GIST_ID_KEY) || GIST_ID_DEFAULT;
-  if (!tok || !gid) return;
-  try {
-    const payload = getGistPayload();
-    const body = { description: 'Trading Journal Pro — Auto Sync', public: false, files: { [GIST_FILENAME]: { content: payload } } };
-    const res = await fetch('https://api.github.com/gists/' + gid, {
-      method: 'PATCH',
-      headers: { Authorization: 'Bearer ' + tok, 'Content-Type': 'application/json', 'X-GitHub-Api-Version': '2022-11-28' },
-      body: JSON.stringify(body)
-    });
-    if (res.ok) {
-      const now = new Date().toLocaleString('th-TH');
-      localStorage.setItem('tj_gist_last_sync', now);
-      localStorage.setItem(GIST_ID_KEY, gid);
-      updateGistTopbarBtn();
-      console.log('[Gist] Auto-pushed', S.trades.length, 'trades');
-    }
-  } catch(e) {
-    console.warn('[Gist] Auto-push failed:', e.message);
+function gistAutoPush() {
+  const token = localStorage.getItem('tj_gist_token');
+  const gistId = localStorage.getItem('tj_gist_id');
+  if (token && gistId) {
+    gistPush().catch(console.error); // silent background push
   }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  // Set default gist id if not set
-  if (!localStorage.getItem(GIST_ID_KEY)) {
-    localStorage.setItem(GIST_ID_KEY, GIST_ID_DEFAULT);
+function updateGistTopbarBtn() {
+  const tk = localStorage.getItem('tj_gist_token');
+  const gid = localStorage.getItem('tj_gist_id');
+  const lSync = localStorage.getItem('tj_gist_last_sync');
+  const btn = document.getElementById('gist-sync-btn');
+  if (tk && gid) {
+    btn.innerHTML = '<span>✓</span> <span style="margin-left:2px">Synced</span>';
+    btn.style.background = '#ecfdf5'; btn.style.color = '#065f46'; btn.style.borderColor = '#10b981';
+    btn.title = 'Last sync: ' + (lSync || 'Unknown');
   }
-  setTimeout(updateGistTopbarBtn, 300);
-  // Auto-pull on load if token + gist id exist
-  setTimeout(async function() {
-    const tok = localStorage.getItem(GIST_TOKEN_KEY);
-    const gid = localStorage.getItem(GIST_ID_KEY) || GIST_ID_DEFAULT;
-    if (!tok || !gid) return;
-    // Silent pull - no confirm dialog, just update data
-    try {
-      const res  = await fetch('https://api.github.com/gists/' + gid, {
-        headers: { Authorization: 'Bearer ' + tok, 'X-GitHub-Api-Version': '2022-11-28' }
-      });
-      if (!res.ok) return;
-      const data = await res.json();
-      const fileContent = data.files && data.files[GIST_FILENAME] && data.files[GIST_FILENAME].content;
-      if (!fileContent) return;
-      const parsed = JSON.parse(fileContent);
-      if (!parsed.trades) return;
-      // Only update if remote has more/newer data
-      const remoteDate = new Date(parsed.exportedAt || 0);
-      const localSync  = new Date(localStorage.getItem('tj_gist_last_sync') || 0);
-      if (remoteDate <= localSync && parsed.trades.length <= S.trades.length) return;
-      S.trades   = (parsed.trades || []).map(t=>({...t,id:+t.id||t.id}));
-      S.accounts = parsed.accounts || S.accounts;
-      S.models   = parsed.models   || S.models;
-      if (parsed.customConfs) localStorage.setItem('tj_custom_confs', JSON.stringify(parsed.customConfs));
-      S.trades = S.trades.map(t => ({ ...t, date: (t.date||'').replace(/-/g,'/') }));
-      saveTrades(); saveAccounts(); saveModels();
-      if (!S.currentAcc && S.accounts.length) S.currentAcc = S.accounts[0].id;
-      renderAccSelector(); renderDash();
-      const now = new Date().toLocaleString('th-TH');
-      localStorage.setItem('tj_gist_last_sync', now);
-      updateGistTopbarBtn();
-      // Show subtle sync indicator
-      const btn = document.getElementById('gist-sync-btn');
-      if (btn) {
-        const orig = btn.innerHTML;
-        btn.innerHTML = '<span>✓</span> <span>Synced</span>';
-        btn.style.background = '#ecfdf5';
-        btn.style.color = '#065f46';
-        btn.style.borderColor = '#10b981';
-      }
-      console.log('[Gist] Auto-pulled', S.trades.length, 'trades');
-    } catch(e) {
-      console.warn('[Gist] Auto-pull failed:', e.message);
-    }
-  }, 800);
+}
+
+// Init Gist Modal Fields
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('gist-token-input').value = localStorage.getItem('tj_gist_token') || '';
+  document.getElementById('gist-id-input').value = localStorage.getItem('tj_gist_id') || '';
+  const lSync = localStorage.getItem('tj_gist_last_sync');
+  if (lSync) document.getElementById('gist-last-sync').textContent = 'ล่าสุดเมื่อ: ' + lSync;
+  updateGistTopbarBtn();
 });
+
+function showRestorePanel() {
+  document.getElementById('restore-panel').style.display = 'block';
+}
+
+function restoreFromPaste() {
+  const txt = document.getElementById('restore-input').value.trim();
+  if (!txt) return;
+  try {
+    const parsed = JSON.parse(txt);
+    if (!Array.isArray(parsed)) throw new Error("ไม่ใช่รูปแบบ Array");
+    if (confirm(`พบข้อมูล ${parsed.length} รายการ ต้องการเขียนทับข้อมูลในระบบทั้งหมดหรือไม่?`)) {
+      S.trades = parsed.map(t=>({...t, id:+t.id||t.id, date:(t.date||'').replace(/-/g,'/')}));
+      saveTrades();
+      alert('กู้คืนสำเร็จ! รีเฟรชหน้าเว็บเพื่อดูข้อมูล');
+      location.reload();
+    }
+  } catch (e) {
+    alert('รูปแบบ JSON ไม่ถูกต้อง: ' + e.message);
+  }
+}
 </script>
-</body></html>
+</body>
+</html>
