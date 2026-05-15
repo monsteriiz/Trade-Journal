@@ -871,6 +871,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         &#8681; Pull
       </button>
     </div>
+    <div id="gist-data-size" style="font-size:10px;color:#aaa;text-align:center;margin-bottom:4px"></div>
     <div id="gist-action-status" style="font-size:12px;text-align:center;min-height:20px;font-weight:600;padding:6px"></div>
     <div style="border-top:1px solid #eee;margin-top:10px;padding-top:8px;font-size:10px;color:#bbb;line-height:1.6;text-align:center">
       Gist จะเป็น Secret (ไม่ public) &#183; Push จะทับข้อมูลเก่าใน Gist &#183; Pull จะทับข้อมูลในเครื่องนี้
@@ -954,7 +955,15 @@ function load(){
 function saveAccounts(){localStorage.setItem(DB.accounts,JSON.stringify(S.accounts))}
 function saveModels(){localStorage.setItem(DB.models,JSON.stringify(S.models))}
 function saveTrades(){
-  try{localStorage.setItem(DB.trades,JSON.stringify(S.trades))}
+  try{
+    // Strip base64 chart images before saving to localStorage (5MB limit)
+    const tradesClean = S.trades.map(function(t){
+      var r = Object.assign({}, t);
+      delete r.htf; delete r.mtf; delete r.ltf;
+      return r;
+    });
+    localStorage.setItem(DB.trades, JSON.stringify(tradesClean));
+  }
   catch(e){alert('Storage เต็ม: ลองลบ trade เก่าหรือ export CSV ก่อนครับ')}
 }
 
@@ -1710,7 +1719,7 @@ setTimeout(async function() {
     const data = await res.json();
     const fileContent = data.files && data.files['trading_journal_data.json'] && data.files['trading_journal_data.json'].content;
     if (!fileContent) return;
-    const parsed = JSON.parse(fileContent);
+    let parsed; try { parsed = JSON.parse(fileContent); } catch(e) { console.warn('[Gist] Auto-pull: corrupted JSON', e.message); return; }
     if (!parsed.trades) return;
     // Only update if remote is newer or has more trades
     const remoteDate = new Date(parsed.exportedAt || 0);
@@ -2181,15 +2190,27 @@ async function gistPush() {
   const el = document.getElementById('gist-action-status');
   if (!token) { el.textContent = '❌ ต้องใส่ Token ก่อน Push'; el.style.color = '#ef4444'; return; }
   
-  let gistId = document.getElementById('gist-id-input').value.trim();
+  let gistId = document.getElementById('gist-id-input').value.trim() || localStorage.getItem('tj_gist_id') || GIST_ID_DEFAULT;
+
+  // Strip base64 chart images before push (causes JSON truncation in Gist)
+  const tradesClean = S.trades.map(function(t){
+    var r = Object.assign({}, t);
+    delete r.htf; delete r.mtf; delete r.ltf;
+    return r;
+  });
   const payload = {
     exportedAt: new Date().toISOString(),
     accounts: S.accounts,
-    trades: S.trades,
+    trades: tradesClean,
     models: S.models,
     customConfs: getCustomConfs()
   };
-  const content = JSON.stringify(payload);
+  const jsonStr = JSON.stringify(payload);
+  if (jsonStr.length > 9000000) {
+    el.textContent = '⚠ ข้อมูลใหญ่เกินไป (' + (jsonStr.length/1000000).toFixed(1) + 'MB)';
+    el.style.color = '#f59e0b'; return;
+  }
+  const content = jsonStr;
   const files = { "trading_journal_data.json": { content } };
 
   el.textContent = 'กำลัง Push...'; el.style.color = '#6d28d9';
@@ -2198,33 +2219,28 @@ async function gistPush() {
     if (gistId) {
       res = await fetch('https://api.github.com/gists/' + gistId, {
         method: 'PATCH',
-        headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' },
+        headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
         body: JSON.stringify({ files })
       });
     } else {
       res = await fetch('https://api.github.com/gists', {
         method: 'POST',
-        headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' },
-        body: JSON.stringify({ description: "Trading Journal Sync Data", public: false, files })
+        headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description: 'Trading Journal Pro Data', public: false, files })
       });
     }
-    if (!res.ok) throw new Error('API Error ' + res.status);
     const data = await res.json();
-    
-    if (!gistId) {
-      gistId = data.id;
-      document.getElementById('gist-id-input').value = gistId;
-      localStorage.setItem('tj_gist_id', gistId);
-    }
-    
+    if (!res.ok) throw new Error(data.message || 'HTTP ' + res.status);
+    const newId = data.id;
+    localStorage.setItem('tj_gist_id', newId);
+    document.getElementById('gist-id-input').value = newId;
     const now = new Date().toLocaleString('th-TH');
     localStorage.setItem('tj_gist_last_sync', now);
-    
-    el.textContent = '✓ Push สำเร็จ (' + now + ')';
+    el.textContent = '✓ Push สำเร็จ! (' + tradesClean.length + ' trades, ' + (jsonStr.length/1024).toFixed(0) + ' KB)';
     el.style.color = '#10b981';
     updateGistTopbarBtn();
-  } catch (err) {
-    el.textContent = '❌ Push ล้มเหลว: ' + err.message;
+  } catch(e) {
+    el.textContent = '✗ Push ล้มเหลว: ' + e.message;
     el.style.color = '#ef4444';
   }
 }
@@ -2246,7 +2262,8 @@ async function gistPull() {
     const fileContent = data.files["trading_journal_data.json"]?.content;
     if (!fileContent) throw new Error('ไม่พบไฟล์ trading_journal_data.json ใน Gist นี้');
     
-    const parsed = JSON.parse(fileContent);
+    let parsed;
+    try { parsed = JSON.parse(fileContent); } catch(pe) { throw new Error('JSON เสียหาย — กด Push จากเครื่องหลักก่อน แล้วค่อย Pull ใหม่'); }
     if (!parsed.trades) throw new Error('ข้อมูลไม่ถูกต้อง');
     
     S.trades = (parsed.trades || []).map(t => ({...t, id: +t.id||t.id, date: (t.date||'').replace(/-/g,'/')}));
@@ -2299,6 +2316,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('gist-id-input').value = localStorage.getItem('tj_gist_id') || '';
   const lSync = localStorage.getItem('tj_gist_last_sync');
   if (lSync) document.getElementById('gist-last-sync').textContent = 'ล่าสุดเมื่อ: ' + lSync;
+  const sizeEl = document.getElementById('gist-data-size');
+  if (sizeEl) {
+    const tradesNoImg = S.trades.map(function(t){var r=Object.assign({},t);delete r.htf;delete r.mtf;delete r.ltf;return r;});
+    const estKB = (JSON.stringify({trades:tradesNoImg,accounts:S.accounts}).length/1024).toFixed(0);
+    sizeEl.textContent = 'ขนาดข้อมูล (ไม่รวม charts): ~' + estKB + ' KB';
+  }
   updateGistTopbarBtn();
 });
 
