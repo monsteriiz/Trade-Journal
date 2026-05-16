@@ -342,35 +342,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="fg"><label>Market Conditions</label><select id="f-mkt"><option>Strong uptrend (HT)</option><option>Strong downtrend (HT)</option><option>15m Strong Uptrend</option><option>15m Strong Downtrend</option><option>Ranging</option><option>Volatile</option><option>Trending</option></select></div>
       <div class="fg"><label>Bias</label><select id="f-bias"><option>Bullish</option><option>Bearish</option><option>Neutral</option></select></div>
       <div class="fg"><label>Setup Type</label>
-        <select id="f-model">
-          <option value="">— เลือก Setup —</option>
-          <optgroup label="ICT Concepts">
-            <option value="fvg">FVG (Fair Value Gap)</option>
-            <option value="ifvg">iFVG (Inverse FVG)</option>
-            <option value="ob">Order Block</option>
-            <option value="bb">Breaker Block</option>
-            <option value="ob_5m">5m Order Block</option>
-            <option value="ob_15m">15m Order Block</option>
-            <option value="ifvg_1m">1m iFVG</option>
-            <option value="ifvg_5m">5m iFVG</option>
-            <option value="ifvg_15m">15m iFVG</option>
-            <option value="fvg_5m">5m FVG</option>
-            <option value="fvg_15m">15m FVG</option>
-            <option value="bb_5m">5m Breaker Block</option>
-            <option value="bb_15m">15m Breaker Block</option>
-          </optgroup>
-          <optgroup label="SMC / Price Action">
-            <option value="supply_zone">Supply Zone</option>
-            <option value="demand_zone">Demand Zone</option>
-            <option value="pullback">Pullback</option>
-            <option value="ms_break">Market Structure Break</option>
-            <option value="liq_sweep">Liquidity Sweep</option>
-          </optgroup>
-          <optgroup label="Other">
-            <option value="custom">Custom / Other</option>
-          </optgroup>
-        </select>
+        <select id="f-model"></select>
       </div>
+      <div class="fg" style="align-self:flex-end"><button type="button" onclick="openModal('modal-setup-type')" class="btn btn-sm" style="white-space:nowrap;border-color:#a78bfa;color:#6d28d9;font-size:11px">&#9881; จัดการ</button></div>
     </div>
     <div class="fr">
       <div class="fg"><label>Key Levels</label><input type="text" id="f-kl" placeholder="Supply Zone, OB, PDH..."></div>
@@ -650,34 +624,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="ct">Setup / Confluences</div>
       <div class="fr">
         <div class="fg"><label>Setup Type</label>
-          <select id="e-model">
-            <option value="">— เลือก Setup —</option>
-            <optgroup label="ICT Concepts">
-              <option value="fvg">FVG (Fair Value Gap)</option>
-              <option value="ifvg">iFVG (Inverse FVG)</option>
-              <option value="ob">Order Block</option>
-              <option value="bb">Breaker Block</option>
-              <option value="ob_5m">5m Order Block</option>
-              <option value="ob_15m">15m Order Block</option>
-              <option value="ifvg_1m">1m iFVG</option>
-              <option value="ifvg_5m">5m iFVG</option>
-              <option value="ifvg_15m">15m iFVG</option>
-              <option value="fvg_5m">5m FVG</option>
-              <option value="fvg_15m">15m FVG</option>
-              <option value="bb_5m">5m Breaker Block</option>
-              <option value="bb_15m">15m Breaker Block</option>
-            </optgroup>
-            <optgroup label="SMC / Price Action">
-              <option value="supply_zone">Supply Zone</option>
-              <option value="demand_zone">Demand Zone</option>
-              <option value="pullback">Pullback</option>
-              <option value="ms_break">Market Structure Break</option>
-              <option value="liq_sweep">Liquidity Sweep</option>
-            </optgroup>
-            <optgroup label="Other">
-              <option value="custom">Custom / Other</option>
-            </optgroup>
-          </select>
+          <select id="e-model"></select>
         </div>
         <div class="fg"><label>Entry Timeframe</label><select id="e-etf"><option>1m</option><option>5m</option><option>15m</option><option>1h</option><option>4h</option></select></div>
         <div class="fg"><label>Key Levels</label><input type="text" id="e-kl"></div>
@@ -997,7 +944,7 @@ function renderAccSelector(){
   const t=accTrades();
   const net=t.reduce((a,x)=>a+(+x.net||0),0);
   if(acc)document.getElementById('acc-info').textContent=`${t.length} trades | Net: ${net>=0?'+':''}$${net.toFixed(2)}`;
-  document.getElementById('log-acc-name').textContent=acc?.name||'—';
+  const logAccEl=document.getElementById('log-acc-name'); if(logAccEl)logAccEl.textContent=acc?.name||'—';
 }
 
 function switchAccount(id){S.currentAcc=id;renderAccSelector();renderDash()}
@@ -1700,6 +1647,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
   initStarWidget('f-grade-stars','f-grade',3);
+  populateSetupDropdowns();
 });
 
 document.getElementById('f-date').valueAsDate=new Date();
@@ -2345,6 +2293,150 @@ function restoreFromPaste() {
     alert('รูปแบบ JSON ไม่ถูกต้อง: ' + e.message);
   }
 }
+
+// ===== SETUP TYPE MANAGER =====
+const DB_SETUPS = 'tj_setup_types_v1';
+const DEFAULT_SETUPS = [
+  {id:'fvg',name:'FVG (Fair Value Gap)',cat:'ICT Concepts',locked:true},
+  {id:'ifvg',name:'iFVG (Inverse FVG)',cat:'ICT Concepts',locked:true},
+  {id:'ob',name:'Order Block',cat:'ICT Concepts',locked:true},
+  {id:'bb',name:'Breaker Block',cat:'ICT Concepts',locked:true},
+  {id:'ob_5m',name:'5m Order Block',cat:'ICT Concepts',locked:true},
+  {id:'ob_15m',name:'15m Order Block',cat:'ICT Concepts',locked:true},
+  {id:'ifvg_1m',name:'1m iFVG',cat:'ICT Concepts',locked:true},
+  {id:'ifvg_5m',name:'5m iFVG',cat:'ICT Concepts',locked:true},
+  {id:'ifvg_15m',name:'15m iFVG',cat:'ICT Concepts',locked:true},
+  {id:'fvg_5m',name:'5m FVG',cat:'ICT Concepts',locked:true},
+  {id:'fvg_15m',name:'15m FVG',cat:'ICT Concepts',locked:true},
+  {id:'bb_5m',name:'5m Breaker Block',cat:'ICT Concepts',locked:true},
+  {id:'bb_15m',name:'15m Breaker Block',cat:'ICT Concepts',locked:true},
+  {id:'supply_zone',name:'Supply Zone',cat:'SMC / Price Action',locked:true},
+  {id:'demand_zone',name:'Demand Zone',cat:'SMC / Price Action',locked:true},
+  {id:'pullback',name:'Pullback',cat:'SMC / Price Action',locked:true},
+  {id:'ms_break',name:'Market Structure Break',cat:'SMC / Price Action',locked:true},
+  {id:'liq_sweep',name:'Liquidity Sweep',cat:'SMC / Price Action',locked:true},
+  {id:'custom',name:'Custom / Other',cat:'Other',locked:true},
+];
+
+function loadSetupTypes(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(DB_SETUPS)||'[]');
+    return [...DEFAULT_SETUPS,...saved.filter(s=>!DEFAULT_SETUPS.find(d=>d.id===s.id))];
+  }catch(e){return[...DEFAULT_SETUPS];}
+}
+
+function saveSetupTypes(types){
+  localStorage.setItem(DB_SETUPS,JSON.stringify(types.filter(t=>!t.locked)));
+}
+
+function populateSetupDropdowns(selectedVal){
+  const types=loadSetupTypes();
+  const cats={};
+  types.forEach(t=>{if(!cats[t.cat])cats[t.cat]=[];cats[t.cat].push(t);});
+  const html='<option value="">— เลือก Setup —</option>'+
+    Object.entries(cats).map(([cat,items])=>
+      '<optgroup label="'+cat+'">'+items.map(t=>'<option value="'+t.id+'">'+t.name+'</option>').join('')+'</optgroup>'
+    ).join('');
+  ['f-model','e-model'].forEach(function(id){
+    const el=document.getElementById(id);
+    if(!el)return;
+    const cur=selectedVal!==undefined?selectedVal:el.value;
+    el.innerHTML=html;
+    if(cur)el.value=cur;
+  });
+}
+
+function addSetupType(){
+  const name=document.getElementById('new-setup-name').value.trim();
+  const cat=document.getElementById('new-setup-cat').value;
+  const msg=document.getElementById('new-setup-msg');
+  if(!name){if(msg){msg.textContent='กรุณาใส่ชื่อ Setup';msg.style.color='#E24B4A';}return;}
+  const types=loadSetupTypes();
+  if(types.find(t=>t.name.toLowerCase()===name.toLowerCase())){
+    if(msg){msg.textContent='มี Setup ชื่อนี้อยู่แล้ว';msg.style.color='#E24B4A';}return;
+  }
+  types.push({id:'custom_'+Date.now(),name:name,cat:cat,locked:false});
+  saveSetupTypes(types);
+  populateSetupDropdowns();
+  document.getElementById('new-setup-name').value='';
+  if(msg){msg.textContent='เพิ่มแล้ว: '+name;msg.style.color='#1D9E75';}
+  renderSetupTypeList();
+}
+
+function deleteSetupType(id){
+  if(!confirm('ลบ Setup Type นี้?'))return;
+  const types=loadSetupTypes().filter(t=>t.id!==id);
+  saveSetupTypes(types);
+  populateSetupDropdowns();
+  renderSetupTypeList();
+}
+
+function renderSetupTypeList(){
+  const el=document.getElementById('setup-type-list');
+  if(!el)return;
+  const types=loadSetupTypes();
+  const cats={};
+  types.forEach(t=>{if(!cats[t.cat])cats[t.cat]=[];cats[t.cat].push(t);});
+  el.innerHTML=Object.entries(cats).map(function([cat,items]){
+    return '<div style="margin-bottom:10px">'
+      +'<div style="font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.06em;padding:3px 0;border-bottom:1px solid #f0f0ec;margin-bottom:4px">'+cat+'</div>'
+      +items.map(function(t){
+        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 6px;border-radius:5px;margin-bottom:2px;'+(t.locked?'':'background:#fdf8ff;border:1px solid #f0e8ff')+'">'
+          +'<span style="font-size:12px;color:'+(t.locked?'#555':'#6d28d9')+'">'+t.name+(t.locked?' <span style="font-size:10px;color:#ccc">&#128274;</span>':' <span style="font-size:10px;color:#a78bfa">custom</span>')+'</span>'
+          +(!t.locked?'<button class="btn btn-sm btn-d" onclick="deleteSetupType(this.dataset.id)" data-id="'+t.id+'" style="font-size:10px;padding:2px 7px">ลบ</button>':'')
+          +'</div>';
+      }).join('')
+      +'</div>';
+  }).join('');
+}
+
+// Hook openModal for setup-type
+const _origOpenModalSetup=openModal;
+openModal=function(id){
+  _origOpenModalSetup(id);
+  if(id==='modal-setup-type')renderSetupTypeList();
+};
+
+// Also populate when edit modal opens
+const _origOpenEditModal=openEditModal;
+openEditModal=function(id){
+  _origOpenEditModal(id);
+  populateSetupDropdowns();
+};
+
+// populateSetupDropdowns is called in DOMContentLoaded below
+
 </script>
+
+<!-- MODAL: MANAGE SETUP TYPES -->
+<div class="modal-overlay" id="modal-setup-type" onclick="overlayClose(event,'modal-setup-type')">
+  <div class="modal" style="max-width:480px">
+    <button class="modal-close" onclick="closeModal('modal-setup-type')">x</button>
+    <div class="ct">&#9881; จัดการ Setup Type</div>
+    <div style="background:#f8f8f6;border:1px solid #e8e8e4;border-radius:8px;padding:12px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:600;color:#555;margin-bottom:8px">เพิ่ม Setup Type ใหม่</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <div class="fg"><label>ชื่อ Setup</label>
+          <input type="text" id="new-setup-name" placeholder="เช่น 1m FVG London" style="font-size:12px;padding:6px 9px;border:1px solid #e0e0e0;border-radius:6px;background:#fff;color:#1a1a1a;width:100%;font-family:inherit">
+        </div>
+        <div class="fg"><label>Category</label>
+          <select id="new-setup-cat" style="font-size:12px;padding:6px 9px;border:1px solid #e0e0e0;border-radius:6px;background:#fff;color:#1a1a1a;width:100%;font-family:inherit">
+            <option value="ICT Concepts">ICT Concepts</option>
+            <option value="SMC / Price Action">SMC / Price Action</option>
+            <option value="Custom">Custom</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="addSetupType()" class="btn btn-p btn-sm" style="width:100%">+ เพิ่ม Setup Type</button>
+      <div id="new-setup-msg" style="font-size:11px;margin-top:6px;font-weight:600"></div>
+    </div>
+    <div style="font-size:11px;font-weight:600;color:#555;margin-bottom:6px">Setup Types ทั้งหมด</div>
+    <div id="setup-type-list" style="max-height:300px;overflow-y:auto"></div>
+    <div style="border-top:1px solid #eee;margin-top:10px;padding-top:8px;font-size:10px;color:#bbb;text-align:center">
+      &#128274; = ค่าเริ่มต้น (ลบไม่ได้) &nbsp;|&nbsp; Custom = เพิ่มเองลบได้
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
