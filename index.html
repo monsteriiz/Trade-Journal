@@ -1390,6 +1390,7 @@ function exportWeekPDF(){
   const topM=Object.entries(mistakes).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,v])=>`${k} (${v}x)`).join(', ')||'None';
 
   const tradesHtml=wt.map((x,i)=>{
+    x=getTradeWithImages(x); // merge stored images
     const net2=+x.net||0;
     const nc=net2>=0?'#1D9E75':'#E24B4A';
     const oc={'Great Exit!':'#1D9E75','Profit Taken':'#0C447C','Loss, Review Setup':'#E24B4A','Capital Protected':'#0C447C','Breakeven':'#854F0B'}[x.outcome]||'#333';
@@ -1561,7 +1562,9 @@ function saveTrade(){
     htf:S._htf||'',mtf:S._mtf||'',ltf:S._ltf||'',
   };
   if(!t.date||!t.sym){alert('กรุณากรอก Date และ Symbol');return}
-  S.trades.unshift(t);saveTrades();
+  S.trades.unshift(t);
+  saveTradeImages(t.id, t.htf, t.mtf, t.ltf);
+  saveTrades();
   const msg=document.getElementById('save-msg');msg.style.display='block';
   setTimeout(()=>msg.style.display='none',2500);
   clearForm();renderAccSelector();
@@ -1583,7 +1586,7 @@ function clearForm(){
 
 function deleteTrade(id){
   if(!confirm('ลบ trade นี้?'))return;
-  S.trades=S.trades.filter(x=>String(x.id)!==String(id));saveTrades();renderHistory();renderAccSelector();
+  S.trades=S.trades.filter(x=>String(x.id)!==String(id));deleteTradeImages(id);saveTrades();renderHistory();renderAccSelector();
 }
 
 function exportCSV(){
@@ -1753,6 +1756,22 @@ function openEditModal(id) {
   buildEditConfTags(t.confs || []);
   const gradeVal = parseInt(t.grade) || 3;
   setTimeout(() => initStarWidget('e-grade-stars','e-grade', gradeVal), 50);
+  // Load stored chart images into edit modal slots
+  const imgs = loadTradeImages(t.id);
+  S._editHtf = t.htf || imgs.htf || '';
+  S._editMtf = t.mtf || imgs.mtf || '';
+  S._editLtf = t.ltf || imgs.ltf || '';
+  ['htf','mtf','ltf'].forEach(function(key) {
+    const src = S['_edit'+key.charAt(0).toUpperCase()+key.slice(1)];
+    const slotEl = document.getElementById('e-slot-'+key);
+    if (slotEl) {
+      let img = slotEl.querySelector('img');
+      if (src) {
+        if (!img) { img = document.createElement('img'); slotEl.appendChild(img); }
+        img.src = src; img.style.cssText='width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;border-radius:6px';
+      } else if (img) { img.remove(); }
+    }
+  });
   openModal('modal-edit');
 }
 
@@ -1799,6 +1818,7 @@ function saveEdit() {
   
   t.confs = [...document.querySelectorAll('#e-conf-tags .conf-tag.on')].map(b => b.dataset.label || b.textContent.replace(' ×','').trim());
   
+  saveTradeImages(_editId, S._editHtf||"", S._editMtf||"", S._editLtf||"");
   saveTrades();
   closeModal('modal-edit');
   renderHistory();
@@ -2405,6 +2425,38 @@ openEditModal=function(id){
 };
 
 // populateSetupDropdowns is called in DOMContentLoaded below
+
+
+// ===== SEPARATE IMAGE STORAGE =====
+function saveTradeImages(tradeId, htf, mtf, ltf) {
+  if (!tradeId) return;
+  try {
+    if (htf) localStorage.setItem('tj_img_' + tradeId + '_htf', htf);
+    if (mtf) localStorage.setItem('tj_img_' + tradeId + '_mtf', mtf);
+    if (ltf) localStorage.setItem('tj_img_' + tradeId + '_ltf', ltf);
+  } catch(e) {
+    console.warn('Image storage full:', e.message);
+  }
+}
+
+function loadTradeImages(tradeId) {
+  return {
+    htf: localStorage.getItem('tj_img_' + tradeId + '_htf') || '',
+    mtf: localStorage.getItem('tj_img_' + tradeId + '_mtf') || '',
+    ltf: localStorage.getItem('tj_img_' + tradeId + '_ltf') || '',
+  };
+}
+
+function deleteTradeImages(tradeId) {
+  ['htf','mtf','ltf'].forEach(k => localStorage.removeItem('tj_img_' + tradeId + '_' + k));
+}
+
+function getTradeWithImages(trade) {
+  if (!trade) return trade;
+  if (trade.htf || trade.mtf || trade.ltf) return trade; // already has images in memory
+  const imgs = loadTradeImages(trade.id);
+  return Object.assign({}, trade, imgs);
+}
 
 </script>
 
